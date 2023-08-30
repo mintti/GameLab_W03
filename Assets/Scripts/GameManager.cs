@@ -217,6 +217,10 @@ public class GameManager : MonoBehaviour
 
         // 맵을 밝힘
         TurnOnMapPiece(field, true);
+        
+        // 이동 가능 영역 업데이트
+        if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
+        else ChangeBehavior(knight.SelectedIdx);
 
         return result;
     }
