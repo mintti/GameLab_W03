@@ -35,9 +35,9 @@ public class Player : MonoBehaviour
             {
                 _selectedIdx = value;
                 _selectedIdx = Mathf.Min(_selectedIdx, 3);
-                _uiManager.FocusSkill(playerSkillUI, _selectedIdx);
-                _uiManager.UpdateInfoText(_selectedIdx);
                 _gameManager.ChangeBehavior(_selectedIdx); 
+                _uiManager.UpdateInfoText(_selectedIdx);
+                _uiManager.FocusSkill(playerSkillUI, _selectedIdx);
                 
             }
         }

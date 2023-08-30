@@ -205,7 +205,7 @@ public class UIManager : MonoBehaviour
     public void UpdateKnightStatusInfo(Status status)
     {
         hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
-        powerText.text = $"<color=#FFD400>파워</color>  {status.Power}";
+        powerText.text = $"<color=#FFD400>파워</color>  {(status.Buff ? $"{status.Power +5}(버프)" : status.Power)}";
     }
 
     public void ActiveEndingScene()

@@ -31,14 +31,13 @@ public class BattleEvent : MonoBehaviour
     {
         bool knightTurn = true;
         bool monsterTurn = false;
-        ;
 
-        while (_knight.Status.CurrentHp > 0 &&  _monster.Status.MaxHp > 0)
+        while (true)
         {
             if (knightTurn)
             {
                 _monster.Status.MaxHp -= _knight.Status.Power;
-                _uiManager.OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power,  _monster.Status.MaxHp);
+                _uiManager.OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power + (_knight.Status.Buff ? 5 : 0),  _monster.Status.MaxHp);
                 
                 knightTurn = false;
                 monsterTurn = true;
@@ -49,6 +48,7 @@ public class BattleEvent : MonoBehaviour
                     _knight.Status.CurrentHp = _knight.Status.CurrentHp;
                     _uiManager.combatPanelExitButton.SetActive(true);
                     _gameManager.EventPrinting = false;
+                    End();
                     yield break;
                 }
             }
@@ -70,7 +70,15 @@ public class BattleEvent : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.7f);
+        }
+    }
+
+    void End()
+    {
+        if (_knight.Status.Buff)
+        {
+            _knight.Status.Buff = false;
         }
         _gameManager.EventPrinting = false;
     }

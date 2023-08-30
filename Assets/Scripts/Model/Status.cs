@@ -6,6 +6,18 @@ public class Status
     private int currentHp;
     private int power;
     private int defense;
+
+    private bool _buff;
+
+    public bool Buff
+    {
+        get => _buff;
+        set
+        {
+            _buff = value;
+            UIManager.Instance?.UpdateKnightStatusInfo(this);
+        }
+    }
     public int MaxHp
     {
         get { return maxHp; }

@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
             Turn++;
             if (Turn % waveInterval == 0)
             {
-                MapManager.DoWave(10f);
+                MapManager.DoWave(.1f);
             }
         }
     }
@@ -297,8 +297,20 @@ public class GameManager : MonoBehaviour
 
     private  bool BuffKnight()
     {
-        knight.transform.BroadcastMessage("Buff");
-        return true;
+        bool result = true;
+        var knight_ = knight.gameObject.GetComponent<Knight>();
+
+        if (!knight_.Status.Buff)
+        {
+            knight_.Status.Buff = true;
+        }
+        else
+        {
+            Log("버프는 한 번만 사용할 수 있습니다.");
+            result = false;
+        }
+        
+        return result;
     }
 
     #endregion
