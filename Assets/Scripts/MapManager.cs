@@ -113,9 +113,9 @@ public class MapManager : MonoBehaviour
                     gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
                     selectCusorObj.transform.position = new Vector2(100,100);
                     isCanFieldSelect = false;
-                    foreach(FieldPiece piece in canSelectList){
-                        if(piece._canSelect){ piece._canSelect = false; }
-                    }
+                    // foreach(FieldPiece piece in canSelectList){
+                    //     if(piece._canSelect){ piece._canSelect = false; }
+                    // }
                     canSelectList.Clear();
                 } 
             }
