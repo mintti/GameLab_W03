@@ -369,7 +369,7 @@ public class FieldPiece
     }
     // public Sprite Sprite;
 
-    public bool IsLight = true;
+    public bool IsLight = false;
 
     private bool _canSelect;
 
