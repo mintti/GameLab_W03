@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FieldEvent : IEvent
+public class FieldEvent : MonoBehaviour
 {
+    private UIImgText _uiImgTxt;
+    
     /// <summary>
     /// 텍스트
     /// </summary>
@@ -26,8 +28,20 @@ public class FieldEvent : IEvent
     public string Answer { get; set; }
     #endregion
     
-    public void Execute()
+    void Start()
     {
-           
+        _uiImgTxt = GetComponent<UIImgText>();
+    }
+    
+    public void Execute(FieldEventInfo info)
+    {
+        gameObject.SetActive(true);
+        _uiImgTxt.Init(info.Sprite, End, info.GetText);
+    }
+
+
+    void End()
+    {
+        gameObject.SetActive(false);
     }
 }
