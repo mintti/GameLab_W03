@@ -105,10 +105,12 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
+            Camera.main.backgroundColor = new Color(0.3537736f, 0.401642f, 1, 1);
             whoseTurn = nameof(knight);
             MapManager.BuildAllField(FieldType.Knight);
             yield return StartCoroutine(PlayPlayer(knight));
-            
+
+            Camera.main.backgroundColor = new Color(1, 0.6650944f, 0.9062265f, 1);
             whoseTurn = nameof(princess);
             MapManager.BuildAllField(FieldType.Princess);
             yield return StartCoroutine(PlayPlayer(princess));
