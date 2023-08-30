@@ -71,11 +71,12 @@ public class GameManager : MonoBehaviour
     void InitPlayerPosition()
     {
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
-        MapManager.LightField(FieldType.Knight, new Vector2(0,0));
+        MapManager.LightField(FieldType.Knight, new Vector2(1,1));
         knight.CurrentFieldPiece = MapManager.knightFields[0,0];
+
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
-        MapManager.LightField(FieldType.Princess, new Vector2(19,19));
-        princess.CurrentFieldPiece = MapManager.princessFields[0,0];
+        MapManager.LightField(FieldType.Princess, new Vector2(20,20));
+        princess.CurrentFieldPiece = MapManager.princessFields[19,19];
     }
 
     IEnumerator PlayGame()
@@ -83,11 +84,11 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             whoseTurn = nameof(princess);
-            MapManager.BuildAllField(FieldType.Knight);
+            MapManager.BuildAllField(FieldType.Princess);
             yield return StartCoroutine(PlayPlayer(princess));
 
             whoseTurn = nameof(knight);
-            MapManager.BuildAllField(FieldType.Princess);
+            MapManager.BuildAllField(FieldType.Knight);
             yield return StartCoroutine(PlayPlayer(knight));
 
             if (GameEnd)
@@ -317,6 +318,7 @@ public class GameManager : MonoBehaviour
         
         
         // [TODO] MapManger에게 changePiece 전달
+        Debug.Log(changePiece[0].gridPosition);
         MapManager.showCanSelectField(changePiece);
     }
 

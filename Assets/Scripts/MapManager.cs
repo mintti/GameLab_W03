@@ -113,8 +113,7 @@ public class MapManager : MonoBehaviour
     
             }
         }
-        printMap(knightFields);
-        BuildAllField(FieldType.Knight);
+        BuildAllField(FieldType.Princess);
     }
     
     private void Update()
@@ -130,19 +129,6 @@ public class MapManager : MonoBehaviour
                 isCanFieldSelect = false;
             } 
         }
-        if(Input.GetKeyDown(KeyCode.Alpha1)){
-            currentField = FieldType.Field;
-            BuildAllField(currentField);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha2)){
-            currentField = FieldType.Princess;
-            BuildAllField(currentField);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha3)){
-            currentField = FieldType.PrincessMap;
-            BuildAllField(currentField);
-        }
-        // if()
         // else if(Input.GetKeyDown(KeyCode.Z)){
         //     currentField = FieldType.PrincessMap;
         //     BuildAllField(currentField);
@@ -224,7 +210,7 @@ public class MapManager : MonoBehaviour
     }
 
     public Vector2 GridToWorldPosition(Vector2 gridPosition, Vector2 offset){
-        return gridPosition * cellSize + new Vector2(cellSize / 2, cellSize / 2) + offset ;
+        return gridPosition * cellSize + new Vector2(cellSize / 2, cellSize / 2) + offset;
     }
     public Vector2 GridToWorldPosition(Vector2 gridPosition){
         return gridPosition * cellSize + new Vector2(cellSize / 2 + ObjectField.transform.position.x, cellSize / 2 + ObjectField.transform.position.y);
