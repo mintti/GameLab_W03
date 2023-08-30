@@ -29,16 +29,24 @@ public class FieldEvent : MonoBehaviour
     public string Answer { get; set; }
     #endregion
     
-    public void Start()
-    {
-        _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
-    }
-    
     public void Execute(FieldEventInfo info)
     {
         gameObject.SetActive(true);
         _uiImgTxt ??= GetComponent<UIImgText>();
+        _gameManager ??= GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
         
+
+        switch(info.Type){
+            case EventType.HP:
+                _gameManager.knight.gameObject.GetComponent<Knight>().Status.CurrentHp += info.EffectAmount;
+            break;
+            case EventType.Power:
+                _gameManager.knight.gameObject.GetComponent<Knight>().Status.Power += info.EffectAmount;
+
+            break;
+
+        }
+
         _uiImgTxt.Init(info.Sprite, End, info.GetText);
     }
 
