@@ -368,7 +368,7 @@ public class GameManager : MonoBehaviour
     {
         if (!(x < 0 || x >= baseFields.GetLength(0) || y < 0 || y >= baseFields.GetLength(1)))
         {
-            var piece = baseFields[x,y];
+            var piece = baseFields[y, x];
             if(!list.Contains(piece)) list.Add(piece);
         }
     }
