@@ -18,10 +18,9 @@ public class Player : MonoBehaviour
         set
         {
             _cost = value;
+            _uiManager.UpdateCostText(_cost);
         }
     }
-
-
 
     public bool IsTurnEnd;
 
@@ -52,9 +51,9 @@ public class Player : MonoBehaviour
 
     public void StartTurn()
     {
+        Cost = _gameManager.MaxCost;
         IsTurnEnd = false;
         playerUI.SetActive(true);
-        _uiManager.ResetCost();
     }
 
     public void EndTurn()
@@ -69,7 +68,6 @@ public class Player : MonoBehaviour
         {
             CheckScroll();
         }
-        
     }
 
     #region Check Scroll
