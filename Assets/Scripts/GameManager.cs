@@ -294,7 +294,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (piece.IsLight)
                         {
-                            changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, curPiece,
+                            changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, piece,
                                 new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
                         }
                     }
@@ -303,7 +303,7 @@ public class GameManager : MonoBehaviour
                 case 1:
                     foreach (var piece in MapManager.princessFields)
                     {
-                        if(piece.IsLight) changePiece.Add(piece);
+                        if(piece.IsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
                     }
                     break;
                 case 2:
