@@ -74,7 +74,7 @@ public class MapManager : MonoBehaviour
 
     GameObject selectCusorObj;
     Vector2 currentMouseGridPos;
-    float cellSize = 0.32f;
+    float cellSize = 1.28f;
 
 
     public FieldPiece[,] princessFields;

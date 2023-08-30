@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1514134bc4fbd41bb739b1b9a49231, type: 3}
   m_Name: PrincessEmptyTile
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 21300000, guid: f3c3f95dc8c690d4886ff3f326c15b0f, type: 3}
+  m_DefaultSprite: {fileID: 21300000, guid: f209596c619ca814fb88fce15d422d3a, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
   m_TilingRules: []
