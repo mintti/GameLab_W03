@@ -21,10 +21,10 @@ public class CameraManager : MonoBehaviour
     
     public void Update()
     {
-        if (Target != null && !mapON)
-        {
-            transform.position = Vector3.Lerp(transform.position, Target.position + targetOffset, 0.1f);
-        }
+        // if (Target != null && !mapON)
+        // {
+        //     transform.position = Vector3.Lerp(transform.position, Target.position + targetOffset, 0.1f);
+        // }
     }
     
     public void ActiveMap()

@@ -131,6 +131,7 @@ public class MapManager : MonoBehaviour
                 Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
                 if(isInGrid(grid)){
                     gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
+                selectCusorObj.transform.position = new Vector2(100,100);
                     isCanFieldSelect = false;
                 } 
             }
@@ -397,7 +398,12 @@ public class MapManager : MonoBehaviour
         princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
         knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
         FieldMapData[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
+        RefreshMap();
+    }
+
+    public void RefreshMap(){
         BuildAllField(currentField);
+
     }
 
     public void SetMapPiece(FieldPiece fieldPiece, MapType type){
