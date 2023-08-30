@@ -14,7 +14,7 @@ public class Status
             maxHp = Mathf.Max(value, 0);
             // Ensure CurrentHp doesn't exceed MaxHp
             currentHp = Mathf.Min(currentHp, maxHp);
-            UIManager.Instance.UpdateKnightStatusInfo(this);
+            UIManager.Instance?.UpdateKnightStatusInfo(this);
         }
     }
 
@@ -25,7 +25,7 @@ public class Status
         {
             // Ensure CurrentHp is between 0 and MaxHp
             currentHp = Mathf.Clamp(value, 0, maxHp);
-            UIManager.Instance.UpdateKnightStatusInfo(this);
+            UIManager.Instance?.UpdateKnightStatusInfo(this);
         }
     }
 
@@ -35,7 +35,7 @@ public class Status
         set
         {
             power = Mathf.Max(value, 0);
-            UIManager.Instance.UpdateKnightStatusInfo(this);
+            UIManager.Instance?.UpdateKnightStatusInfo(this);
         }
     }
 
