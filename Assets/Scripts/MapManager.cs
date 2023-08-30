@@ -84,13 +84,11 @@ public class MapManager : MonoBehaviour
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
-        width = fieldWidth + 2;
-        height = fieldHeight + 2;
-    }
-    private void Start() {
     }
     public void CreateMap(){
 
+        width = fieldWidth + 2;
+        height = fieldHeight + 2;
         GenerateField();
         princessFields = new FieldPiece[height, width];
         knightFields = new FieldPiece[height, width];
