@@ -108,6 +108,8 @@ public class GameManager : MonoBehaviour
     {
         do
         {
+            ChangeBehavior(player.SelectedIdx);
+            
             player.StartTurn();
             CameraManager.Target = player.transform;
             yield return new WaitUntil(() => player.IsTurnEnd);
@@ -129,7 +131,6 @@ public class GameManager : MonoBehaviour
         bool complete = true;
         //if (field..CanSelect) // 필드에서 판단
         {
-            
             if(whoseTurn.Equals(nameof(princess))) // 공주의 턴
             {
                 if (princess.Cost >= princessSkillCost[princess.SelectedIdx])
