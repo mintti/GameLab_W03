@@ -39,6 +39,7 @@ public class MapManager : MonoBehaviour
     public TileBase CanSelectTile;
     public TileBase BlockTile;
     public TileBase EmptyTile;
+    public TileBase DragonTile;
 
     bool isCanFieldSelect = true;
     bool isPrincessMapSelect = true;
@@ -74,6 +75,7 @@ public class MapManager : MonoBehaviour
             {
                 princessFields[j, i]= new FieldPiece
                 { 
+
                     IsLight = false,
                     MapType = MapType.Hide,
                     gridPosition = new Vector2Int(i, j)
@@ -89,6 +91,11 @@ public class MapManager : MonoBehaviour
     
             }
         }
+        
+        LightField(FieldType.Princess, new Vector2(fieldWidth-1,fieldHeight-1));
+        LightField(FieldType.Princess, new Vector2(fieldWidth-2,fieldHeight-1));
+        LightField(FieldType.Princess, new Vector2(fieldWidth-1,fieldHeight-2));
+        LightField(FieldType.Princess, new Vector2(fieldWidth-2,fieldHeight-2));
         BuildAllField(type);
     }
     
@@ -118,44 +125,10 @@ public class MapManager : MonoBehaviour
         if(type == FieldType.Princess){
             princessFields[(int) position.y,(int) position.x].IsLight = true;
             princessFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
-            if(position.x != 0){
-                princessFields[(int) position.y,(int) position.x-1].IsLight = true;
-                princessFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y,(int) position.x - 1].MapType;
-            }
-            if(position.x != 19){
-                princessFields[(int) position.y,(int) position.x+1].IsLight = true;
-                princessFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y,(int) position.x+1 + 1].MapType;
-
-            }
-            if(position.y != 19){
-                princessFields[(int) position.y+1,(int) position.x].IsLight = true;
-                princessFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y+1,(int) position.x].MapType;
-            }
-            if(position.y != 0){
-                princessFields[(int) position.y-1,(int) position.x].IsLight = true;
-                princessFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y-1,(int) position.x].MapType;
-            }
         }
         else if(type == FieldType.Knight){
             knightFields[(int) position.y,(int) position.x].IsLight = true;
             knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y ,(int) position.x].MapType;
-            if(position.x != 0){
-                knightFields[(int) position.y,(int) position.x-1].IsLight = true;
-                knightFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y ,(int) position.x-1].MapType;
-            }
-            if(position.x != 19){
-                knightFields[(int) position.y,(int) position.x+1].IsLight = true;
-                knightFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y ,(int) position.x+1].MapType;
-
-            }
-            if(position.y != 0){
-                knightFields[(int) position.y-1,(int) position.x].IsLight = true;
-                knightFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y-1 ,(int) position.x].MapType;
-            }
-            if(position.y != 19){
-                knightFields[(int) position.y+1,(int) position.x].IsLight = true;
-                knightFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y+1 ,(int) position.x ].MapType;
-            }
         }
         BuildAllField(type);
 
@@ -211,14 +184,9 @@ public class MapManager : MonoBehaviour
         GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
         generatorManager.width = fieldWidth + 2;
         generatorManager.height = fieldHeight + 2;
-        while(true){
-            generatorManager.ClearAllMaps();
-            generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
-            generatorManager.GenerateNewMap("Maze"); 
-            if(!generatorManager.MapData[1, 1] && !generatorManager.MapData[fieldHeight, fieldWidth]){
-                break;
-            }
-        }
+        generatorManager.ClearAllMaps();
+        generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
+        generatorManager.GenerateNewMap("Maze"); 
 
         FieldMapData = new FieldPiece[fieldHeight,fieldWidth];
         for (int i = 0; i < fieldWidth; i++)
@@ -240,12 +208,17 @@ public class MapManager : MonoBehaviour
         GenerateFieldObjects(mapEventRatio/remainRatio, MapType.Event);
         remainRatio -= mapEventRatio;
         GenerateFieldObjects(mapMonsterRatio/remainRatio, MapType.Monster);
+        FieldMapData[0,0].MapType = MapType.Empty;
+        FieldMapData[fieldHeight-1,fieldWidth-1].MapType = MapType.Empty;
+        FieldMapData[fieldHeight-1,fieldWidth-2].MapType = MapType.Block;
+        FieldMapData[fieldHeight-2,fieldWidth-1].MapType = MapType.Dragon;
+        FieldMapData[fieldHeight-2,fieldWidth-2].MapType = MapType.Block;
         // BuildAllField(FieldType.Field);
     }
 
     public void BuildAllField(FieldType type){
         currentField = type;
-        FieldPiece[,] fieldPieces;
+        FieldPiece[,] fieldPieces = princessFields;
         FieldTileMap.ClearAllTiles();
         if(type == FieldType.Princess){
             fieldPieces = princessFields;
@@ -254,13 +227,14 @@ public class MapManager : MonoBehaviour
             fieldPieces = knightFields;
         }
         FieldTileMap.ClearAllTiles();
-        BuildMap(knightFields, MapType.Block, FieldTileMap, BlockTile);
-        BuildMap(knightFields, MapType.Item, FieldTileMap, ItemTile);
-        BuildMap(knightFields, MapType.Empty, FieldTileMap, EmptyTile);
-        BuildMap(knightFields, MapType.Monster, FieldTileMap, MonsterTile);
-        BuildMap(knightFields, MapType.Event, FieldTileMap, EventTile);
-        BuildMap(knightFields, MapType.Heal, FieldTileMap, HealTile);
-        BuildMap(knightFields, MapType.Hide, FieldTileMap, HideTile);
+        BuildMap(fieldPieces, MapType.Block, FieldTileMap, BlockTile);
+        BuildMap(fieldPieces, MapType.Item, FieldTileMap, ItemTile);
+        BuildMap(fieldPieces, MapType.Empty, FieldTileMap, EmptyTile);
+        BuildMap(fieldPieces, MapType.Monster, FieldTileMap, MonsterTile);
+        BuildMap(fieldPieces, MapType.Event, FieldTileMap, EventTile);
+        BuildMap(fieldPieces, MapType.Heal, FieldTileMap, HealTile);
+        BuildMap(fieldPieces, MapType.Dragon, FieldTileMap, DragonTile);
+        BuildMap(fieldPieces, MapType.Hide, FieldTileMap, HideTile);
 
     }
 
@@ -372,13 +346,4 @@ public class FieldPiece
         
         // 타입정보에 따라 맵 오브젝트 업데이트 필요
     }
-         
-
-    public void OnMouseInput()
-    {
-        // if (CanSelect)
-        // {
-        //     _gameManager.ClickMap(this);
-        // }
-    }   
 }

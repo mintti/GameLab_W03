@@ -158,7 +158,7 @@ public class GameManager : MonoBehaviour
                     complete = knight.SelectedIdx switch
                     {
                         
-                        1 => TurnOnMapPiece(field),
+                        1 => TurnOnMapPiece(field, true),
                         0 or 2 => MoveKnight(field),
                         _ => false,
                     };
