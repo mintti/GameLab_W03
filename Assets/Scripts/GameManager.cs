@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
     public bool ClickMap(FieldPiece field)
     {
         bool complete = true;
-        //if (field..CanSelect) // 필드에서 판단
+        if (field._canSelect) // 필드에서 판단
         {
             if(whoseTurn.Equals(nameof(princess))) // 공주의 턴
             {
@@ -178,6 +178,11 @@ public class GameManager : MonoBehaviour
             {
                 Log($"스킬이 실행되지 않음.");
             }
+        }
+        else
+        {
+            Log($"선택 가능한 영역이 아님");
+            complete = false;
         }
 
 
