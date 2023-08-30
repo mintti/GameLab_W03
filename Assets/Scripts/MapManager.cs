@@ -39,6 +39,7 @@ public class MapManager : MonoBehaviour
     public TileBase EventTile;
     public TileBase MonsterTile;
     public TileBase HideTile;
+    public TileBase HealTile;
     public TileBase CanSelectTile;
     // public TileBase BlockTile;
     // public TileBase EmptyTile;
@@ -83,7 +84,7 @@ public class MapManager : MonoBehaviour
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
     }
-    public void CreateMap(){
+    public void CreateMap(FieldType type){
 
         GenerateField();
         princessFields = new FieldPiece[fieldHeight, fieldWidth];
@@ -111,7 +112,7 @@ public class MapManager : MonoBehaviour
     
             }
         }
-        BuildAllField(FieldType.Princess);
+        BuildAllField(type);
     }
     
     private void Update()
@@ -206,6 +207,12 @@ public class MapManager : MonoBehaviour
             selectCusorObj.transform.position = new Vector2(100,100);
         }
     }
+    // public void OpenMap(FieldType type){
+    //     if(type == FieldType.PrincessMap){
+
+    //     }
+    //     else if(type == FieldType.Map){}
+    // }
 
     public Vector2 GridToWorldPosition(Vector2 gridPosition, Vector2 offset){
         Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
@@ -266,6 +273,7 @@ public class MapManager : MonoBehaviour
             BuildMap(princessFields, MapType.Block, FieldTileMap, KnightBlockTile);
             BuildMap(princessFields, MapType.Empty, FieldTileMap, KnightEmptyTile);
             BuildMap(princessFields, MapType.Event, FieldTileMap, EventTile);
+            BuildMap(princessFields, MapType.Heal, FieldTileMap, HealTile);
             BuildMap(princessFields, MapType.Hide, FieldTileMap, HideTile);
         }
         else if(type == FieldType.Knight){
@@ -275,10 +283,12 @@ public class MapManager : MonoBehaviour
             BuildMap(knightFields, MapType.Monster, FieldTileMap, KnightMonsterTile);
             BuildMap(knightFields, MapType.Item, FieldTileMap, KnightItemTile);
             BuildMap(knightFields, MapType.Event, FieldTileMap, KnightEventTile);
+            BuildMap(knightFields, MapType.Heal, FieldTileMap, HealTile);
             BuildMap(knightFields, MapType.Hide, FieldTileMap, KnightHideTile);
         }
         else if(type == FieldType.PrincessMap){
             PrincessTileMap.ClearAllTiles();
+            BuildMap(princessFields, MapType.Heal, PrincessTileMap, HealTile);
             BuildMap(princessFields, MapType.Block, PrincessTileMap, PrincessBlockTile);
             BuildMap(princessFields, MapType.Empty, PrincessTileMap, PrincessEmptyTile);
             BuildMap(princessFields, MapType.Monster, PrincessTileMap, PrincessMonsterTile);
