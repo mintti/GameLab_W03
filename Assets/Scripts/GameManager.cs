@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     [Header("맵 관련")]
     public Transform MapGenTransform;
-    private MapPiece[,] Maps;
+    // private MapPiece[,] Maps;
 
     [Header("플레이어")]
     public Player knight;
@@ -172,7 +172,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // 이동
-            knight.transform.SetParent(field.gameObject.transform); 
+            // knight.transform.SetParent(field.gameObject.transform); 
             knight.transform.position = Vector3.zero;
 
             switch (field.MapType)
@@ -198,7 +198,6 @@ public class GameManager : MonoBehaviour
         if (!field.IsLight)
         {
             field.IsLight = true;
-            field.MapPiece.IsLight = true;
         }
         else
         {
