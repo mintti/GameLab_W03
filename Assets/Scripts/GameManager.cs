@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour
     public FieldEvent fieldEvent;
     public ItemEvent itemEvent;
     public HealEvent healEvent;
+
+    public bool EventPrinting { get; set; }
     
     public void Start()
     {
@@ -369,6 +371,7 @@ public class GameManager : MonoBehaviour
     /// <param name="field"></param>
     private void ExecuteMapEvent(FieldPiece field)
     {
+        EventPrinting = true;
         switch (field.MapType)
         {
             case MapType.BattleMonster : 
@@ -389,6 +392,8 @@ public class GameManager : MonoBehaviour
                     _resourceManager.healEventSprite);
                 break;
         }
+
+        field.MapType = MapType.Empty;
     }
     #endregion
     

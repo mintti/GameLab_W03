@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class FieldEvent : MonoBehaviour
 {
+    private GameManager _gameManager;
     private UIImgText _uiImgTxt;
     
     /// <summary>
@@ -28,14 +29,16 @@ public class FieldEvent : MonoBehaviour
     public string Answer { get; set; }
     #endregion
     
-    void Start()
+    public void Start()
     {
-        _uiImgTxt = GetComponent<UIImgText>();
+        _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
     }
     
     public void Execute(FieldEventInfo info)
     {
         gameObject.SetActive(true);
+        _uiImgTxt ??= GetComponent<UIImgText>();
+        
         _uiImgTxt.Init(info.Sprite, End, info.GetText);
     }
 
@@ -43,5 +46,6 @@ public class FieldEvent : MonoBehaviour
     void End()
     {
         gameObject.SetActive(false);
+        _gameManager.EventPrinting = false;
     }
 }
