@@ -7,5 +7,4 @@ public enum MapType
     Heal,
     Item,
     Hide,
-    BattleMonster,
 }
