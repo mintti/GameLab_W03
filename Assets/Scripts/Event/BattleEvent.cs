@@ -37,6 +37,7 @@ public class BattleEvent : MonoBehaviour
 
         _monster = new Monster()
         {
+            Name = "<color=#FF0000>°íºí¸°</color>",
             Status = new Status()
             {
                 MaxHp = 5,
