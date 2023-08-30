@@ -36,14 +36,16 @@ public class Player : MonoBehaviour
                 _selectedIdx = value;
                 _selectedIdx = Mathf.Min(_selectedIdx, 3);
                 _uiManager.FocusSkill(playerSkillUI, _selectedIdx);
-                _gameManager.ChangeBehavior(_selectedIdx);
+                _uiManager.UpdateInfoText(_selectedIdx);
+                _gameManager.ChangeBehavior(_selectedIdx); 
+                
             }
         }
     }
 
     public void Start()
     {
-        _selectedIdx = 0;
+        SelectedIdx = 0;
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
