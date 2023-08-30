@@ -46,6 +46,7 @@ public class MapManager : MonoBehaviour
 
 
     GameObject selectCusorObj;
+    List<FieldPiece> canSelectList = new List<FieldPiece>();
     Vector2 currentMouseGridPos;
     float cellSize = 1.28f;
 
@@ -103,8 +104,12 @@ public class MapManager : MonoBehaviour
                 Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
                 if(isInGrid(grid)){
                     gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
-                selectCusorObj.transform.position = new Vector2(100,100);
+                    selectCusorObj.transform.position = new Vector2(100,100);
                     isCanFieldSelect = false;
+                    foreach(FieldPiece piece in canSelectList){
+                        if(piece._canSelect){ piece._canSelect = false; }
+                    }
+                    canSelectList.Clear();
                 } 
             }
         }
@@ -159,8 +164,17 @@ public class MapManager : MonoBehaviour
         UITileMap.ClearAllTiles();
         foreach (FieldPiece piece in canSelectFields)
         {   
+            Debug.Log(piece.gridPosition);
             UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
             isCanFieldSelect = true;
+            
+            piece._canSelect = true;
+            princessFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
+            canSelectList.Add(princessFields[piece.gridPosition.y, piece.gridPosition.x]);
+            knightFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
+            canSelectList.Add(knightFields[piece.gridPosition.y, piece.gridPosition.x]);
+            FieldMapData[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
+            canSelectList.Add(FieldMapData[piece.gridPosition.y, piece.gridPosition.x]);
         }
     }
     bool isInGrid(Vector2 gridPosition){
