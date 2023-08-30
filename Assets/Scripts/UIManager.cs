@@ -12,7 +12,6 @@ public class UIManager : MonoBehaviour
 
 
     [Header("CombatPanelUI")]
-    public GameObject combatMonsterSprite;
     public GameObject combatPanel;
     public TextMeshProUGUI combatText;
 
@@ -34,9 +33,8 @@ public class UIManager : MonoBehaviour
         
     }
 
-    public void CombatActive(Sprite monsterSprite)
+    public void CombatActive()
     {
-        combatMonsterSprite.GetComponent<Image>().sprite = monsterSprite;
         combatPanel.SetActive(true);
         
     }

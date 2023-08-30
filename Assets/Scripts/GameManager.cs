@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     void CreateMap()
     {
-        MapManager.CreateMap();
+        MapManager.CreateMap(FieldType.Knight);
     }
 
     void InitPlayerPosition()
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
     public bool ClickMap(FieldPiece field)
     {
         bool complete = true;
-        // if (field.CanSelect) // 필드에서 판단
+        //if (field..CanSelect) // 필드에서 판단
         {
             
             if(whoseTurn.Equals(nameof(princess))) // 공주의 턴
