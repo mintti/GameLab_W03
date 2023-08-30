@@ -7,13 +7,7 @@ public class UIManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
-
-    [Header("Buttons")]
-    public GameObject combatPanelExitButton;
-    public GameObject gameOverButton;
-
-
-    [Header("CombatPanel")]
+    [Header("CombatPanelUI")]
     public GameObject combatMonsterSprite;
     public GameObject combatPanel;
     public TextMeshProUGUI combatText;
@@ -21,6 +15,9 @@ public class UIManager : MonoBehaviour
     private int maxLines = 5;
     private int lineCount = 0;
     public GameObject scrollbarVertical;
+
+    public GameObject combatPanelExitButton;
+    public GameObject gameOverButton;
 
 
     private void Start()
@@ -116,4 +113,34 @@ public class UIManager : MonoBehaviour
         lineCount = 0;
     }
 
+    public void FocusSkill(GameObject skillui, int index)
+    {
+
+        GameObject[] skillArray = new GameObject[skillui.transform.childCount];
+
+        // Iterate through the child objects and store them in the array
+        for (int i = 0; i < skillui.transform.childCount; i++)
+        {
+            skillArray[i] = skillui.transform.GetChild(i).gameObject;
+        }
+        // Iterate through all objects and disable outlines
+        for (int i = 0; i < skillArray.Length; i++)
+        {
+            Outline outline = skillArray[i].GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = false;
+            }
+        }
+
+        // Activate the outline for the object at the specified index
+        if (index >= 0 && index < skillArray.Length)
+        {
+            Outline outline = skillArray[index].GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = true;
+            }
+        }
+    }
 }

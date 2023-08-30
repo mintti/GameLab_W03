@@ -3,7 +3,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private UIManager _uiManager;
     public Vector3 CurrentPosition { get; set; }
+    public GameObject playerUI;
+    private GameObject playerSkillUI;
     
     private int _cost;
     public int Cost
@@ -15,7 +18,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    public bool IsTurnEnd = false;
+
+
+    public bool IsTurnEnd;
 
     private int _selectedIdx;
 
@@ -25,23 +30,38 @@ public class Player : MonoBehaviour
         set
         {
             _selectedIdx = value;
-            //UIManager.FocusItem(_selectedIdx);
+            _selectedIdx = Mathf.Min(_selectedIdx, 3);
+            _uiManager.FocusSkill(playerSkillUI, _selectedIdx);
         }
+    }
+
+    public void Start()
+    {
+        _selectedIdx = 0;
+        _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
+        playerSkillUI = playerUI.transform.GetChild(0).gameObject;
     }
 
     public void StartTurn()
     {
         IsTurnEnd = false;
+        playerUI.SetActive(true);
+
     }
 
     public void EndTurn()
     {
         IsTurnEnd = true;
+        playerUI.SetActive(false);
     }
 
     public void Update()
     {
-        CheckScroll();
+        if (!IsTurnEnd)
+        {
+            CheckScroll();
+        }
+        
     }
 
     #region Check Scroll

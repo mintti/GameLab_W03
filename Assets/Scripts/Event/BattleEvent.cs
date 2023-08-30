@@ -37,7 +37,7 @@ public class BattleEvent : MonoBehaviour
 
         _monster = new Monster()
         {
-            Name = "<color=#FF0000>����</color>",
+            Name = "<color=#FF0000>고블린</color>",
             Status = new Status()
             {
                 MaxHp = 5,
@@ -58,14 +58,14 @@ public class BattleEvent : MonoBehaviour
             if (knightTurn)
             {
                 currentMonsterHP -= _knight.Status.Power;
-                _uiManager.OutputCombatText("���", _monster.Name, _knight.Status.Power, currentMonsterHP);
+                _uiManager.OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power, currentMonsterHP);
                 knightTurn = false;
                 monsterTurn = true;
             }
             else if (monsterTurn)
             {
                 currentPlayerHP -= _monster.Status.Power;
-                _uiManager.OutputCombatText(_monster.Name, "���", _monster.Status.Power, currentPlayerHP);
+                _uiManager.OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", _monster.Status.Power, currentPlayerHP);
                 monsterTurn = false;
                 knightTurn = true;
             }
