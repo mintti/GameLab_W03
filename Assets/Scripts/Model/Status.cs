@@ -6,7 +6,6 @@ public class Status
     private int currentHp;
     private int power;
     private int defense;
-
     public int MaxHp
     {
         get { return maxHp; }
@@ -45,11 +44,10 @@ public class Status
         
     }
     
-    public Status(int maxHp, int power, int defense)
+    public Status(int maxHp, int power)
     {
         MaxHp = maxHp;
         currentHp = maxHp;
         Power = power;
-        Defense = defense;
     }
 }
