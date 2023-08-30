@@ -15,6 +15,9 @@ public class FieldPiece : MonoBehaviour
     public MapPiece MapPiece;
     public bool IsLight;
 
+    public int X;
+    public int Y;
+
     private bool _canSelect;
 
     public bool CanSelect

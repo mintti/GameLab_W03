@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = name1 + "(ÀÌ)°¡" + name1power + " ÀÇ µ¥¹ÌÁö¸¦ ÀÔÇû½À´Ï´Ù. " + name2 + "ÀÇ ³²Àº HP = " + name2currentHP;
+        string newCombatInfo = name1 + "(ì´)ê°€" + name1power + " ì˜ ë°ë¯¸ì§€ë¥¼ ì…í˜”ìŠµë‹ˆë‹¤. " + name2 + "ì˜ ë‚¨ì€ HP = " + name2currentHP;
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
@@ -71,7 +71,7 @@ public class UIManager : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = "¿ë»ç°¡ " + monsterName + "(À»)¸¦ ¹«Âñ·¶½À´Ï´Ù!";
+        string newCombatInfo = "ìš©ì‚¬ê°€ " + monsterName + "(ì„)ë¥¼ ë¬´ì°”ë €ìŠµë‹ˆë‹¤!";
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
@@ -88,7 +88,7 @@ public class UIManager : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = "¿ë»çÀÇ ´«¾ÕÀÌ ±ô±ôÇØÁı´Ï´Ù..";
+        string newCombatInfo = "ìš©ì‚¬ì˜ ëˆˆì•ì´ ê¹œê¹œí•´ì§‘ë‹ˆë‹¤..";
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;

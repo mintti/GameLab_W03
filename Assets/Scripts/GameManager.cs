@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -22,11 +25,13 @@ public class GameManager : MonoBehaviour
     
     [Header("필드 관련")]
     public Transform FieldGenTransform;
-    private FieldPiece[,] Fields;
+    private FieldPiece[,] KnightFields;
+    private FieldPiece[,] PrincessFields;
 
     [Header("맵 관련")]
     public Transform MapGenTransform;
-    private MapPiece[,] Maps;
+    private MapPiece[,] KnightMaps;
+    private MapPiece[,] PrincessMaps;
 
     [Header("플레이어")]
     public Player knight;
@@ -41,7 +46,7 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         _resourceManager = GetComponentInChildren<ResourceManager>();
-        CameraManager = GameObject.Find(nameof(CameraManager)).GetComponent<CameraManager>();
+        CameraManager = Camera.main.GetComponent<CameraManager>();
         Init();
     }
 
@@ -57,7 +62,16 @@ public class GameManager : MonoBehaviour
 
     void CreateMap()
     {
-        
+        KnightFields = new FieldPiece[5,5];
+        PrincessFields = new FieldPiece[5,5];
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                KnightFields[i,j] = new();
+                PrincessFields[i,j] = new();
+            }
+        }
     }
 
     void InitPlayerPosition()
@@ -70,10 +84,10 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             whoseTurn = nameof(princess);
-            StartCoroutine(PlayPlayer(princess));
-            
+            yield return StartCoroutine(PlayPlayer(princess));
+
             whoseTurn = nameof(knight);
-            StartCoroutine(PlayPlayer(knight));
+            yield return StartCoroutine(PlayPlayer(knight));
 
             if (GameEnd)
             {
@@ -91,7 +105,7 @@ public class GameManager : MonoBehaviour
             player.StartTurn();
             CameraManager.Target = player.transform;
             yield return new WaitUntil(() => player.IsTurnEnd);
-        } while (player.IsTurnEnd);
+        } while (!player.IsTurnEnd);
     }
 
 
@@ -170,11 +184,7 @@ public class GameManager : MonoBehaviour
             Log("이동할 수 없는 지형입니다.");
         }
         else
-        {
-            // 이동
-            knight.transform.SetParent(field.gameObject.transform); 
-            knight.transform.position = Vector3.zero;
-
+        {   
             switch (field.MapType)
             {
                 case MapType.Ignore : break; // 이벤트가 없으면 종료
@@ -183,6 +193,11 @@ public class GameManager : MonoBehaviour
                     field.UpdateMapType(MapType.Ignore);
                     break;
             }
+            
+            // 이동
+            knight.transform.SetParent(field.gameObject.transform); 
+            knight.transform.position = Vector3.zero;
+            knight.CurrentFieldPiece = field;
         }
 
         // 맵을 밝힘
@@ -236,7 +251,113 @@ public class GameManager : MonoBehaviour
 
 
 
-    #region Execute Map Event
+    #region Map-Related
+    
+    /// <summary>
+    /// 행동이 변경될 때, 행동 사용 가능 지역을 표시
+    /// </summary>
+    /// <param name="index"></param>
+    public void ChangeBehavior(int index)
+    {
+        List<FieldPiece> changePiece = new();
+        FieldPiece[,] baseFields = whoseTurn.Equals(nameof(princess)) ? PrincessFields : KnightFields;
+        FieldPiece     curPiece  = whoseTurn.Equals(nameof(princess)) ? princess.CurrentFieldPiece : knight.CurrentFieldPiece;
+        
+        if (whoseTurn.Equals(nameof(princess)))
+        {
+            switch (index)
+            {
+                case 0:
+                    foreach (var piece in PrincessFields)
+                    {
+                        if (piece.IsLight)
+                        {
+                            changePiece = changePiece.Concat(GetFieldKnightSkill1(PrincessFields, curPiece,
+                                new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
+                        }
+                    }
+                    
+                    break;
+                case 1:
+                    foreach (var piece in PrincessFields)
+                    {
+                        if(piece.IsLight) changePiece.Add(piece);
+                    }
+                    break;
+                case 2:
+                    changePiece.Add(princess.CurrentFieldPiece);
+                    break;
+                    return;
+            }
+        }
+        else
+        {
+            switch (index)
+            {
+                case 0:
+                    AddPieceInList(changePiece, baseFields, curPiece.X-1, curPiece.Y);
+                    AddPieceInList(changePiece, baseFields, curPiece.X+1, curPiece.Y);
+                    AddPieceInList(changePiece, baseFields, curPiece.X, curPiece.Y-1);
+                    AddPieceInList(changePiece, baseFields, curPiece.X, curPiece.Y+1);
+                    break;
+                case 1:
+                    changePiece = GetFieldKnightSkill1(KnightFields, curPiece, new []{-1, 1, 0, 0}, new[]{0, 0, -1, 1}).ToList();
+                    break;
+                case 2:
+                    AddPieceInList(changePiece, baseFields, curPiece.X-2, curPiece.Y);
+                    AddPieceInList(changePiece, baseFields, curPiece.X+2, curPiece.Y);
+                    AddPieceInList(changePiece, baseFields, curPiece.X, curPiece.Y-2);
+                    AddPieceInList(changePiece, baseFields, curPiece.X, curPiece.Y+2);
+                    break;
+            }
+        }
+        
+        
+        // [TODO] MapManger에게 changePiece 전달
+    }
+
+    #region Map Area
+
+
+    /// <summary>
+    /// way X, way Y 조합에 해당하는 방향내 Field Piece 리스트를 반환
+    /// </summary>
+    /// <param name="baseFields"></param>
+    /// <param name="CurPiece"></param>
+    /// <param name="wayX"></param>
+    /// <param name="wayY"></param>
+    /// <returns></returns>
+    IEnumerable<FieldPiece> GetFieldKnightSkill1(FieldPiece[,] baseFields, FieldPiece CurPiece, int[] wayX, int[] wayY)
+    {
+        List<FieldPiece> list = new();
+
+        for (int xIdx = 0; xIdx < wayX.Length; xIdx++)
+        {
+            for (int yIdx = 0; yIdx < wayY.Length; yIdx++)
+            {
+                (int x, int y) pivot = (CurPiece.X + wayX[xIdx], CurPiece.Y + wayY[yIdx]);
+
+                AddPieceInList(list, baseFields, pivot.x, pivot.y);
+            }
+        }
+        
+        return list;
+    }
+
+    void AddPieceInList(List<FieldPiece> list, FieldPiece[,] baseFields, int x, int y)
+    {
+        if (!(x < 0 || x >= baseFields.GetLength(0) || y < 0 || y >= baseFields.GetLength(1)))
+        {
+            var piece = baseFields[x,y];
+            if(!list.Contains(piece)) list.Add(piece);
+        }
+    }
+    #endregion
+    
+    /// <summary>
+    /// 맵 이동 후 이벤트가 존재하면 수행 
+    /// </summary>
+    /// <param name="field"></param>
     private void ExecuteMapEvent(FieldPiece field)
     {
         switch (field.MapType)
