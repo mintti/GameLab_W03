@@ -84,10 +84,10 @@ public class MapManager : MonoBehaviour
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
-    }
-    private void Start() {
         width = fieldWidth + 2;
         height = fieldHeight + 2;
+    }
+    private void Start() {
     }
     public void CreateMap(){
 
@@ -115,6 +115,7 @@ public class MapManager : MonoBehaviour
     
             }
         }
+        printMap(knightFields);
         BuildAllField(FieldType.Knight);
     }
     
@@ -168,14 +169,15 @@ public class MapManager : MonoBehaviour
             }
             if(position.y != 19){
                 princessFields[(int) position.y+1,(int) position.x].IsLight = true;
-                princessFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y-1,(int) position.x].MapType;
+                princessFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y+1,(int) position.x].MapType;
             }
             if(position.y != 0){
                 princessFields[(int) position.y-1,(int) position.x].IsLight = true;
-                princessFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y+1,(int) position.x].MapType;
+                princessFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y-1,(int) position.x].MapType;
             }
         }
         else if(type == FieldType.Knight){
+            printMap(knightFields);
             knightFields[(int) position.y,(int) position.x].IsLight = true;
             knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
             if(position.x != 0){
@@ -264,7 +266,7 @@ public class MapManager : MonoBehaviour
         BuildAllField(FieldType.Field);
     }
 
-    void BuildAllField(FieldType type){
+    public void BuildAllField(FieldType type){
         if(type == FieldType.Field){
             FieldTileMap.ClearAllTiles();
             BuildMap(FieldMapData, MapType.Monster, FieldTileMap, MonsterTile);

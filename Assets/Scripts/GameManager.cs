@@ -81,9 +81,11 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             whoseTurn = nameof(princess);
+            MapManager.BuildAllField(FieldType.Knight);
             yield return StartCoroutine(PlayPlayer(princess));
 
             whoseTurn = nameof(knight);
+            MapManager.BuildAllField(FieldType.Princess);
             yield return StartCoroutine(PlayPlayer(knight));
 
             if (GameEnd)
