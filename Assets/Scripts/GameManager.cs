@@ -8,6 +8,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private ResourceManager _resourceManager;
+    private UIManager _uiManager;
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
     
@@ -53,7 +54,8 @@ public class GameManager : MonoBehaviour
         _resourceManager = GetComponentInChildren<ResourceManager>();
         MapManager = GetComponentInChildren<MapManager>();
         CameraManager = Camera.main.GetComponent<CameraManager>();
-
+        _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
+        
         Init();
     }
 
@@ -129,7 +131,7 @@ public class GameManager : MonoBehaviour
     public bool ClickMap(FieldPiece field)
     {
         bool complete = true;
-        //if (field..CanSelect) // 필드에서 판단
+        if (field._canSelect) // 필드에서 판단
         {
             if(whoseTurn.Equals(nameof(princess))) // 공주의 턴
             {
@@ -177,6 +179,11 @@ public class GameManager : MonoBehaviour
                 Log($"스킬이 실행되지 않음.");
             }
         }
+        else
+        {
+            Log($"선택 가능한 영역이 아님");
+            complete = false;
+        }
 
 
         return complete;
@@ -210,6 +217,10 @@ public class GameManager : MonoBehaviour
 
         // 맵을 밝힘
         TurnOnMapPiece(field, true);
+        
+        // 이동 가능 영역 업데이트
+        if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
+        else ChangeBehavior(knight.SelectedIdx);
 
         return result;
     }
@@ -361,7 +372,7 @@ public class GameManager : MonoBehaviour
     {
         if (!(x < 0 || x >= baseFields.GetLength(0) || y < 0 || y >= baseFields.GetLength(1)))
         {
-            var piece = baseFields[x,y];
+            var piece = baseFields[y, x];
             if(!list.Contains(piece)) list.Add(piece);
         }
     }
