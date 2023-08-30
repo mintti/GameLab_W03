@@ -65,13 +65,13 @@ public class BattleEvent : MonoBehaviour
                     _uiManager.CombatMonsterWinText();
                     yield return new WaitForSeconds(2f);
                     _uiManager.gameOverButton.SetActive(true);
-                    _gameManager.EventPrinting = false;
                     yield break;
                 }
             }
 
             yield return new WaitForSeconds(0.5f);
         }
+        _gameManager.EventPrinting = false;
     }
 
 }
