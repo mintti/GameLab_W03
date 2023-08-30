@@ -19,7 +19,7 @@ public class BattleEvent : MonoBehaviour
 
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
 
-        _uiManager.CombatActive(_monster.sprite);
+        _uiManager.CombatActive(_monster.Sprite);
         StartCoroutine(Battle());
     }
     //test

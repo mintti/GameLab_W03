@@ -242,7 +242,7 @@ public class GameManager : MonoBehaviour
         switch (field.MapType)
         {
             case MapType.BattleMonster : 
-                battleEvent.Init(knight, _resourceManager.Monsters[field.EventIndex]);
+                battleEvent.Init(knight.GetComponent<Knight>(), _resourceManager.Monsters[field.EventIndex]);
                 battleEvent.Execute();
                 break;
             case MapType.Event :

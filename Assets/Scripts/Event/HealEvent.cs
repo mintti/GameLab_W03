@@ -12,7 +12,7 @@ public class HealEvent : MonoBehaviour
     public void Execute(Knight knight, Sprite sprite)
     {
         gameObject.SetActive(true);
-        knight.Status.Hp += healPoint;
+        knight.Status.CurrentHp += healPoint;
         _uiImgTxt.Init(sprite, End, "체력이 회복 되었습니다.");
     }
 
