@@ -1,15 +1,22 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager Instance;
     private GameManager _gameManager;
 
     [Header("CostUI")]
     public TextMeshProUGUI leftCostLeft;
 
+    [Header("플레이어 정보")] 
+    public TextMeshProUGUI hpText;
+    public TextMeshProUGUI powerText;
+
+    public TextMeshProUGUI skillInfoText;
 
     [Header("CombatPanelUI")]
     public GameObject combatPanel;
@@ -22,6 +29,26 @@ public class UIManager : MonoBehaviour
     public GameObject combatPanelExitButton;
     public GameObject gameOverButton;
 
+
+    private Dictionary<int, string> _princessSkillInfoDict = new()
+    {
+        {0, "주변을 밝힙니다. (행동력 -1 소모)"},
+        {1, "밝힌 영역 중 지정한 위치에 일회성 회복 존을 생성합니다. (행동력 -2 소모)"},
+        {2, "다음 전투에서 용사를 강화합니다. (행동력 -3 소모)"},
+    };
+
+    private Dictionary<int, string> _knightSkillInfoDict = new()
+    {
+        {0, "한 칸 이동하고 영역을 밝힙니다. (행동력 -1 소모)"},
+        {1, "지정한 영역을 밝힙니다. (행동력 -2 소모)"},
+        {2, "한 칸 뛰어넘어 이동합니다. (행동력 -3 소모)"},
+    };
+
+    private void Awake()
+    {
+        Instance = this;
+        skillInfoText.text = _knightSkillInfoDict[0];
+    }
 
     private void Start()
     {
@@ -150,5 +177,26 @@ public class UIManager : MonoBehaviour
     {
         leftCostLeft.text = $"{cost}";
     }
+    
+    public void UpdateInfoText(int index)
+    {
+        string text;
+        if (_gameManager.whoseTurn.Equals(nameof(Princess)))
+        {
+            text = _princessSkillInfoDict[index];
+        }
+        else
+        {
+            text = _knightSkillInfoDict[index];
+        }
 
+        skillInfoText.text = text;
+        skillInfoText.gameObject.GetComponent<TextMeshProUGUI>().text = text;
+    }
+
+    public void UpdateKnightStatusInfo(Status status)
+    {
+        hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
+        powerText.text = $"<color=#FFD400>파워</color>  {status.Power}";
+    }
 }
