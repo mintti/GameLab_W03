@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +12,7 @@ public class MapPiece : MonoBehaviour
     public MapType MapType;
     public Sprite Sprite;
     public bool IsLight;
+    public bool CanSelect;
 
     private bool _isClear;
 
@@ -30,10 +32,5 @@ public class MapPiece : MonoBehaviour
     public void Start()
     {
         _renderer = GetComponent<SpriteRenderer>();
-    }
-
-    public void Init()
-    {
-        
     }
 }

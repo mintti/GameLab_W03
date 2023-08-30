@@ -1,6 +1,10 @@
 public enum MapType
 {
     Ignore = 0,
-    Battle,
-    fff
+    BattleMonster,
+    Item,
+    Block,
+    Heal,
+    Event,
+    Princess
 }
