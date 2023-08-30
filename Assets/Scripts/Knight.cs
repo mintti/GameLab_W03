@@ -1,8 +1,17 @@
+using System;
 using UnityEngine;
 
 public class Knight : MonoBehaviour
 {
     public Status Status { get; set; }
+
+    public int defaultHp;
+    public int defaultPower;
+
+    public void Start()
+    {
+        Status = new Status(defaultHp, defaultPower);
+    }
 
     public void Buff()
     {

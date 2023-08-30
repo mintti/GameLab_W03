@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class HealEvent : MonoBehaviour
 {
+    private GameManager _gameManager;
     private UIImgText _uiImgTxt;
     public int healPoint;
     public void Start()
@@ -19,5 +20,6 @@ public class HealEvent : MonoBehaviour
     void End()
     {
         gameObject.SetActive(false);
+        _gameManager.EventPrinting = false;
     }
 }

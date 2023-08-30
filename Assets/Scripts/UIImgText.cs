@@ -37,6 +37,7 @@ public class UIImgText : MonoBehaviour
                 {
                     click = false;
                     text.text = texts[index];
+                    charIndex = texts[index].Length;
                 }
             } while (charIndex < texts[index].Length);
 

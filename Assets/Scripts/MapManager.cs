@@ -93,17 +93,20 @@ public class MapManager : MonoBehaviour
     
     private void Update()
     {
-        Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
-        if(isCanFieldSelect){
-            PlaceSelectCursor(mousePosition, ObjectField.transform.position);
-        }
-        if(Input.GetMouseButtonDown(0)){
-            Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
-            if(isInGrid(grid)){
-                gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
+        if (!gameManager.EventPrinting)
+        {
+            Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
+            if(isCanFieldSelect){
+                PlaceSelectCursor(mousePosition, ObjectField.transform.position);
+            }
+            if(Input.GetMouseButtonDown(0)){
+                Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
+                if(isInGrid(grid)){
+                    gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
                 selectCusorObj.transform.position = new Vector2(100,100);
-                isCanFieldSelect = false;
-            } 
+                    isCanFieldSelect = false;
+                } 
+            }
         }
     }
     public void LightField(FieldType type, Vector2 position){
@@ -330,7 +333,7 @@ public class FieldPiece
     }
     // public Sprite Sprite;
 
-    public bool IsLight = true;
+    public bool IsLight = false;
 
     public bool _canSelect = false;
 
