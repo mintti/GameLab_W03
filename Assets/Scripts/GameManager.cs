@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
                 {
                     complete = princess.SelectedIdx switch
                     {
-                        0 => TurnOnMapPiece(field, true),
+                        0 => TurnOnMapPiece(field),
                         1 => MakeHealZone(field),
                         2 => BuffKnight(),
                         _ => false,
