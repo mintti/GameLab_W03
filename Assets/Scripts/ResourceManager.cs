@@ -46,22 +46,21 @@ public class ResourceManager :  MonoBehaviour
 
     public void InitFieldEvent()
     {
-        
         FieldEvents = new();
-        FieldEvents.Add(new(GetSrc("FieldEvent","test"),"이건/테스트/입니다"));
+        FieldEvents.Add(new(GetSrc("FieldEvent","test"),"축복의 샘입니다.\n\n체력이 회복됩니다."));
     }
 
 
     public void InitMonster()
     {
         Monsters = new();
-        Monsters.Add(new("테스트 몬스터", new(10, 1, 1), GetSrc("Monster","test")));
+        Monsters.Add(new("슬라임", new(10, 1, 1), GetSrc("Monster","test")));
     }
 
     public void InitItemEvent()
     {
         Items = new();
-        Items.Add(new(GetSrc("ItemEvent", "test"), "물약을 주웠다.\n체력이 회복된다!\n"));
+        Items.Add(new(GetSrc("ItemEvent", "test"), "물약을 주웠다.\n\n체력이 회복된다!"));
     }
 
     Sprite GetSrc(string folder, string name)
