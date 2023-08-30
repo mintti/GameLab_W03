@@ -121,16 +121,19 @@ public class MapManager : MonoBehaviour
     
     private void Update()
     {
-        Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
-        if(isCanFieldSelect){
-            PlaceSelectCursor(mousePosition, ObjectField.transform.position);
-        }
-        if(Input.GetMouseButtonDown(0)){
-            Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
-            if(isInGrid(grid)){
-                gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
-                isCanFieldSelect = false;
-            } 
+        if (!gameManager.EventPrinting)
+        {
+            Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
+            if(isCanFieldSelect){
+                PlaceSelectCursor(mousePosition, ObjectField.transform.position);
+            }
+            if(Input.GetMouseButtonDown(0)){
+                Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
+                if(isInGrid(grid)){
+                    gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
+                    isCanFieldSelect = false;
+                } 
+            }
         }
         // else if(Input.GetKeyDown(KeyCode.Z)){
         //     currentField = FieldType.PrincessMap;Knight
@@ -428,7 +431,7 @@ public class FieldPiece
     }
     // public Sprite Sprite;
 
-    public bool IsLight = true;
+    public bool IsLight = false;
 
     private bool _canSelect;
 
