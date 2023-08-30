@@ -8,6 +8,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private ResourceManager _resourceManager;
+    private UIManager _uiManager;
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
     
@@ -53,7 +54,8 @@ public class GameManager : MonoBehaviour
         _resourceManager = GetComponentInChildren<ResourceManager>();
         MapManager = GetComponentInChildren<MapManager>();
         CameraManager = Camera.main.GetComponent<CameraManager>();
-
+        _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
+        
         Init();
     }
 
