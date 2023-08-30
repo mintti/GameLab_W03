@@ -23,8 +23,6 @@ public class MapManager : MonoBehaviour
     public GameObject generatorManagerObj;
     public int fieldWidth = 20;
     public int fieldHeight = 20;
-    int width;
-    int height;
     FieldPiece[,] FieldMapData;
     public float mapEmptyRatio = 0.35f;
     public float mapMonsterRatio = 0.25f;
@@ -87,16 +85,14 @@ public class MapManager : MonoBehaviour
     }
     public void CreateMap(){
 
-        width = fieldWidth + 2;
-        height = fieldHeight + 2;
         GenerateField();
-        princessFields = new FieldPiece[height, width];
-        knightFields = new FieldPiece[height, width];
+        princessFields = new FieldPiece[fieldHeight, fieldWidth];
+        knightFields = new FieldPiece[fieldHeight, fieldWidth];
 
         
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < fieldWidth; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < fieldHeight; j++)
             {
                 princessFields[j, i]= new FieldPiece
                 { 
@@ -104,12 +100,14 @@ public class MapManager : MonoBehaviour
                     MapType = MapType.Hide,
                     gridPosition = new Vector2Int(i, j)
                 };
+                princessFields[j, i].Init(gameManager, this);
                 knightFields[j, i] = new FieldPiece
                 { 
                     IsLight = false,
                     MapType = MapType.Hide,
                     gridPosition = new Vector2Int(i, j)
                 };
+                knightFields[j, i].Init(gameManager, this);
     
             }
         }
@@ -144,11 +142,11 @@ public class MapManager : MonoBehaviour
             princessFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
             if(position.x != 0){
                 princessFields[(int) position.y,(int) position.x-1].IsLight = true;
-                princessFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y,(int) position.x-1].MapType;
+                princessFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y,(int) position.x - 1].MapType;
             }
             if(position.x != 19){
                 princessFields[(int) position.y,(int) position.x+1].IsLight = true;
-                princessFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y,(int) position.x+1].MapType;
+                princessFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y,(int) position.x+1 + 1].MapType;
 
             }
             if(position.y != 19){
@@ -163,23 +161,23 @@ public class MapManager : MonoBehaviour
         else if(type == FieldType.Knight){
             printMap(knightFields);
             knightFields[(int) position.y,(int) position.x].IsLight = true;
-            knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
+            knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y ,(int) position.x].MapType;
             if(position.x != 0){
                 knightFields[(int) position.y,(int) position.x-1].IsLight = true;
-                knightFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y,(int) position.x-1].MapType;
+                knightFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y ,(int) position.x-1].MapType;
             }
             if(position.x != 19){
                 knightFields[(int) position.y,(int) position.x+1].IsLight = true;
-                knightFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y,(int) position.x+1].MapType;
+                knightFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y ,(int) position.x+1].MapType;
 
             }
             if(position.y != 0){
                 knightFields[(int) position.y-1,(int) position.x].IsLight = true;
-                knightFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y-1,(int) position.x].MapType;
+                knightFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y-1 ,(int) position.x].MapType;
             }
             if(position.y != 19){
                 knightFields[(int) position.y+1,(int) position.x].IsLight = true;
-                knightFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y+1,(int) position.x].MapType;
+                knightFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y+1 ,(int) position.x ].MapType;
             }
         }
         BuildAllField(type);
@@ -189,12 +187,12 @@ public class MapManager : MonoBehaviour
         UITileMap.ClearAllTiles();
         foreach (FieldPiece piece in canSelectFields)
         {
-            UITileMap.SetTile(new Vector3Int(piece.gridPosition.x, piece.gridPosition.y, 0), CanSelectTile);
+            UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
             isCanFieldSelect = true;
         }
     }
     bool isInGrid(Vector2 gridPosition){
-        if(gridPosition.x >= 0 && gridPosition.x < width && gridPosition.y >= 0 && gridPosition.y < height){
+        if(gridPosition.x >= 0 && gridPosition.x < fieldWidth && gridPosition.y >= 0 && gridPosition.y < fieldHeight){
             return true;
         }
         return false;
@@ -210,35 +208,39 @@ public class MapManager : MonoBehaviour
     }
 
     public Vector2 GridToWorldPosition(Vector2 gridPosition, Vector2 offset){
-        return gridPosition * cellSize + new Vector2(cellSize / 2, cellSize / 2) + offset;
+        Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
+        return position * cellSize + new Vector2(cellSize / 2, cellSize / 2) + offset;
     }
     public Vector2 GridToWorldPosition(Vector2 gridPosition){
-        return gridPosition * cellSize + new Vector2(cellSize / 2 + ObjectField.transform.position.x, cellSize / 2 + ObjectField.transform.position.y);
+        Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
+        return position * cellSize + new Vector2(cellSize / 2 + ObjectField.transform.position.x, cellSize / 2 + ObjectField.transform.position.y);
     }
 
     public Vector2 WorldPositionToGrid(Vector2 worldPosition, Vector2 offset){
         Vector2 tmp = worldPosition - offset;
-        return  new Vector2((int)(tmp.x / cellSize),(int)(tmp.y / cellSize));   
+        return  new Vector2((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
     }
 
     void GenerateField(){
         GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
         generatorManager.ClearAllMaps();
-        generatorManager.width = width;
-        generatorManager.height = height;
+        generatorManager.width = fieldWidth + 2;
+        generatorManager.height = fieldHeight + 2;
         generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
         generatorManager.GenerateNewMap("Maze"); 
 
-        FieldMapData = new FieldPiece[height,width];
-        for (int i = 0; i < width; i++)
+        FieldMapData = new FieldPiece[fieldHeight,fieldWidth];
+        for (int i = 0; i < fieldWidth; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < fieldHeight; j++)
             {
                 FieldMapData[j, i] = new FieldPiece
                 {
-                    MapType = generatorManager.MapData[j, i] ? MapType.Block : MapType.Empty,
+                    MapType = generatorManager.MapData[j + 1, i + 1] ? MapType.Block : MapType.Empty,
                     gridPosition = new Vector2Int(i, j)
                 };
+                
+                FieldMapData[j, i].Init(gameManager, this);
             }
         }
         float remainRatio = 1-mapBlockRatio;
@@ -247,17 +249,17 @@ public class MapManager : MonoBehaviour
         GenerateFieldObjects(mapEventRatio/remainRatio, MapType.Event);
         remainRatio -= mapEventRatio;
         GenerateFieldObjects(mapMonsterRatio/remainRatio, MapType.Monster);
-        BuildAllField(FieldType.Field);
+        // BuildAllField(FieldType.Field);
     }
 
     public void BuildAllField(FieldType type){
-        if(type == FieldType.Field){
-            FieldTileMap.ClearAllTiles();
-            BuildMap(FieldMapData, MapType.Monster, FieldTileMap, MonsterTile);
-            BuildMap(FieldMapData, MapType.Item, FieldTileMap, ItemTile);
-            BuildMap(FieldMapData, MapType.Event, FieldTileMap, EventTile);
-        }
-        else if(type == FieldType.Princess){
+        // if(type == FieldType.Field){
+        //     FieldTileMap.ClearAllTiles();
+        //     BuildMap(FieldMapData, MapType.Monster, FieldTileMap, MonsterTile);
+        //     BuildMap(FieldMapData, MapType.Item, FieldTileMap, ItemTile);
+        //     BuildMap(FieldMapData, MapType.Event, FieldTileMap, EventTile);
+        // }
+        if(type == FieldType.Princess){
             FieldTileMap.ClearAllTiles();
             BuildMap(princessFields, MapType.Monster, FieldTileMap, MonsterTile);
             BuildMap(princessFields, MapType.Item, FieldTileMap, ItemTile);
@@ -291,9 +293,9 @@ public class MapManager : MonoBehaviour
     
     void GenerateFieldObjects(float generateRatio, MapType value)
     {
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < fieldWidth; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < fieldHeight; j++)
             {
                 if(FieldMapData[j, i].MapType == MapType.Empty){
                     float val = Random.value;
@@ -307,31 +309,31 @@ public class MapManager : MonoBehaviour
     
     public void BuildMap(FieldPiece[,] mapData, MapType type, Tilemap map, TileBase tile)
     {
-        for (int x = 0; x < width; x++){
-            for (int y = 0; y < height; y++){
+        for (int x = 0; x < fieldWidth; x++){
+            for (int y = 0; y < fieldHeight; y++){
                 if (mapData[y, x].MapType == type)
                 {
                     if(!mapData[y, x].IsLight){ 
                         mapData[y, x].MapType = MapType.Hide;
-                        map.SetTile(new Vector3Int(x, y, 0), HideTile);
+                        map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
                     }
                     else{
-                        map.SetTile(new Vector3Int(x, y, 0), tile);
+                        map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
                     }
                 }
             }
         }
     }
     public void SetMapPiece(FieldPiece fieldPiece, MapType type){
-        princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
+        Debug.Log("set map piece" + fieldPiece.gridPosition);
         princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
         knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
     }
     void printMap(FieldPiece[,] pieces){
         string arrayStr = "";
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < fieldHeight; j++)
             {
-                for (int i = 0; i < width; i++)
+                for (int i = 0; i < fieldWidth; i++)
                 {
                     arrayStr += pieces[j,i].MapType + " ";
                 }
@@ -372,6 +374,7 @@ public class FieldPiece
     public void UpdateMapType(MapType type, int index = -1)
     {
         _mapType = type;
+        Debug.Log(_mapManager);
         _mapManager.SetMapPiece(this, type);
 
         EventIndex = index;

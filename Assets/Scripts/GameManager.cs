@@ -73,11 +73,11 @@ public class GameManager : MonoBehaviour
     void InitPlayerPosition()
     {
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
-        MapManager.LightField(FieldType.Knight, new Vector2(1,1));
+        MapManager.LightField(FieldType.Knight, new Vector2(0,0));
         knight.CurrentFieldPiece = MapManager.knightFields[0,0];
 
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
-        MapManager.LightField(FieldType.Princess, new Vector2(20,20));
+        MapManager.LightField(FieldType.Princess, new Vector2(19,19));
         princess.CurrentFieldPiece = MapManager.princessFields[19,19];
     }
 
@@ -199,6 +199,7 @@ public class GameManager : MonoBehaviour
             }
             
             // 이동'
+            Debug.Log("move" +field.gridPosition );
             knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
             knight.CurrentFieldPiece = field;
         }
