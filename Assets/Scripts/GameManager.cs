@@ -87,13 +87,13 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            whoseTurn = nameof(princess);
-            MapManager.BuildAllField(FieldType.Princess);
-            yield return StartCoroutine(PlayPlayer(princess));
-
             whoseTurn = nameof(knight);
             MapManager.BuildAllField(FieldType.Knight);
             yield return StartCoroutine(PlayPlayer(knight));
+            
+            whoseTurn = nameof(princess);
+            MapManager.BuildAllField(FieldType.Princess);
+            yield return StartCoroutine(PlayPlayer(princess));
 
             if (GameEnd)
             {
@@ -136,8 +136,9 @@ public class GameManager : MonoBehaviour
                 {
                     complete = princess.SelectedIdx switch
                     {
-                        1 => TurnOnMapPiece(field),
-                        0 or 2 => MoveKnight(field),
+                        0 => TurnOnMapPiece(field, true),
+                        1 => MakeHealZone(field),
+                        2 => BuffKnight(),
                         _ => false,
                     };
                     
@@ -155,9 +156,9 @@ public class GameManager : MonoBehaviour
                 {
                     complete = knight.SelectedIdx switch
                     {
-                        0 => TurnOnMapPiece(field, true),
-                        1 => MakeHealZone(field),
-                        2 => BuffKnight(),
+                        
+                        1 => TurnOnMapPiece(field),
+                        0 or 2 => MoveKnight(field),
                         _ => false,
                     };
 
@@ -374,22 +375,21 @@ public class GameManager : MonoBehaviour
         EventPrinting = true;
         switch (field.MapType)
         {
-            case MapType.BattleMonster : 
-                battleEvent.Init(knight.GetComponent<Knight>(), _resourceManager.Monsters[field.EventIndex]);
+            case MapType.Monster : 
+                battleEvent.Init(knight.gameObject.GetComponent<Knight>(), _resourceManager.GetRandomMonster());
                 battleEvent.Execute();
                 break;
             case MapType.Event :
-                var fevt = _resourceManager.FieldEvents[field.EventIndex];
+                var fevt = _resourceManager.GetRandomFieldEvent();
                 fieldEvent.Execute(fevt);
                 break;
             case MapType.Item : 
-                var ievt = _resourceManager.Items[field.EventIndex];
+                var ievt = _resourceManager.GetRandomItemEvent();
                 itemEvent.Execute(ievt);
                 break;
             case MapType.Heal :
                 healEvent.Execute(
-                    knight.GetComponent<Knight>(),
-                    _resourceManager.healEventSprite);
+                    knight.GetComponent<Knight>(), _resourceManager.healEventSprite);
                 break;
         }
 
