@@ -39,4 +39,17 @@ public class Status
         get { return defense; }
         set { defense = Mathf.Max(value, 0); }
     }
+
+    public Status()
+    {
+        
+    }
+    
+    public Status(int maxHp, int power, int defense)
+    {
+        MaxHp = maxHp;
+        currentHp = maxHp;
+        Power = power;
+        Defense = defense;
+    }
 }

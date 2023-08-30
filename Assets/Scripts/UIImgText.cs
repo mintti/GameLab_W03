@@ -41,7 +41,9 @@ public class UIImgText : MonoBehaviour
             } while (charIndex < texts[index].Length);
 
             yield return new WaitUntil(() => click);
-        } while (texts.Length < ++index);
+            
+            index++;
+        } while (index < texts.Length);
         
         // 종료
         endCb?.Invoke();
