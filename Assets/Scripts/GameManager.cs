@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
     public Player knight;
     public Player princess;
 
+    public int MaxCost;
+
     [Header("이벤트 관련")]
     public BattleEvent battleEvent;
     public FieldEvent fieldEvent;
