@@ -16,6 +16,20 @@ public class GameManager : MonoBehaviour
     public bool GameEnd = false;
 
     public string whoseTurn;
+
+    public int _turn;
+
+    public int Turn
+    {
+        get => _turn;
+        set
+        {
+            _turn = value;
+            UIManager.Instance.UpdateTurnText(_turn);
+        }
+    }
+
+    public int waveInterval;
     
     [Header("설정 값")] 
     public Vector2 mapSize;
@@ -66,6 +80,8 @@ public class GameManager : MonoBehaviour
     {
         CreateMap();
         InitPlayerPosition();
+
+        Turn = 1;
         StartCoroutine(nameof(PlayGame));
     }
 
@@ -102,6 +118,12 @@ public class GameManager : MonoBehaviour
                 // 게임이 종료되면 실행한다.
                 // 왜 종료되었는 지는 각 오브젝트에서 설정해준다.
                 yield break;
+            }
+            
+            Turn++;
+            if (Turn % waveInterval == 0)
+            {
+                MapManager.DoWave(10f);
             }
         }
     }

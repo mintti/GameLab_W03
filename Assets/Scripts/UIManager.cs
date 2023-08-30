@@ -9,6 +9,10 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     private GameManager _gameManager;
 
+    [Header("게임 정보")]
+    public TextMeshProUGUI turnText;
+    public TextMeshProUGUI waveText;
+    
     [Header("CostUI")]
     public TextMeshProUGUI leftCostLeft;
 
@@ -220,5 +224,11 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         obj.SetActive(true);
+    }
+
+    public void UpdateTurnText(int turn)
+    {
+        turnText.text = $"{turn} 턴";
+        waveText.text = $"{_gameManager.waveInterval - (turn % _gameManager.waveInterval)}턴 후 몬스터가 증식합니다.";
     }
 }
