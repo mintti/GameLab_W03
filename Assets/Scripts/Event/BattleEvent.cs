@@ -64,6 +64,7 @@ public class BattleEvent : MonoBehaviour
                 {
                     _uiManager.CombatMonsterWinText();
                     yield return new WaitForSeconds(2f);
+                    _uiManager.ActiveGameOverObj();
                     _uiManager.gameOverButton.SetActive(true);
                     yield break;
                 }

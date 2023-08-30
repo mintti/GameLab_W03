@@ -26,6 +26,10 @@ public class Status
             // Ensure CurrentHp is between 0 and MaxHp
             currentHp = Mathf.Clamp(value, 0, maxHp);
             UIManager.Instance?.UpdateKnightStatusInfo(this);
+            if (UIManager.Instance != null && currentHp == 0)
+            {
+                UIManager.Instance.ActiveGameOverObj();
+            }
         }
     }
 

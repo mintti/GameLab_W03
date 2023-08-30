@@ -19,7 +19,7 @@ public class MapManager : MonoBehaviour
     public GameObject generatorManagerObj;
     public int fieldWidth = 20;
     public int fieldHeight = 20;
-    FieldPiece[,] FieldMapData;
+    public FieldPiece[,] FieldMapData;
     public float mapEmptyRatio = 0.35f;
     public float mapMonsterRatio = 0.25f;
     public float mapEventRatio = 0.2f;

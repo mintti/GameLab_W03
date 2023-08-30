@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +29,10 @@ public class UIManager : MonoBehaviour
     public GameObject combatPanelExitButton;
     public GameObject gameOverButton;
 
+    [Header("화면 제어")]
+    public GameObject gameOverObj;
+    public GameObject gameClearObj;
+    public GameObject endingScreen;
 
     private Dictionary<int, string> _princessSkillInfoDict = new()
     {
@@ -198,5 +202,23 @@ public class UIManager : MonoBehaviour
     {
         hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
         powerText.text = $"<color=#FFD400>파워</color>  {status.Power}";
+    }
+
+    public void ActiveEndingScene()
+    {
+        endingScreen.SetActive(true);
+        StartCoroutine(ShowEnding(gameClearObj));
+    }
+
+    public void ActiveGameOverObj()
+    {
+        endingScreen.SetActive(true);
+        StartCoroutine(ShowEnding(gameOverObj));
+    }
+
+    IEnumerator ShowEnding(GameObject obj)
+    {
+        yield return new WaitForSeconds(2f);
+        obj.SetActive(true);
     }
 }

@@ -192,6 +192,12 @@ public class GameManager : MonoBehaviour
     #region Player Skill
     private bool MoveKnight(FieldPiece field)
     {
+        if (field.gridPosition.x == 19 && field.gridPosition.y == 19)
+        {
+            Ending();
+            return true;
+        }
+        
         bool result = true;
 
         if (field.MapType == MapType.Block)
@@ -412,9 +418,17 @@ public class GameManager : MonoBehaviour
         field.MapType = MapType.Empty;
     }
     #endregion
+
+    private void Ending()
+    {
+        EventPrinting = true;
+        _uiManager.ActiveEndingScene();
+    }
     
     private void Log(string text)
     {
         Debug.Log(text);
     }
+    
+    
 }
