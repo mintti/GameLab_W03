@@ -235,7 +235,10 @@ public class GameManager : MonoBehaviour
             if(isKnight) 
                 MapManager.LightField(FieldType.Knight, field.gridPosition);
             else
+            {
                 MapManager.LightField(FieldType.Princess, field.gridPosition);
+                ChangeBehavior(princess.SelectedIdx);
+            }
         }
         else
         {
@@ -253,6 +256,7 @@ public class GameManager : MonoBehaviour
         if (field.MapType == MapType.Empty)
         {
             field.UpdateMapType(MapType.Heal);
+            MapManager.RefreshMap();
         }
         else
         {
