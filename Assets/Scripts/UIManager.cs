@@ -7,6 +7,12 @@ public class UIManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
+    [Header("CostUI")]
+    public TextMeshProUGUI leftCostLeft;
+
+    private int currentCost;
+
+
     [Header("CombatPanelUI")]
     public GameObject combatMonsterSprite;
     public GameObject combatPanel;
@@ -142,5 +148,18 @@ public class UIManager : MonoBehaviour
                 outline.enabled = true;
             }
         }
+    }
+
+    public void ResetCost()
+    {
+        currentCost = 3;
+        leftCostLeft.text = currentCost.ToString();
+    }
+
+    public void UseCost(int _currentcost)
+    {
+        currentCost = _currentcost;
+        leftCostLeft.text = currentCost.ToString();
+
     }
 }

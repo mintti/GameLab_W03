@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
     {
         IsTurnEnd = false;
         playerUI.SetActive(true);
+        _uiManager.ResetCost();
     }
 
     public void EndTurn()
