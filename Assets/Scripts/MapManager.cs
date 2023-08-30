@@ -215,27 +215,27 @@ public class MapManager : MonoBehaviour
         FieldMapData[fieldHeight-2,fieldWidth-2].MapType = MapType.Block;
         // BuildAllField(FieldType.Field);
     }
+    public void DoWave(float waveMonsterRatio){
+        GenerateFieldObjects(waveMonsterRatio, MapType.Monster);
+        FieldMapData[(int)gameManager.knight.CurrentFieldPiece.gridPosition.y, (int)gameManager.knight.CurrentFieldPiece.gridPosition.x].MapType = MapType.Empty;
+        FieldMapData[(int)gameManager.princess.CurrentFieldPiece.gridPosition.y, (int)gameManager.princess.CurrentFieldPiece.gridPosition.x].MapType = MapType.Empty;
+        
+        for (int i = 0; i < fieldWidth; i++)
+        {
+            for (int j = 0; j < fieldHeight; j++)
+            {
+                if(princessFields[j, i].IsLight) 
+                    princessFields[j, i].MapType = FieldMapData[j, i].MapType;
+                else 
+                    princessFields[j, i].MapType = MapType.Hide;
 
-    public void BuildAllField(FieldType type){
-        currentField = type;
-        FieldPiece[,] fieldPieces = princessFields;
-        FieldTileMap.ClearAllTiles();
-        if(type == FieldType.Princess){
-            fieldPieces = princessFields;
+                if(knightFields[j, i].IsLight) 
+                    knightFields[j, i].MapType = FieldMapData[j, i].MapType;
+                else 
+                    knightFields[j, i].MapType = MapType.Hide;
+            }
         }
-        else if(type == FieldType.Knight){
-            fieldPieces = knightFields;
-        }
-        FieldTileMap.ClearAllTiles();
-        BuildMap(fieldPieces, MapType.Block, FieldTileMap, BlockTile);
-        BuildMap(fieldPieces, MapType.Item, FieldTileMap, ItemTile);
-        BuildMap(fieldPieces, MapType.Empty, FieldTileMap, EmptyTile);
-        BuildMap(fieldPieces, MapType.Monster, FieldTileMap, MonsterTile);
-        BuildMap(fieldPieces, MapType.Event, FieldTileMap, EventTile);
-        BuildMap(fieldPieces, MapType.Heal, FieldTileMap, HealTile);
-        BuildMap(fieldPieces, MapType.Dragon, FieldTileMap, DragonTile);
-        BuildMap(fieldPieces, MapType.Hide, FieldTileMap, HideTile);
-
+        RefreshMap();
     }
 
     
@@ -257,6 +257,28 @@ public class MapManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void BuildAllField(FieldType type){
+        currentField = type;
+        FieldPiece[,] fieldPieces = princessFields;
+        FieldTileMap.ClearAllTiles();
+        if(type == FieldType.Princess){
+            fieldPieces = princessFields;
+        }
+        else if(type == FieldType.Knight){
+            fieldPieces = knightFields;
+        }
+        FieldTileMap.ClearAllTiles();
+        BuildMap(fieldPieces, MapType.Block, FieldTileMap, BlockTile);
+        BuildMap(fieldPieces, MapType.Item, FieldTileMap, ItemTile);
+        BuildMap(fieldPieces, MapType.Empty, FieldTileMap, EmptyTile);
+        BuildMap(fieldPieces, MapType.Monster, FieldTileMap, MonsterTile);
+        BuildMap(fieldPieces, MapType.Event, FieldTileMap, EventTile);
+        BuildMap(fieldPieces, MapType.Heal, FieldTileMap, HealTile);
+        BuildMap(fieldPieces, MapType.Dragon, FieldTileMap, DragonTile);
+        BuildMap(fieldPieces, MapType.Hide, FieldTileMap, HideTile);
+
     }
     
     public void BuildMap(FieldPiece[,] mapData, MapType type, Tilemap map, TileBase tile)
