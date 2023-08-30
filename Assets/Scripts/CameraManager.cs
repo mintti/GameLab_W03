@@ -26,7 +26,7 @@ public class CameraManager : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, Target.position + targetOffset, 0.1f);
         }
     }
-
+    
     public void ActiveMap()
     {
         mapON = true;
