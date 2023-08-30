@@ -16,8 +16,8 @@ public class MapManager : MonoBehaviour
 {
     public GameManager gameManager;
     public Camera fieldCamera;
-    public Camera princessMapCamera;
-    public Camera knightMapCamera;
+    // public Camera princessMapCamera;
+    // public Camera knightMapCamera;
 
     [Header("Generator")]
     public GameObject generatorManagerObj;
@@ -41,8 +41,8 @@ public class MapManager : MonoBehaviour
     public TileBase HideTile;
     public TileBase HealTile;
     public TileBase CanSelectTile;
-    // public TileBase BlockTile;
-    // public TileBase EmptyTile;
+    public TileBase BlockTile;
+    public TileBase EmptyTile;
 
     [Header("Princess Map")]
     public GameObject PrincessMapObject;
@@ -53,6 +53,7 @@ public class MapManager : MonoBehaviour
     public TileBase PrincessHideTile;
     public TileBase PrincessBlockTile;
     public TileBase PrincessEmptyTile;
+    public TileBase PrincessSelfTile;
 
     
 
@@ -65,6 +66,7 @@ public class MapManager : MonoBehaviour
     public TileBase KnightHideTile;
     public TileBase KnightBlockTile;
     public TileBase KnightEmptyTile;
+    public TileBase KnightSelfTile;
 
     bool isCanFieldSelect = true;
     bool isPrincessMapSelect = true;
@@ -79,7 +81,9 @@ public class MapManager : MonoBehaviour
     public FieldPiece[,] princessFields;
     public FieldPiece[,] knightFields;
 
+
     FieldType currentField;
+    bool isMapOpen = false;
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
@@ -129,7 +133,7 @@ public class MapManager : MonoBehaviour
             } 
         }
         // else if(Input.GetKeyDown(KeyCode.Z)){
-        //     currentField = FieldType.PrincessMap;
+        //     currentField = FieldType.PrincessMap;Knight
         //     BuildAllField(currentField);
         // }
         // else if(Input.GetKeyDown(KeyCode.X)){
@@ -160,7 +164,6 @@ public class MapManager : MonoBehaviour
             }
         }
         else if(type == FieldType.Knight){
-            printMap(knightFields);
             knightFields[(int) position.y,(int) position.x].IsLight = true;
             knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y ,(int) position.x].MapType;
             if(position.x != 0){
@@ -207,11 +210,42 @@ public class MapManager : MonoBehaviour
             selectCusorObj.transform.position = new Vector2(100,100);
         }
     }
-    // public void OpenMap(FieldType type){
-    //     if(type == FieldType.PrincessMap){
-
+    // public void OpenMap(){
+    //     if(!isMapOpen){
+    //         if(currentField == FieldType.Princess){
+    //             fieldCamera.enabled = false; 
+    //             princessMapCamera.enabled = true;
+    //             Vector2 pos = gameManager.princess.CurrentFieldPiece.gridPosition;
+    //             princessFields[(int)pos.y, (int)pos.x].MapType = MapType.Self;
+    //             BuildAllField(FieldType.PrincessMap);
+    //         }
+    //         else if(currentField == FieldType.Knight){
+    //             fieldCamera.enabled = false; 
+    //             knightMapCamera.enabled = true;
+    //             Vector2 pos = gameManager.knight.CurrentFieldPiece.gridPosition;
+    //             knightFields[(int)pos.y, (int)pos.x].MapType = MapType.Self;
+    //             BuildAllField(FieldType.KnightMap);
+    //         }
+    //         isMapOpen = true;
     //     }
-    //     else if(type == FieldType.Map){}
+        
+    //     else{
+    //         if(currentField == FieldType.PrincessMap){
+    //             princessMapCamera.enabled = false;
+    //             fieldCamera.enabled = true; 
+    //             Vector2 pos = gameManager.princess.CurrentFieldPiece.gridPosition;
+    //             princessFields[(int)pos.y, (int)pos.x].MapType = MapType.Empty;
+    //             BuildAllField(FieldType.Princess);
+    //         }
+    //         else if(currentField == FieldType.KnightMap){
+    //             knightMapCamera.enabled = false;
+    //             fieldCamera.enabled = true; 
+    //             Vector2 pos = gameManager.knight.CurrentFieldPiece.gridPosition;
+    //             knightFields[(int)pos.y, (int)pos.x].MapType = MapType.Empty;
+    //             BuildAllField(FieldType.Knight);
+    //         }
+    //         isMapOpen = false;
+    //     }
     // }
 
     public Vector2 GridToWorldPosition(Vector2 gridPosition, Vector2 offset){
@@ -230,11 +264,16 @@ public class MapManager : MonoBehaviour
 
     void GenerateField(){
         GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
-        generatorManager.ClearAllMaps();
         generatorManager.width = fieldWidth + 2;
         generatorManager.height = fieldHeight + 2;
-        generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
-        generatorManager.GenerateNewMap("Maze"); 
+        while(true){
+            generatorManager.ClearAllMaps();
+            generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
+            generatorManager.GenerateNewMap("Maze"); 
+            if(!generatorManager.MapData[1, 1] && !generatorManager.MapData[fieldHeight, fieldWidth]){
+                break;
+            }
+        }
 
         FieldMapData = new FieldPiece[fieldHeight,fieldWidth];
         for (int i = 0; i < fieldWidth; i++)
@@ -266,12 +305,13 @@ public class MapManager : MonoBehaviour
         //     BuildMap(FieldMapData, MapType.Item, FieldTileMap, ItemTile);
         //     BuildMap(FieldMapData, MapType.Event, FieldTileMap, EventTile);
         // }
+        currentField = type;
         if(type == FieldType.Princess){
             FieldTileMap.ClearAllTiles();
             BuildMap(princessFields, MapType.Monster, FieldTileMap, MonsterTile);
             BuildMap(princessFields, MapType.Item, FieldTileMap, ItemTile);
-            BuildMap(princessFields, MapType.Block, FieldTileMap, KnightBlockTile);
-            BuildMap(princessFields, MapType.Empty, FieldTileMap, KnightEmptyTile);
+            BuildMap(princessFields, MapType.Block, FieldTileMap, BlockTile);
+            BuildMap(princessFields, MapType.Empty, FieldTileMap, EmptyTile);
             BuildMap(princessFields, MapType.Event, FieldTileMap, EventTile);
             BuildMap(princessFields, MapType.Heal, FieldTileMap, HealTile);
             BuildMap(princessFields, MapType.Hide, FieldTileMap, HideTile);
@@ -294,7 +334,18 @@ public class MapManager : MonoBehaviour
             BuildMap(princessFields, MapType.Monster, PrincessTileMap, PrincessMonsterTile);
             BuildMap(princessFields, MapType.Item, PrincessTileMap, PrincessItemTile);
             BuildMap(princessFields, MapType.Event, PrincessTileMap, PrincessEventTile);
+            BuildMap(princessFields, MapType.Self, PrincessTileMap, PrincessSelfTile);
             BuildMap(princessFields, MapType.Hide, PrincessTileMap, PrincessHideTile);
+        }
+        else if(type == FieldType.KnightMap){
+            PrincessTileMap.ClearAllTiles();
+            BuildMap(knightFields, MapType.Heal, KnightTileMap, HealTile);
+            BuildMap(knightFields, MapType.Block, KnightTileMap, KnightBlockTile);
+            BuildMap(knightFields, MapType.Empty, KnightTileMap, KnightEmptyTile);
+            BuildMap(knightFields, MapType.Monster, KnightTileMap, KnightMonsterTile);
+            BuildMap(knightFields, MapType.Item, KnightTileMap, KnightItemTile);
+            BuildMap(knightFields, MapType.Self, KnightTileMap, KnightSelfTile);
+            BuildMap(knightFields, MapType.Hide, KnightTileMap, KnightHideTile);
         }
 
     }
@@ -307,6 +358,9 @@ public class MapManager : MonoBehaviour
         {
             for (int j = 0; j < fieldHeight; j++)
             {
+                if((i == 0 && j == 0) || (i == fieldWidth -1 && j == fieldHeight -1)){
+                    continue;
+                }
                 if(FieldMapData[j, i].MapType == MapType.Empty){
                     float val = Random.value;
                     if(val < generateRatio){
@@ -334,8 +388,16 @@ public class MapManager : MonoBehaviour
             }
         }
     }
+    
+    public void ClearMapPiece(FieldPiece fieldPiece){
+        
+        princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
+        knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
+        FieldMapData[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
+        BuildAllField(currentField);
+    }
+
     public void SetMapPiece(FieldPiece fieldPiece, MapType type){
-        Debug.Log("set map piece" + fieldPiece.gridPosition);
         princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
         knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
     }

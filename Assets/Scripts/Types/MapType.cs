@@ -8,4 +8,5 @@ public enum MapType
     Item,
     Hide,
     BattleMonster,
+    Self,
 }
