@@ -70,11 +70,10 @@ public class GameManager : MonoBehaviour
 
     void InitPlayerPosition()
     {
-        knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
-        princess.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
-
-        // 
-        
+        knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
+        MapManager.LightField(FieldType.Knight, new Vector2(0,0));
+        princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
+        MapManager.LightField(FieldType.Princess, new Vector2(19,19));
     }
 
     IEnumerator PlayGame()
@@ -198,7 +197,7 @@ public class GameManager : MonoBehaviour
         }
 
         // 맵을 밝힘
-        TurnOnMapPiece(field);
+        TurnOnMapPiece(field, true);
 
         return result;
     }
@@ -211,9 +210,9 @@ public class GameManager : MonoBehaviour
         {
             field.IsLight = true;
             if(isKnight) 
-                MapManager.LightField(FieldType.Knight, field);
+                MapManager.LightField(FieldType.Knight, field.gridPosition);
             else
-                MapManager.LightField(FieldType.Princess, field);
+                MapManager.LightField(FieldType.Princess, field.gridPosition);
         }
         else
         {

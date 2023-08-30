@@ -3,7 +3,7 @@ using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using UnityEditor;
 
-enum FieldType
+public enum FieldType
 {
     Field,
     Princess, 
@@ -92,10 +92,29 @@ public class MapManager : MonoBehaviour
     public void CreateMap(){
 
         GenerateField();
+        princessFields = new FieldPiece[height, width];
+        knightFields = new FieldPiece[height, width];
 
-        princessFields = (FieldPiece[,])FieldMapData.Clone();
-        BuildAllField(FieldType.Princess);
-        knightFields = (FieldPiece[,])FieldMapData.Clone();
+        
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                princessFields[j, i]= new FieldPiece
+                { 
+                    IsLight = false,
+                    MapType = MapType.Hide,
+                    gridPosition = new Vector2Int(i, j)
+                };
+                knightFields[j, i] = new FieldPiece
+                { 
+                    IsLight = false,
+                    MapType = MapType.Hide,
+                    gridPosition = new Vector2Int(i, j)
+                };
+    
+            }
+        }
         BuildAllField(FieldType.Knight);
     }
     
@@ -134,7 +153,52 @@ public class MapManager : MonoBehaviour
         //     BuildAllField(currentField);
         // }
     }
+    public void LightField(FieldType type, Vector2 position){
+        if(type == FieldType.Princess){
+            princessFields[(int) position.y,(int) position.x].IsLight = true;
+            princessFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
+            if(position.x != 0){
+                princessFields[(int) position.y,(int) position.x-1].IsLight = true;
+                princessFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y,(int) position.x-1].MapType;
+            }
+            if(position.x != 19){
+                princessFields[(int) position.y,(int) position.x+1].IsLight = true;
+                princessFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y,(int) position.x+1].MapType;
 
+            }
+            if(position.y != 19){
+                princessFields[(int) position.y+1,(int) position.x].IsLight = true;
+                princessFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y-1,(int) position.x].MapType;
+            }
+            if(position.y != 0){
+                princessFields[(int) position.y-1,(int) position.x].IsLight = true;
+                princessFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y+1,(int) position.x].MapType;
+            }
+        }
+        else if(type == FieldType.Knight){
+            knightFields[(int) position.y,(int) position.x].IsLight = true;
+            knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
+            if(position.x != 0){
+                knightFields[(int) position.y,(int) position.x-1].IsLight = true;
+                knightFields[(int) position.y,(int) position.x-1].MapType = FieldMapData[(int) position.y,(int) position.x-1].MapType;
+            }
+            if(position.x != 19){
+                knightFields[(int) position.y,(int) position.x+1].IsLight = true;
+                knightFields[(int) position.y,(int) position.x+1].MapType = FieldMapData[(int) position.y,(int) position.x+1].MapType;
+
+            }
+            if(position.y != 0){
+                knightFields[(int) position.y-1,(int) position.x].IsLight = true;
+                knightFields[(int) position.y-1,(int) position.x].MapType = FieldMapData[(int) position.y-1,(int) position.x].MapType;
+            }
+            if(position.y != 19){
+                knightFields[(int) position.y+1,(int) position.x].IsLight = true;
+                knightFields[(int) position.y+1,(int) position.x].MapType = FieldMapData[(int) position.y+1,(int) position.x].MapType;
+            }
+        }
+        BuildAllField(type);
+
+    }
     public void showCanSelectField(List<FieldPiece> canSelectFields){
         UITileMap.ClearAllTiles();
         foreach (FieldPiece piece in canSelectFields)
@@ -197,7 +261,7 @@ public class MapManager : MonoBehaviour
         GenerateFieldObjects(mapEventRatio/remainRatio, MapType.Event);
         remainRatio -= mapEventRatio;
         GenerateFieldObjects(mapMonsterRatio/remainRatio, MapType.Monster);
-        // printMap();
+        BuildAllField(FieldType.Field);
     }
 
     void BuildAllField(FieldType type){
@@ -211,8 +275,19 @@ public class MapManager : MonoBehaviour
             FieldTileMap.ClearAllTiles();
             BuildMap(princessFields, MapType.Monster, FieldTileMap, MonsterTile);
             BuildMap(princessFields, MapType.Item, FieldTileMap, ItemTile);
+            BuildMap(princessFields, MapType.Block, FieldTileMap, KnightBlockTile);
+            BuildMap(princessFields, MapType.Empty, FieldTileMap, KnightEmptyTile);
             BuildMap(princessFields, MapType.Event, FieldTileMap, EventTile);
             BuildMap(princessFields, MapType.Hide, FieldTileMap, HideTile);
+        }
+        else if(type == FieldType.Knight){
+            FieldTileMap.ClearAllTiles();
+            BuildMap(knightFields, MapType.Block, FieldTileMap, KnightBlockTile);
+            BuildMap(knightFields, MapType.Empty, FieldTileMap, KnightEmptyTile);
+            BuildMap(knightFields, MapType.Monster, FieldTileMap, KnightMonsterTile);
+            BuildMap(knightFields, MapType.Item, FieldTileMap, KnightItemTile);
+            BuildMap(knightFields, MapType.Event, FieldTileMap, KnightEventTile);
+            BuildMap(knightFields, MapType.Hide, FieldTileMap, KnightHideTile);
         }
         else if(type == FieldType.PrincessMap){
             PrincessTileMap.ClearAllTiles();
@@ -225,6 +300,8 @@ public class MapManager : MonoBehaviour
         }
 
     }
+
+    
     
     void GenerateFieldObjects(float generateRatio, MapType value)
     {
@@ -241,17 +318,6 @@ public class MapManager : MonoBehaviour
             }
         }
     }
-    public void KnightMove(FieldPiece field){
-
-        knightFields[field.gridPosition.y,field.gridPosition.x-1].IsLight = true;
-        knightFields[field.gridPosition.y,field.gridPosition.x-1].MapType = FieldMapData[field.gridPosition.y,field.gridPosition.x-1].MapType;
-        knightFields[field.gridPosition.y,field.gridPosition.x+1].IsLight = true;
-        knightFields[field.gridPosition.y,field.gridPosition.x+1].MapType = FieldMapData[field.gridPosition.y,field.gridPosition.x+1].MapType;
-        knightFields[field.gridPosition.y+1,field.gridPosition.x].IsLight = true;
-        knightFields[field.gridPosition.y+1,field.gridPosition.x].MapType = FieldMapData[field.gridPosition.y-1,field.gridPosition.x].MapType;
-        knightFields[field.gridPosition.y-1,field.gridPosition.x].IsLight = true;
-        knightFields[field.gridPosition.y-1,field.gridPosition.x].MapType = FieldMapData[field.gridPosition.y+1,field.gridPosition.x].MapType;
-    }
     
     public void BuildMap(FieldPiece[,] mapData, MapType type, Tilemap map, TileBase tile)
     {
@@ -259,11 +325,12 @@ public class MapManager : MonoBehaviour
             for (int y = 0; y < height; y++){
                 if (mapData[y, x].MapType == type)
                 {
-                    if(mapData[y, x].IsLight){ 
-                        map.SetTile(new Vector3Int(x, y, 0), tile);
+                    if(!mapData[y, x].IsLight){ 
+                        mapData[y, x].MapType = MapType.Hide;
+                        map.SetTile(new Vector3Int(x, y, 0), HideTile);
                     }
                     else{
-                        mapData[y, x].MapType = MapType.Hide;
+                        map.SetTile(new Vector3Int(x, y, 0), tile);
                     }
                 }
             }
@@ -274,17 +341,17 @@ public class MapManager : MonoBehaviour
         princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
         knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
     }
-    void printMap(){
+    void printMap(FieldPiece[,] pieces){
         string arrayStr = "";
             for (int j = 0; j < height; j++)
             {
                 for (int i = 0; i < width; i++)
                 {
-                    arrayStr += FieldMapData[j,i] + " ";
+                    arrayStr += pieces[j,i].MapType + " ";
                 }
                 arrayStr += "\n";
             }
-
+        Debug.Log(arrayStr);
     }
 }
 
@@ -301,7 +368,7 @@ public class FieldPiece
     }
     // public Sprite Sprite;
 
-    public bool IsLight = false;
+    public bool IsLight = true;
 
     private bool _canSelect;
 
