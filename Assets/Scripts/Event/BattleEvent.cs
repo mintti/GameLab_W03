@@ -23,7 +23,6 @@ public class BattleEvent : MonoBehaviour
 
     public void Execute(bool isLastBoss = false)
     {
-        
         _isLastBoss = isLastBoss;
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         _uiManager.combatPanelExitButton.SetActive(false);
@@ -51,9 +50,10 @@ public class BattleEvent : MonoBehaviour
                 
                 if ( _monster.Status.MaxHp <= 0)
                 {
+                    _gameManager.Coin++;
                     _uiManager.CombatPlayerWinText(_monster.Name);
-                    _knight.Status.CurrentHp = _knight.Status.CurrentHp;
-                    _gameManager.EventPrinting = false;
+                    _uiManager.combatText.text += "\n1 코인을 얻었습니다.";
+                    
                     _uiManager.combatPanelExitButton.SetActive(true);
                     _uiManager.combatPanelExitButton.GetComponent<Button>().onClick.AddListener(End);
                     // 종료 로직

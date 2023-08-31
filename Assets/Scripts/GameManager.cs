@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer.Internal.Converters;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -53,7 +54,18 @@ public class GameManager : MonoBehaviour
     [Header("플레이어")]
     public Player knight;
     public Player princess;
-
+    
+    private int _coin;
+    public int Coin
+    {
+        get => _coin;
+        set
+        {
+            _coin = value;
+            _uiManager.UpdateCoinText(_coin);
+        }
+    }
+    
     public int MaxCost;
 
     [Header("이벤트 관련")]
@@ -73,7 +85,7 @@ public class GameManager : MonoBehaviour
         
         Init();
     }
-
+    
     /// <summary>
     /// 기본 설정 초기화
     /// </summary>
@@ -83,6 +95,7 @@ public class GameManager : MonoBehaviour
         InitPlayerPosition();
 
         Turn = 1;
+        Coin = 0;
         StartCoroutine(nameof(PlayGame));
     }
 
@@ -479,4 +492,53 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Title");
     }
+
+    #region Shop-Related
+
+    public void B_BuyMaxHp()
+    {
+        if (Coin >= 2)
+        {
+            var status = knight.gameObject.GetComponent<Knight>().Status;
+            status.MaxHp += 1;   
+            status.CurrentHp += 1;   
+            Log("최대 체력이 증가했습니다.");
+            Coin -= 2;
+        }
+        else
+        {
+            Log("돈이 부족합니다.");
+        }
+    }
+
+    public void B_BuyPower()
+    {
+        
+        if (Coin >= 2)
+        {
+            knight.gameObject.GetComponent<Knight>().Status.Power += 1;   
+            Log("파워가 증가했습니다.");
+            Coin -= 2;
+        }
+        else
+        {
+            Log("돈이 부족합니다.");
+        }
+    }
+
+    public void B_BuyCost()
+    {
+        if (Coin >= 5)
+        {
+            MaxCost += 1;   
+            Log("최대 코스트가 증가했습니다.(다음 차례부터 적용됩니다.)");
+            Coin -= 5;
+        }
+        else
+        {
+            Log("돈이 부족합니다.");
+        }
+    }
+    
+    #endregion
 }

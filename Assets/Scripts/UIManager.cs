@@ -39,6 +39,11 @@ public class UIManager : MonoBehaviour
     public GameObject gameClearObj;
     public GameObject endingScreen;
 
+    [Header("미니 상점")]
+    public TextMeshProUGUI ShopProductInfoText;
+    public TextMeshProUGUI CoinText;
+
+    
     private Dictionary<int, string> _princessSkillInfoDict = new()
     {
         {0, "주변을 밝힙니다. (행동력 -1 소모)"},
@@ -62,6 +67,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
+        infoText.text = string.Empty;
     }
 
     public void B_Map()
@@ -251,5 +257,15 @@ public class UIManager : MonoBehaviour
         
         
         infoTextObj.SetActive(false);
+    }
+
+    public void UpdateCoinText(int coin)
+    {
+        CoinText.text = coin.ToString();
+    }
+
+    public void UpdateMiniShopInfoText(string text)
+    {
+        ShopProductInfoText.text = text;
     }
 }
