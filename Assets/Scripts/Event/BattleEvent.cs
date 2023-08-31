@@ -18,6 +18,7 @@ public class BattleEvent : MonoBehaviour
         _knight = knight;
         _monster = monster;
         img.sprite = _monster.Sprite;
+
     }
 
     public void Execute(bool isLastBoss = false)
@@ -25,6 +26,7 @@ public class BattleEvent : MonoBehaviour
         _isLastBoss = isLastBoss;
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         _uiManager.combatPanelExitButton.SetActive(false);
+        _uiManager.combatText.text = string.Empty;
 
         _uiManager.combatPanel.SetActive(true);
         StartCoroutine(Battle());
@@ -49,9 +51,10 @@ public class BattleEvent : MonoBehaviour
                 {
                     _uiManager.CombatPlayerWinText(_monster.Name);
                     _knight.Status.CurrentHp = _knight.Status.CurrentHp;
-                    _uiManager.combatPanelExitButton.SetActive(true);
                     _gameManager.EventPrinting = false;
-                    End();
+                    _uiManager.combatPanelExitButton.SetActive(true);
+                    _uiManager.combatPanelExitButton.GetComponent<Button>().onClick.AddListener(End);
+                    // 종료 로직
                     yield break;
                 }
             }
@@ -65,10 +68,10 @@ public class BattleEvent : MonoBehaviour
                 
                 if (_knight.Status.CurrentHp <= 0)
                 {
-                    _uiManager.combatPanel.SetActive(false);
                     _uiManager.CombatMonsterWinText();
                     _uiManager.ActiveGameOverObj();
-                    // yield return new WaitForSeconds(2f);
+                    yield return new WaitForSeconds(2f);
+                    _uiManager.combatPanel.SetActive(false);
                     //_uiManager.gameOverButton.SetActive(true);
                     yield break;
                 }
@@ -77,16 +80,18 @@ public class BattleEvent : MonoBehaviour
             yield return new WaitForSeconds(0.6f);
         }
     }
-
-    void End()
+    
+    private void End()
     {
         _uiManager.combatPanel.SetActive(false);
         if (_isLastBoss)
         {
+            _uiManager.combatPanel.SetActive(false);
             _uiManager.ActiveEndingScene();
         }
         else
         {
+            _uiManager.combatPanelExitButton.SetActive(true);
             if (_knight.Status.Buff)
             {
                 _knight.Status.Buff = false;
