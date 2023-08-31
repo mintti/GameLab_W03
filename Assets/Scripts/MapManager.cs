@@ -111,8 +111,6 @@ public class MapManager : MonoBehaviour
                 Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
                 if(isInGrid(grid)){
                     gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
-                    selectCusorObj.transform.position = new Vector2(100,100);
-                    isCanFieldSelect = false;
                     // foreach(FieldPiece piece in canSelectList){
                     //     if(piece._canSelect){ piece._canSelect = false; }
                     // }
