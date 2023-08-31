@@ -231,4 +231,28 @@ public class UIManager : MonoBehaviour
         turnText.text = $"{turn} 턴";
         waveText.text = $"{_gameManager.waveInterval - (turn % _gameManager.waveInterval)}턴 후 몬스터가 증식합니다.";
     }
+
+    public GameObject infoTextObj;
+    public TextMeshProUGUI infoText;
+    private float timer;
+    public void OutputInfo(string text)
+    {
+        StartCoroutine(Message(text));
+    }
+
+    IEnumerator Message(string text)
+    {
+        timer = .7f;
+        
+        do
+        {
+            infoTextObj.SetActive(true);
+            infoText.text = text;
+            yield return new WaitForSeconds(0.1f);
+            timer -= .1f;
+        } while (timer > 0);
+        
+        
+        infoTextObj.SetActive(false);
+    }
 }

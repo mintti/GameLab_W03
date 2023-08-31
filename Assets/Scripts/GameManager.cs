@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour
             
             if (!complete)
             {
-                Log($"스킬이 실행되지 않음.");
+                //Log($"스킬이 실행되지 않음.");
             }
         }
         else
@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour
         }
 
         // 맵을 밝힘
-        TurnOnMapPiece(field, true);
+        TurnOnMapPiece(field, true, false);
         
         // 이동 가능 영역 업데이트
         if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
@@ -258,7 +258,7 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
-    private bool TurnOnMapPiece(FieldPiece field, bool isKnight = false)
+    private bool TurnOnMapPiece(FieldPiece field, bool isKnight = false, bool outputLog = true)
     {
         bool result = true;
 
@@ -275,7 +275,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Log("이미 밝혀져 있는 맵은 밝힐 수 없습니다.");
+            if(outputLog) Log("이미 밝혀져 있는 맵은 밝힐 수 없습니다.");
             result = false;
         }
 
@@ -466,7 +466,7 @@ public class GameManager : MonoBehaviour
     
     private void Log(string text)
     {
-        Debug.Log(text);
+        _uiManager.OutputInfo(text);
     }
 
     public void B_Restart()
