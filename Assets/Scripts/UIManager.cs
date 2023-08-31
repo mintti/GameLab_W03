@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour
     [Header("CombatPanelUI")]
     public GameObject combatPanel;
     public TextMeshProUGUI combatText;
+    public TextMeshProUGUI monsterInf;
 
     private int maxLines = 5;
     private int lineCount = 0;

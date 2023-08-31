@@ -23,10 +23,15 @@ public class BattleEvent : MonoBehaviour
 
     public void Execute(bool isLastBoss = false)
     {
+        
         _isLastBoss = isLastBoss;
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         _uiManager.combatPanelExitButton.SetActive(false);
+<<<<<<< Updated upstream
         _uiManager.combatText.text = string.Empty;
+=======
+        _uiManager.monsterInf.text = "HP:" + _monster.Status.MaxHp + ", 파워:" + _monster.Status.Power;
+>>>>>>> Stashed changes
 
         _uiManager.combatPanel.SetActive(true);
         StartCoroutine(Battle());
