@@ -84,7 +84,17 @@ public class ResourceManager :  MonoBehaviour
     public Monster GetRandomMonster()
     {
         int index = Random.Range(0, Monsters.Count);
-        return Monsters[index];
+
+
+        return index switch
+        {
+            0 => new Monster("슬라임", new(3, 1), GetSrc("Monster","slime")),
+            1 => new Monster("고블린", new(3, 2), GetSrc("Monster", "goblin")),
+            2 => new Monster("오크", new(5, 2), GetSrc("Monster", "orc")),
+            3 => new Monster("드레이크", new(6, 1), GetSrc("Monster", "drake")),
+            4 => new Monster("스텀프", new(3, 1), GetSrc("Monster", "stump")),
+            _ => null,
+        };
     }
 
     public FieldEventInfo GetRandomFieldEvent()
