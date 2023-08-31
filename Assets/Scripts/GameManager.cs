@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -216,12 +217,14 @@ public class GameManager : MonoBehaviour
     #region Player Skill
     private bool MoveKnight(FieldPiece field)
     {
-        if (field.gridPosition.x == 19 && field.gridPosition.y == 19)
+        if ((field.gridPosition.x == 19 && field.gridPosition.y == 19) ||
+            (field.gridPosition.x == 19 && field.gridPosition.y == 18))
         {
-            Ending();
+            battleEvent.Init(knight.gameObject.GetComponent<Knight>(), _resourceManager.Boss);
+            battleEvent.Execute(true);
             return true;
         }
-        
+
         bool result = true;
 
         if (field.MapType == MapType.Block)
@@ -465,6 +468,15 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log(text);
     }
-    
-    
+
+    public void B_Restart()
+    {
+        Destroy(_uiManager.gameObject);
+        Invoke(nameof(Restart), .5f);
+    }
+
+    void Restart()
+    {
+        SceneManager.LoadScene("Title");
+    }
 }

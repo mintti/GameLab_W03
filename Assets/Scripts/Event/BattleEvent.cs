@@ -10,7 +10,8 @@ public class BattleEvent : MonoBehaviour
     private Monster _monster;
 
     public Image img;
-
+    private bool _isLastBoss = false;
+    
     public void Init(Knight knight, Monster monster)
     {
         _gameManager ??= GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
@@ -19,8 +20,9 @@ public class BattleEvent : MonoBehaviour
         img.sprite = _monster.Sprite;
     }
 
-    public void Execute()
+    public void Execute(bool isLastBoss = false)
     {
+        _isLastBoss = isLastBoss;
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
 
         _uiManager.CombatActive();
@@ -63,24 +65,31 @@ public class BattleEvent : MonoBehaviour
                 if (_knight.Status.CurrentHp <= 0)
                 {
                     _uiManager.CombatMonsterWinText();
-                    yield return new WaitForSeconds(2f);
                     _uiManager.ActiveGameOverObj();
-                    _uiManager.gameOverButton.SetActive(true);
+                    // yield return new WaitForSeconds(2f);
+                    //_uiManager.gameOverButton.SetActive(true);
                     yield break;
                 }
             }
 
-            yield return new WaitForSeconds(0.7f);
+            yield return new WaitForSeconds(0.6f);
         }
     }
 
     void End()
     {
-        if (_knight.Status.Buff)
+        if (_isLastBoss)
         {
-            _knight.Status.Buff = false;
+            _uiManager.ActiveEndingScene();
         }
-        _gameManager.EventPrinting = false;
+        else
+        {
+            if (_knight.Status.Buff)
+            {
+                _knight.Status.Buff = false;
+            }
+            _gameManager.EventPrinting = false;
+        }
     }
 
 }
