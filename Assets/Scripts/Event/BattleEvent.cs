@@ -48,6 +48,8 @@ public class BattleEvent : MonoBehaviour
                 knightTurn = false;
                 monsterTurn = true;
                 
+                _uiManager.monsterInf.text = "HP:" + _monster.Status.MaxHp + ", 파워:" + _monster.Status.Power;
+                
                 if ( _monster.Status.MaxHp <= 0)
                 {
                     _gameManager.Coin++;
