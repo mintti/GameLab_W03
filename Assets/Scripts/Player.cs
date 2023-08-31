@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
         Cost = _gameManager.MaxCost;
         IsTurnEnd = false;
         playerUI.SetActive(true);
+        _uiManager.UpdateInfoText(_selectedIdx);
     }
 
     public void EndTurn()
