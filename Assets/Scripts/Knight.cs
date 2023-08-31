@@ -10,7 +10,7 @@ public class Knight : MonoBehaviour
 
     public void Start()
     {
-        Status = new Status(defaultHp, defaultPower);
+        Status = new Status(defaultHp, defaultPower, true);
     }
 
     public void Buff()

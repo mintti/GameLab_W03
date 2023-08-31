@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Status
 {
+    private bool player;
     private int maxHp;
     private int currentHp;
     private int power;
@@ -15,7 +16,7 @@ public class Status
         set
         {
             _buff = value;
-            UIManager.Instance?.UpdateKnightStatusInfo(this);
+            if(player) UIManager.Instance.UpdateKnightStatusInfo(this);
         }
     }
     public int MaxHp
@@ -26,7 +27,7 @@ public class Status
             maxHp = Mathf.Max(value, 0);
             // Ensure CurrentHp doesn't exceed MaxHp
             currentHp = Mathf.Min(currentHp, maxHp);
-            UIManager.Instance?.UpdateKnightStatusInfo(this);
+            if(player) UIManager.Instance.UpdateKnightStatusInfo(this);
         }
     }
 
@@ -37,10 +38,13 @@ public class Status
         {
             // Ensure CurrentHp is between 0 and MaxHp
             currentHp = Mathf.Clamp(value, 0, maxHp);
-            UIManager.Instance?.UpdateKnightStatusInfo(this);
-            if (UIManager.Instance != null && currentHp == 0)
+            if (player)
             {
-                UIManager.Instance.ActiveGameOverObj();
+                UIManager.Instance.UpdateKnightStatusInfo(this);
+                if (currentHp == 0)
+                {
+                    UIManager.Instance.ActiveGameOverObj();
+                }
             }
         }
     }
@@ -51,7 +55,7 @@ public class Status
         set
         {
             power = Mathf.Max(value, 0);
-            UIManager.Instance?.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
         }
     }
 
@@ -66,10 +70,13 @@ public class Status
         
     }
     
-    public Status(int maxHp, int power)
+    public Status(int maxHp, int power, bool isPlayer= false)
     {
+        player = isPlayer;
+        
         MaxHp = maxHp;
         currentHp = maxHp;
         Power = power;
+
     }
 }
