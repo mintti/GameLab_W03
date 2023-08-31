@@ -24,8 +24,9 @@ public class BattleEvent : MonoBehaviour
     {
         _isLastBoss = isLastBoss;
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
+        _uiManager.combatPanelExitButton.SetActive(false);
 
-        _uiManager.CombatActive();
+        _uiManager.combatPanel.SetActive(true);
         StartCoroutine(Battle());
     }
     
@@ -64,6 +65,7 @@ public class BattleEvent : MonoBehaviour
                 
                 if (_knight.Status.CurrentHp <= 0)
                 {
+                    _uiManager.combatPanel.SetActive(false);
                     _uiManager.CombatMonsterWinText();
                     _uiManager.ActiveGameOverObj();
                     // yield return new WaitForSeconds(2f);
@@ -78,6 +80,7 @@ public class BattleEvent : MonoBehaviour
 
     void End()
     {
+        _uiManager.combatPanel.SetActive(false);
         if (_isLastBoss)
         {
             _uiManager.ActiveEndingScene();

@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     public Vector3 CurrentPosition { get; set; }
     public GameObject playerUI;
     private GameObject playerSkillUI;
-
     public FieldPiece CurrentFieldPiece { get; set; }
     
     private int _cost;

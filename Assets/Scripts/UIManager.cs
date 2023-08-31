@@ -68,12 +68,6 @@ public class UIManager : MonoBehaviour
         
     }
 
-    public void CombatActive()
-    {
-        combatPanel.SetActive(true);
-        
-    }
-
     public void OutputCombatText(string name1, string name2, int name1power, int name2currentHP)
     {
         if (name2currentHP < 0)
