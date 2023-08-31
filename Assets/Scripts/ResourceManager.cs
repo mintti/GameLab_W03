@@ -65,13 +65,9 @@ public class ResourceManager :  MonoBehaviour
         Monsters.Add(new("고블린", new(3, 2), GetSrc("Monster", "goblin")));
         Monsters.Add(new("오크", new(5, 2), GetSrc("Monster", "orc")));
         Monsters.Add(new("드레이크", new(6, 1), GetSrc("Monster", "drake")));
-<<<<<<< Updated upstream
         Monsters.Add(new("스텀프", new(3, 1), GetSrc("Monster", "stump")));
         
         Boss = new Monster("드래곤", new(10, 2), GetSrc("Monster", "dragon" ));
-=======
-        Monsters.Add(new("스텀프", new(4, 1), GetSrc("Monster", "stump")));
->>>>>>> Stashed changes
     }
 
     void InitItemEvent()
