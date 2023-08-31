@@ -8,6 +8,7 @@ public class HealEvent : MonoBehaviour
     public void Start()
     {
         _uiImgTxt = GetComponent<UIImgText>();
+        _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
     }
 
     public void Execute(Knight knight, Sprite sprite)

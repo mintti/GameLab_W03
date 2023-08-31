@@ -43,7 +43,7 @@ public class BattleEvent : MonoBehaviour
             if (knightTurn)
             {
                 _monster.Status.MaxHp -= _knight.Status.Power;
-                _uiManager.OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power + (_knight.Status.Buff ? 5 : 0),  _monster.Status.MaxHp);
+                _uiManager.OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power + (_knight.Status.Buff ? 2 : 0),  _monster.Status.MaxHp);
                 
                 knightTurn = false;
                 monsterTurn = true;
