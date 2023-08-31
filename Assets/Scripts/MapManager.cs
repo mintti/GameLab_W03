@@ -131,7 +131,21 @@ public class MapManager : MonoBehaviour
         BuildAllField(type);
 
     }
-    public void showCanSelectField(List<FieldPiece> canSelectFields){
+
+    private List<FieldPiece> _backup;
+    public void showCanSelectField(List<FieldPiece> canSelectFields)
+    {
+        if(_backup != null)
+        {
+            foreach (var piece in _backup)
+            {
+
+                FieldMapData[piece.gridPosition.y, piece.gridPosition.x]._canSelect = false;
+            }
+            _backup = null;
+        }
+        
+        _backup = canSelectFields;
         UITileMap.ClearAllTiles();
         foreach (FieldPiece piece in canSelectFields)
         {   
@@ -140,10 +154,10 @@ public class MapManager : MonoBehaviour
             isCanFieldSelect = true;
             
             piece._canSelect = true;
-            princessFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
-            canSelectList.Add(princessFields[piece.gridPosition.y, piece.gridPosition.x]);
-            knightFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
-            canSelectList.Add(knightFields[piece.gridPosition.y, piece.gridPosition.x]);
+            // princessFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
+            // canSelectList.Add(princessFields[piece.gridPosition.y, piece.gridPosition.x]);
+            // knightFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
+            // canSelectList.Add(knightFields[piece.gridPosition.y, piece.gridPosition.x]);
             FieldMapData[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
             canSelectList.Add(FieldMapData[piece.gridPosition.y, piece.gridPosition.x]);
         }
