@@ -90,7 +90,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(_player1.Cost);
+        // Debug.Log(_player1.Cost);
         if (Time.time > nextBlinkTime1 && _player1.Cost == 0)
         {
             nextBlinkTime1 = Time.time + blinkInterval;

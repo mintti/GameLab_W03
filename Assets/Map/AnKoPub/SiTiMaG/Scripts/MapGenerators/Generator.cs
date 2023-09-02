@@ -23,7 +23,7 @@ public class Generator
     public virtual void NewMap()
     {
         InitialiseMap();
-        BuildMap();
+        // BuildMap();
     }
 
     public virtual void GenerateMap() { }

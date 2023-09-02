@@ -21,6 +21,7 @@ public class MapManager : MonoBehaviour
 
     [Header("Generator")]
     public GameObject generatorManagerObj;
+    GeneratorManager generatorManager;
     public List<Vector2Int> fieldSizeList;
     public float mapEmptyRatio = 0.35f;
     public float mapMonsterRatio = 0.25f;
@@ -63,11 +64,13 @@ public class MapManager : MonoBehaviour
 
     public void InitMap(){
         floorCount = fieldSizeList.Count;
-        currentFloor = 0;
         for(int i = 0; i < floorCount; ++i){
-            if (!AllFieldMapData.ContainsKey(i))
+            if (!AllFieldMapData.ContainsKey(i)){
+                currentFloor = i;
                 AllFieldMapData.Add(i, CreateMap(fieldSizeList[i]));
+            }
         }
+        currentFloor = 0;
 
     }
     public FieldPiece GetFieldPiece(int floor, Vector2Int position){
@@ -78,10 +81,9 @@ public class MapManager : MonoBehaviour
     }
     public FieldPiece[,] CreateMap(Vector2Int fieldSize){
 
-        GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
+        generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
         generatorManager.width = fieldSize.x + 2;
         generatorManager.height = fieldSize.y + 2;
-        generatorManager.ClearAllMaps();
         generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
         generatorManager.GenerateNewMap("Maze"); 
 
@@ -144,15 +146,15 @@ public class MapManager : MonoBehaviour
                 }
                 
                 if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Monster){
-                    _UIManager.SetInfoUI(MapType.Monster, monsterInfo);
+                    // _UIManager.SetInfoUI(MapType.Monster, monsterInfo);
                     Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].monsterInfo.Name);
                 }
                 else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Item){
-                    _UIManager.SetInfoUI(MapType.Item, null);
+                    // _UIManager.SetInfoUI(MapType.Item, null);
                     Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].itemInfo.Type);
                 }
                 else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Event){
-                    _UIManager.SetInfoUI(MapType.Event, null);
+                    // _UIManager.SetInfoUI(MapType.Event, null);
                     Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].fieldEventInfo.Type);
                 } 
             }
@@ -165,6 +167,18 @@ public class MapManager : MonoBehaviour
         else if(type == FieldType.Knight){
             AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
         }
+    }
+    public void LightFieldNight(Vector2Int position){
+        AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x, position.y-1].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x, position.y+1].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x-1, position.y].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x-1, position.y-1].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x-1, position.y+1].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x+1, position.y].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x+1, position.y-1].KnightIsLight = true;
+        AllFieldMapData[currentFloor][position.x+1, position.y+1].KnightIsLight = true;
+
     }
 
     // private List<FieldPiece> _backup;
@@ -188,6 +202,10 @@ public class MapManager : MonoBehaviour
         }
         return false;
     }
+    public void ChangeFloor(){
+        currentFloor = 1;
+        RefreshMap();
+    }
     void PlaceSelectCursor(Vector2 position, Vector2 offset){
         Vector2 grid = WorldPositionToGrid(position, offset);
         if(isInGrid(grid)){
@@ -197,22 +215,6 @@ public class MapManager : MonoBehaviour
             selectCusorObj.transform.position = new Vector2(100,100);
         }
     }
-
-    public Vector2 GridToWorldPosition(Vector2 gridPosition, Vector2 offset){
-        Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
-        return position * cellSize + new Vector2(cellSize / 2, cellSize / 2) + offset;
-    }
-    public Vector2 GridToWorldPosition(Vector2 gridPosition){
-        Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
-        return position * cellSize + new Vector2(cellSize / 2 + ObjectField.transform.position.x, cellSize / 2 + ObjectField.transform.position.y);
-    }
-
-    public Vector2Int WorldPositionToGrid(Vector2 worldPosition, Vector2 offset){
-        Vector2 tmp = worldPosition - offset;
-        return  new Vector2Int((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
-    }
-
-    
 
     public void BuildAllField(FieldType type){
         currentField = type;
@@ -245,14 +247,13 @@ public class MapManager : MonoBehaviour
     }
     
     public void ClearMapPiece(FieldPiece fieldPiece){
-        
         fieldPiece.SetMapType(MapType.Empty);
         RefreshMap();
     }
 
     public void RefreshMap(){
+        generatorManager.ClearAllMaps();
         BuildAllField(currentField);
-
     }
 
     public void UpdateMapType(FieldPiece fieldPiece, MapType type){
@@ -272,6 +273,27 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    // Utils
+    public Vector2 GridToWorldPosition(Vector2 gridPosition, Vector2 offset){
+        Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
+        return position * cellSize + new Vector2(cellSize / 2, cellSize / 2) + offset;
+    }
+    public Vector2 GridToWorldPosition(Vector2 gridPosition){
+        Vector2 position = new Vector2(gridPosition.x + 1, gridPosition.y + 1);
+        return position * cellSize + new Vector2(cellSize / 2 + ObjectField.transform.position.x, cellSize / 2 + ObjectField.transform.position.y);
+    }
+
+    public Vector2Int WorldPositionToGrid(Vector2 worldPosition, Vector2 offset){
+        Vector2 tmp = worldPosition - offset;
+        return  new Vector2Int((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
+    }
+    public FieldPiece[,] GetFloorField(int floor){
+        return AllFieldMapData[floor];
+    }
+    public FieldPiece[,] GetCurrentFloorField(){
+        return AllFieldMapData[currentFloor];
+    }
+
     void printMap(FieldPiece[,] pieces){
         string arrayStr = "";
             for (int j = 0; j < fieldSizeList[currentFloor].y; j++)
@@ -283,12 +305,6 @@ public class MapManager : MonoBehaviour
                 arrayStr += "\n";
             }
         Debug.Log(arrayStr);
-    }
-    public FieldPiece[,] GetFloorField(int floor){
-        return AllFieldMapData[floor];
-    }
-    public FieldPiece[,] GetCurrentFloorField(){
-        return AllFieldMapData[currentFloor];
     }
 }
 

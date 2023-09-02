@@ -66,8 +66,8 @@ public class GeneratorManager : MonoBehaviour
                 MapData = (bool[,])generator.MapData.Clone();
                 break;
         }
-        if (placeDecor) PlaceDecorations();
-        if (placeEnvironment) GenerateEnvironment();
+        // if (placeDecor) PlaceDecorations();
+        // if (placeEnvironment) GenerateEnvironment();
     }
 
     public void ClearAllMaps()
