@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class Status
 {
+    public int Level { get; set; } = 1;
+    
     private bool player;
     private int maxHp;
     private int currentHp;
     private int power;
     private int defense;
     private int dex;
-    private int exp;
+    private int exp = 1;
 
     private bool _buff;
 
@@ -100,6 +102,5 @@ public class Status
         MaxHp = maxHp;
         currentHp = maxHp;
         Power = power;
-
     }
 }

@@ -10,13 +10,15 @@ using Random = UnityEngine.Random;
 
 public class ResourceManager :  MonoBehaviour
 {
-    public List<Monster> Monsters { get; private set; }
     public List<FieldEventInfo> FieldEvents { get; private set; }
     
     public List<ItemInfo> Items { get; private set; }
 
     public Sprite healEventSprite;
 
+
+    public List<int> ExpNeedForLevelUp = new()
+        { 1, 7, 10, 13, 15, 18, 23, 28, 33 };
     
     public void Awake()
     {
@@ -60,13 +62,6 @@ public class ResourceManager :  MonoBehaviour
     public Monster Boss;
     void InitMonster()
     {
-        Monsters = new();
-        Monsters.Add(new("슬라임", new(5, 1), GetSrc("Monster","slime")));
-        Monsters.Add(new("고블린", new(5, 2), GetSrc("Monster", "goblin")));
-        Monsters.Add(new("오크", new(7, 2), GetSrc("Monster", "orc")));
-        Monsters.Add(new("드레이크", new(8, 1), GetSrc("Monster", "drake")));
-        Monsters.Add(new("스텀프", new(5, 1), GetSrc("Monster", "stump")));
-        
         Boss = new Monster("드래곤", new(15, 2), GetSrc("Monster", "dragon" ));
     }
 
@@ -83,8 +78,7 @@ public class ResourceManager :  MonoBehaviour
 
     public Monster GetRandomMonster()
     {
-        int index = Random.Range(0, Monsters.Count);
-
+        int index = Random.Range(0, 5);
 
         return index switch
         {

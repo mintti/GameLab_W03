@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class BattleEvent : MonoBehaviour
 {
+    private ResourceManager _resourceManager;
     private GameManager _gameManager;
     private UIManager _uiManager;
     private Player _knight;
@@ -30,6 +31,7 @@ public class BattleEvent : MonoBehaviour
     public void Init(Player knight, Monster monster)
     {
         _combatPanel ??= gameObject;
+        _resourceManager ??= GameObject.Find(nameof(ResourceManager)).GetComponent<ResourceManager>();
         _gameManager ??= GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
         _uiManager ??= GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         
@@ -75,7 +77,8 @@ public class BattleEvent : MonoBehaviour
                     _gameManager.Coin++;
                     CombatPlayerWinText(_monster.Name);
                     AppendBattleInfoText("\n1 코인을 얻었습니다.");
-                    ScrollCombatText();
+                    
+                    yield return PerformLevelUp();
                     
                     combatPanelExitButton.SetActive(true);
                     combatPanelExitButton.GetComponent<Button>().onClick.AddListener(End);
@@ -229,7 +232,24 @@ public class BattleEvent : MonoBehaviour
         combatText.text += text;
         ScrollCombatText();
     }
-    
 
+    IEnumerator PerformLevelUp()
+    {
+        _knight.Status.Exp += _monster.Status.Exp;
+        int expNeed = _resourceManager.ExpNeedForLevelUp[_knight.Status.Level -1];
+
+        yield return new WaitForSeconds(0.5f);
+
+        AppendBattleInfoText($"\n경험치를 {_monster.Status.Exp} 휙득했습니다.");
+
+        if (_knight.Status.Exp >= expNeed)
+        {
+            _knight.Status.Level++;
+            _knight.Status.Exp -= expNeed;
+            
+            yield return new WaitForSeconds(0.5f);
+            AppendBattleInfoText($"\n용사의 레벨이 {_knight.Status.Level}로 올랐다!");
+        }
+    }
     #endregion
 }
