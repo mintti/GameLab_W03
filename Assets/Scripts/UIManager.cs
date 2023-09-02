@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     private GameManager _gameManager;
+    private Player _player1;
+    private Player _player2;
 
     [Header("게임 정보")]
     public TextMeshProUGUI turnText;
@@ -43,7 +45,16 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI ShopProductInfoText;
     public TextMeshProUGUI CoinText;
 
-    
+    [Header("턴 종료 UI")]
+    public float blinkInterval = 0.5f;
+    private bool shouldBlink1 = false;
+    private bool shouldBlink2 = false;
+    public float nextBlinkTime1 = 0f;
+    public float nextBlinkTime2 = 0f;
+    public TextMeshProUGUI blinkText1;
+    public TextMeshProUGUI blinkText2;
+
+
     private Dictionary<int, string> _princessSkillInfoDict = new()
     {
         {0, "주변을 밝힙니다. (행동력 -1 소모)"},
@@ -67,12 +78,47 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
+        _player1 = GameObject.Find(nameof(Knight)).GetComponent<Player>();
+        _player2 = GameObject.Find(nameof(Princess)).GetComponent<Player>();
         infoText.text = string.Empty;
     }
 
     public void B_Map()
     {
         
+    }
+
+    private void Update()
+    {
+        Debug.Log(_player1.Cost);
+        if (Time.time > nextBlinkTime1 && _player1.Cost == 0)
+        {
+            nextBlinkTime1 = Time.time + blinkInterval;
+            shouldBlink1 = !shouldBlink1;
+            blinkText1.enabled = shouldBlink1;
+        }
+
+        if (Time.time > nextBlinkTime2 && _player2.Cost == 0)
+        {
+            nextBlinkTime2 = Time.time + blinkInterval;
+            shouldBlink2 = !shouldBlink2;
+            blinkText2.enabled = shouldBlink2;
+        }
+
+    }
+
+    public void BlinkText1Reset()
+    {
+        shouldBlink1 = false;
+        blinkText1.enabled = true;
+        nextBlinkTime1 = 0f;
+    }
+
+    public void BlinkText2Reset()
+    {
+        shouldBlink2 = false;
+        blinkText2.enabled = true;
+        nextBlinkTime2 = 0f;
     }
 
     public void OutputCombatText(string name1, string name2, int name1power, int name2currentHP)
