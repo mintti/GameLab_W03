@@ -144,17 +144,17 @@ public class MapManager : MonoBehaviour
                 }
                 
                 if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Monster){
-                    _UIManager.SetInfoUI(MapType.Monster, monsterInfo);
+                    _UIManager.TileInfUI(MapType.Monster, AllFieldMapData[currentFloor][grid.x, grid.y].monsterInfo);
                     Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].monsterInfo.Name);
                 }
                 else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Item){
-                    _UIManager.SetInfoUI(MapType.Item, null);
+                    //_UIManager.SetInfoUI(MapType.Item, null);
                     Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].itemInfo.Type);
                 }
                 else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Event){
-                    _UIManager.SetInfoUI(MapType.Event, null);
+                    //_UIManager.SetInfoUI(MapType.Event, null);
                     Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].fieldEventInfo.Type);
-                } 
+                }
             }
         }
     }
