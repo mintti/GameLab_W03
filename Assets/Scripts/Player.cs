@@ -62,6 +62,9 @@ public class Player : MonoBehaviour
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
 
         Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, true);
+
+        _uiManager.UpdateKnightStatusInfo(Status);
+
     }
 
     public void StartTurn()

@@ -69,7 +69,11 @@ public class Status
     public int Defense
     {
         get { return defense; }
-        set { defense = Mathf.Max(value, 0); }
+        set 
+        { 
+            defense = Mathf.Max(value, 0);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
+        }
     }
 
     public int Dex
@@ -78,6 +82,7 @@ public class Status
         set
         {
             dex = Mathf.Max(value, 0);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
         }
     }
 

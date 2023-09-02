@@ -21,6 +21,9 @@ public class UIManager : MonoBehaviour
     [Header("플레이어 정보")] 
     public TextMeshProUGUI hpText;
     public TextMeshProUGUI powerText;
+    public TextMeshProUGUI defenseText;
+    public TextMeshProUGUI dexText;
+
 
     public TextMeshProUGUI skillInfoText;
 
@@ -167,6 +170,9 @@ public class UIManager : MonoBehaviour
     {
         hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
         powerText.text = $"<color=#FFD400>파워</color>  {status.Power}{(status.Buff ? $"(버프)" : "")}";
+        defenseText.text = $"<color=#0000FF>방어</color>  {status.Defense}";
+        dexText.text = $"<color=#80FF00>민첩</color>  {status.Dex}";
+
     }
 
     public void ActiveEndingScene()
