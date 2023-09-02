@@ -375,7 +375,7 @@ public class GameManager : MonoBehaviour
                 case 2:
                     changePiece.Add(princess.CurrentFieldPiece);
                     break;
-                    return;
+                    // return;
             }
         }
         else

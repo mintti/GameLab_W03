@@ -42,10 +42,6 @@ public class MapManager : MonoBehaviour
     public TileBase EmptyTile;
     public TileBase DragonTile;
 
-    bool isPrincessMapSelect = true;
-    bool isKnightMapSelect = true;
-
-    // public FieldPiece[,] AllFieldMapData[currentFloor];
     public Dictionary<int, FieldPiece[,]> AllFieldMapData = new Dictionary<int, FieldPiece[,]>();
     int floorCount = 0;
     int currentFloor = 0;
