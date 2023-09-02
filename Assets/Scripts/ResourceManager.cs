@@ -62,13 +62,6 @@ public class ResourceManager : MonoBehaviour
     public Monster Boss;
     void InitMonster()
     {
-        Monsters = new();
-        //Monsters.Add(new("슬라임", new(5, 1), GetSrc("Monster","slime")));
-        //Monsters.Add(new("고블린", new(5, 2), GetSrc("Monster", "goblin")));
-        //Monsters.Add(new("오크", new(7, 2), GetSrc("Monster", "orc")));
-        //Monsters.Add(new("드레이크", new(8, 1), GetSrc("Monster", "drake")));
-        //Monsters.Add(new("스텀프", new(5, 1), GetSrc("Monster", "stump")));
-
         Boss = new Monster("드래곤", new(15, 2, 1, 1), GetSrc("Monster", "dragon"));
     }
 
