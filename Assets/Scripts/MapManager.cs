@@ -47,6 +47,7 @@ public class MapManager : MonoBehaviour
     public Dictionary<int, FieldPiece[,]> AllFieldMapData = new Dictionary<int, FieldPiece[,]>();
     int floorCount = 0;
     int currentFloor = 0;
+    Vector2Int currentHoverGrid;
 
 
 
@@ -138,23 +139,30 @@ public class MapManager : MonoBehaviour
             Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
             Vector2Int grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
             if(isInGrid(grid)){
-                PlaceSelectCursor(mousePosition, ObjectField.transform.position);
                 if(Input.GetMouseButtonDown(0)){
                     gameManager.ClickMap(AllFieldMapData[currentFloor][(int)grid.x, (int)grid.y]);
                 }
-                
-                if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Monster){
-                    _UIManager.TileInfUI(MapType.Monster, AllFieldMapData[currentFloor][grid.x, grid.y].monsterInfo);
-                    Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].monsterInfo.Name);
+                if(!grid.Equals(currentHoverGrid)){
+                    PlaceSelectCursor(mousePosition, ObjectField.transform.position);
+                    FieldPiece fieldPiece = AllFieldMapData[currentFloor][grid.x, grid.y];
+                    if((currentField == FieldType.Princess && fieldPiece.PrincessIsLight) || (currentField == FieldType.Knight && fieldPiece.KnightIsLight))
+                    if(fieldPiece.MapType == MapType.Monster){
+                        _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
+                        // Debug.Log(fieldPiece.monsterInfo.Name);
+                    }
+                    else if(fieldPiece.MapType == MapType.Item){
+                        //_UIManager.SetInfoUI(MapType.Item, null);
+                        // Debug.Log(fieldPiece.itemInfo.Type);
+                    }
+                    else if(fieldPiece.MapType == MapType.Event){
+                        //_UIManager.SetInfoUI(MapType.Event, null);
+                        // Debug.Log(fieldPiece.fieldEventInfo.Type);
+                    }
+                    currentHoverGrid = grid;
                 }
-                else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Item){
-                    //_UIManager.SetInfoUI(MapType.Item, null);
-                    Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].itemInfo.Type);
-                }
-                else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Event){
-                    //_UIManager.SetInfoUI(MapType.Event, null);
-                    Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].fieldEventInfo.Type);
-                }
+            }
+            else{
+                currentHoverGrid = new Vector2Int(-100, -100);
             }
         }
     }
@@ -165,6 +173,18 @@ public class MapManager : MonoBehaviour
         else if(type == FieldType.Knight){
             AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
         }
+    }
+    public void LightFieldKnightMove(Vector2Int position){
+            // AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
+            // if(position.y != 0)
+            //     AllFieldMapData[currentFloor][position.x, position.y-1].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x, position.y+1].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x-1, position.y].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x-1, position.y].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x-1, position.y-1].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x+1, position.y-1].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x+1, position.y+1].KnightIsLight = true;
+            // AllFieldMapData[currentFloor][position.x+1, position.y+1].KnightIsLight = true;
     }
 
     // private List<FieldPiece> _backup;

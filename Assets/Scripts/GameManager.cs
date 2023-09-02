@@ -96,8 +96,10 @@ public class GameManager : MonoBehaviour
 
         Turn = 1;
         Coin = 0;
-        // StartCoroutine(nameof(PlayGame));
-        MapManager.BuildAllField(FieldType.Field);
+        StartCoroutine(nameof(PlayGame));
+
+        // Map Test 위에줄 주석치고 밑에거 주석풀기
+        // MapManager.BuildAllField(FieldType.Field);
     }
 
 
@@ -267,6 +269,7 @@ public class GameManager : MonoBehaviour
         }
 
         // 맵을 밝힘
+        MapManager.LightFieldKnightMove(field.gridPosition);
         TurnOnMapPiece(field, true, false);
 
         
