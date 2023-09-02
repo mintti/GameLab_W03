@@ -284,9 +284,16 @@ public class UIManager : MonoBehaviour
     public GameObject infoTextObj;
     public TextMeshProUGUI infoText;
     private float timer;
+    private Coroutine currentMessageCoroutine;
+
     public void OutputInfo(string text)
     {
-        StartCoroutine(Message(text));
+        if (currentMessageCoroutine != null)
+        {
+            StopCoroutine(currentMessageCoroutine); // Stop the previous coroutine
+        }
+
+        currentMessageCoroutine = StartCoroutine(Message(text));
     }
 
     IEnumerator Message(string text)
