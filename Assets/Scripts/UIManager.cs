@@ -55,6 +55,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI blinkText2;
 
 
+
     private Dictionary<int, string> _princessSkillInfoDict = new()
     {
         {0, "주변을 밝힙니다. (행동력 -1 소모)"},
@@ -320,5 +321,37 @@ public class UIManager : MonoBehaviour
     public void UpdateMiniShopInfoText(string text)
     {
         ShopProductInfoText.text = text;
+    }
+
+
+    [Header("타일 패널 UI")]
+    public GameObject tileInfPanel;
+    public TextMeshProUGUI tileName;
+    public GameObject monInf;
+    public Image MonImg;
+    public TextMeshProUGUI monHP;
+    public TextMeshProUGUI monPow;
+    public TextMeshProUGUI monName;
+
+
+    public void TileInfUI(MapType mapType, object obj = null)
+    {
+        if(mapType == MapType.Monster)
+        {
+            tileInfPanel.SetActive(true);
+            monInf.SetActive(true);
+
+            Monster monster = obj as Monster;
+            MonImg.sprite = monster.Sprite;
+            tileName.text = "몬스터";
+            monHP.text = "HP : " + monster.Status.MaxHp;
+            monPow.text = "POW : " + monster.Status.Power;
+            monName.text = monster.Name;
+        }
+        else
+        {
+            tileInfPanel.SetActive(false);
+        }
+
     }
 }
