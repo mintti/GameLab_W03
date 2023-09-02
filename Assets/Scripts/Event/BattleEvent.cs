@@ -77,17 +77,18 @@ public class BattleEvent : MonoBehaviour
             monsterTurn = true;
         }
 
-        int playerDam = Mathf.Max(_knight.Status.Power - _monster.Status.Defense, 0);
-        int monsterDam = Mathf.Max(_monster.Status.Defense - _knight.Status.Power, 0);
+        int playerDam = Mathf.Max(_knight.Status.Power - _monster.Status.Defense, 1);
+        int monsterDam = Mathf.Max(_monster.Status.Defense - _knight.Status.Power, 1);
+
+        //if ((playerDam == monsterDam) && playerDam == 0)
+        //{
+        //    playerDam = monsterDam = 1;
+        //}
 
         while (true)
         {
             if (knightTurn)
             {
-                if ((playerDam == monsterDam) && playerDam == 0)
-                {
-                    playerDam = monsterDam = 1;
-                }
                 
                 if (Dodges(_monster.Status.Dex))
                 {
