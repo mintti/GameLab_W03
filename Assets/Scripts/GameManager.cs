@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public ResourceManager _resourceManager;
+    private DataManager _dataManager;
     private UIManager _uiManager;
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
@@ -79,6 +80,7 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         _resourceManager = GetComponentInChildren<ResourceManager>();
+        _dataManager = GetComponentInChildren<DataManager>();
         MapManager = GetComponentInChildren<MapManager>();
         CameraManager = Camera.main.GetComponent<CameraManager>();
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
@@ -159,10 +161,6 @@ public class GameManager : MonoBehaviour
         } while (!player.IsTurnEnd);
     }
 
-
-    public int[] princessSkillCost;
-    public int[] knightSkillCost;
-
     /// <summary>
     /// true가 반환 된 경우, 스킬 사용이 유효한 상태로 코스트 차감
     /// false가 반환된 경우, 스킬 사용이 실패한 경우로 코스트를 차감하지 않음
@@ -175,47 +173,25 @@ public class GameManager : MonoBehaviour
         // if (field._canSelect) // 필드에서 판단
         if (MapManager.canSelectList.Contains(field)) // 필드에서 판단
         {
-            if(whoseTurn.Equals(nameof(princess))) // 공주의 턴
+            if (whoseTurn.Equals(nameof(princess))) // 공주의 턴
             {
-                if (princess.Cost >= princessSkillCost[princess.SelectedIdx])
+                complete = princess.SelectedIdx switch
                 {
-                    complete = princess.SelectedIdx switch
-                    {
-                        0 => TurnOnMapPiece(field, false),
-                        1 => MakeHealZone(field),
-                        2 => BuffKnight(),
-                        _ => false,
-                    };
-                    
-                    if (complete) princess.Cost -= princessSkillCost[princess.SelectedIdx];
-                }
-                else
-                {
-                    Log("코스트가 부족하여 실행 할 수 없습니다.");
-                    complete = false;
-                }
+                    0 => TurnOnMapPiece(field, false),
+                    1 => BuffKnight(),
+                    _ => false,
+                };
             }
             else // 용사의 턴
             {
-                if (knight.Cost >= knightSkillCost[knight.SelectedIdx])
+                complete = knight.SelectedIdx switch
                 {
-                    complete = knight.SelectedIdx switch
-                    {
-                        
-                        1 => TurnOnMapPiece(field, true),
-                        0 or 2 => MoveKnight(field),
-                        _ => false,
-                    };
-
-                    if (complete) knight.Cost -= knightSkillCost[knight.SelectedIdx];
-                }
-                else
-                {
-                    Log("코스트가 부족하여 실행 할 수 없습니다.");
-                    complete = false;
-                }
+                    0 => MoveKnight(field),
+                    1 => TurnOnMapPiece(field, true),
+                    _ => false,
+                };
             }
-            
+
             if (!complete)
             {
                 //Log($"스킬이 실행되지 않음.");
@@ -234,73 +210,108 @@ public class GameManager : MonoBehaviour
     #region Player Skill
     private bool MoveKnight(FieldPiece field)
     {
-        if ((field.gridPosition.x == 19 && field.gridPosition.y == 19) ||
-            (field.gridPosition.x == 19 && field.gridPosition.y == 18))
-        {
-            battleEvent.Init(knight, _resourceManager.Boss);
-            battleEvent.Execute(true);
-            return true;
-        }
-
         bool result = true;
-
-        if (field.MapType == MapType.Block)
+        int cost = field.PrincessIsLight ? 0 : _dataManager.knightSkillCost[princess.SelectedIdx]; 
+      
+        if (cost <= knight.Cost)
         {
-            Log("이동할 수 없는 지형입니다.");
+            knight.Cost -= cost;
+            
+            // [TODO] Door 접촉 로직 하단에 작성 후 제거
+            // if ((field.gridPosition.x == 19 && field.gridPosition.y == 19) ||
+            //     (field.gridPosition.x == 19 && field.gridPosition.y == 18))
+            // {
+            //     battleEvent.Init(knight, _resourceManager.Boss);
+            //     battleEvent.Execute(true);
+            //     return true;
+            // }
+
+            if (field.MapType == MapType.Block)
+            {
+                Log("이동할 수 없는 지형입니다.");
+            }
+            else
+            {   
+                switch (field.MapType)
+                {
+                    case MapType.Empty : break; // 이벤트가 없으면 종료
+                    default : 
+                        ExecuteMapEvent(field);
+                    
+                        // field.UpdateMapType(MapType.Empty);
+                        MapManager.UpdateMapType(field, MapType.Empty);
+                        break;
+                }
+            
+                // 이동
+                Debug.Log("move" +field.gridPosition );
+                // knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
+                knight.transform.position = MapManager.GridToWorldPosition(new Vector2(field.gridPosition.x,field.gridPosition.y));
+                knight.CurrentFieldPiece = field;
+            }
+
+            // 맵을 밝힘
+            MapManager.LightFieldKnightMove(field.gridPosition);
+            TurnOnMapPiece(field, true, false);
+
+            // 이동 가능 영역 업데이트
+            if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
+            else ChangeBehavior(knight.SelectedIdx);
         }
         else
-        {   
-            switch (field.MapType)
-            {
-                case MapType.Empty : break; // 이벤트가 없으면 종료
-                default : 
-                    ExecuteMapEvent(field);
-                    
-                    // field.UpdateMapType(MapType.Empty);
-                    MapManager.UpdateMapType(field, MapType.Empty);
-                    break;
-            }
-            
-            // 이동'
-            Debug.Log("move" +field.gridPosition );
-            // knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
-            knight.transform.position = MapManager.GridToWorldPosition(new Vector2(field.gridPosition.x,field.gridPosition.y));
-            knight.CurrentFieldPiece = field;
+        {
+            Log("코스트가 부족하여 실행 할 수 없습니다.");
+            result = false;
         }
-
-        // 맵을 밝힘
-        MapManager.LightFieldKnightMove(field.gridPosition);
-        TurnOnMapPiece(field, true, false);
-
         
-        // 이동 가능 영역 업데이트
-        if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
-        else ChangeBehavior(knight.SelectedIdx);
-
         return result;
     }
 
     private bool TurnOnMapPiece(FieldPiece field, bool isKnight = false, bool outputLog = true)
     {
         bool result = true;
-
-        if(isKnight && !field.KnightIsLight) {
-            field.KnightIsLight = true;
-            MapManager.LightField(FieldType.Knight, field.gridPosition);
+        int cost;
+        if(isKnight && !field.KnightIsLight)
+        {
+            // cost = _dataManager.knightSkillCost[1];
+            //
+            // if (knight.Cost >= cost)
+            // {
+            //     field.KnightIsLight = true;
+            //     MapManager.LightField(FieldType.Knight, field.gridPosition);
+            // }
         }
         else if(!isKnight && !field.PrincessIsLight)
         {
-            field.PrincessIsLight = true;
-            MapManager.LightField(FieldType.Princess, field.gridPosition);
-            ChangeBehavior(princess.SelectedIdx);
+            cost = _dataManager.princessSkillCost[0];
+            
+            if (princess.Cost >= cost)
+            {
+                field.PrincessIsLight = true;
+                MapManager.LightField(FieldType.Princess, field.gridPosition);
+                ChangeBehavior(princess.SelectedIdx);
+                princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
+            }
+            else
+            {
+                Log("코스트가 부족하여 실행 할 수 없습니다.");
+                result = false;
+            }
+
         }
         else
         {
             if(outputLog) Log("이미 밝혀져 있는 맵은 밝힐 수 없습니다.");
             result = false;
         }
+        
         MapManager.RefreshMap();
         return result;
+    }
+
+    private bool Rest()
+    {
+        return true;
     }
 
     private bool MakeHealZone(FieldPiece field)
@@ -329,7 +340,18 @@ public class GameManager : MonoBehaviour
 
         if (!knight_.Status.Buff)
         {
-            knight_.Status.Buff = true;
+            int  cost = _dataManager.princessSkillCost[0];
+
+            if (princess.Cost >= cost)
+            {
+                knight_.Status.Buff = true;
+                princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
+            }
+            else
+            {
+                Log("코스트가 부족하여 실행 할 수 없습니다.");
+                result = false;
+            }
         }
         else
         {
@@ -477,6 +499,7 @@ public class GameManager : MonoBehaviour
                 healEvent.Execute(
                     knight, _resourceManager.healEventSprite);
                 break;
+            
         }
 
         MapManager.UpdateMapType(field, MapType.Empty);
