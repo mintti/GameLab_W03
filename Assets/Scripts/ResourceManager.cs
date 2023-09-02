@@ -8,10 +8,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class ResourceManager :  MonoBehaviour
+public class ResourceManager : MonoBehaviour
 {
     public List<FieldEventInfo> FieldEvents { get; private set; }
-    
+
     public List<ItemInfo> Items { get; private set; }
 
     public Sprite healEventSprite;
@@ -25,7 +25,7 @@ public class ResourceManager :  MonoBehaviour
         InitFieldEvent();
         InitMonster();
         InitItemEvent();
-        
+
         // LoadData();
     }
 
@@ -51,10 +51,10 @@ public class ResourceManager :  MonoBehaviour
     void InitFieldEvent()
     {
         FieldEvents = new();
-        FieldEvents.Add(new(EventType.HP, 2, GetSrc("FieldEvent","blessinglake"),"축복의 샘입니다.\n\n체력이 2 회복됩니다."));
-        FieldEvents.Add( new(EventType.HP, -2,GetSrc("FieldEvent", "goblinevent"), "수풀을 헤치며 지나가고 있었습니다. 갑자기 주위에서 고블린 덮칩니다./힘겹게 급습을 막아냈으나, 너무나 지칩니다.\n\n체력이 -2 줄어듭니다."));
-        FieldEvents.Add( new(EventType.HP, 3,GetSrc("FieldEvent", "fruitevent"), "수풀을 헤치며 지나가고 있었습니다. 기다렸다는 듯, 탐스러워 보이는 열매를 찾았습니다./아직 신은 나를 버리지 않았나 봅니다. \n\n체력이 3 회복됩니다."));
-        FieldEvents.Add( new(EventType.Power, 1,GetSrc("FieldEvent", "boyevent"), "늑대들에게 둘러싸여 있는 한 소년을 발견하고, 검을 뽑고 달려가 늑대들을 물리쳤습니다./소년은 감사하다는 인사를 하며, 자기도 꼭 커서 용사가 될 것이라 다짐합니다. 흐뭇한 표정을 지으며 갈 길을 이어서 갑니다. \n\n파워가 1 올라갑니다."));
+        FieldEvents.Add(new(EventType.HP, 2, GetSrc("FieldEvent", "blessinglake"), "축복의 샘입니다.\n\n체력이 2 회복됩니다."));
+        FieldEvents.Add(new(EventType.HP, -2, GetSrc("FieldEvent", "goblinevent"), "수풀을 헤치며 지나가고 있었습니다. 갑자기 주위에서 고블린 덮칩니다./힘겹게 급습을 막아냈으나, 너무나 지칩니다.\n\n체력이 -2 줄어듭니다."));
+        FieldEvents.Add(new(EventType.HP, 3, GetSrc("FieldEvent", "fruitevent"), "수풀을 헤치며 지나가고 있었습니다. 기다렸다는 듯, 탐스러워 보이는 열매를 찾았습니다./아직 신은 나를 버리지 않았나 봅니다. \n\n체력이 3 회복됩니다."));
+        FieldEvents.Add(new(EventType.Power, 1, GetSrc("FieldEvent", "boyevent"), "늑대들에게 둘러싸여 있는 한 소년을 발견하고, 검을 뽑고 달려가 늑대들을 물리쳤습니다./소년은 감사하다는 인사를 하며, 자기도 꼭 커서 용사가 될 것이라 다짐합니다. 흐뭇한 표정을 지으며 갈 길을 이어서 갑니다. \n\n파워가 1 올라갑니다."));
 
     }
 
@@ -62,7 +62,14 @@ public class ResourceManager :  MonoBehaviour
     public Monster Boss;
     void InitMonster()
     {
-        Boss = new Monster("드래곤", new(15, 2), GetSrc("Monster", "dragon" ));
+        Monsters = new();
+        //Monsters.Add(new("슬라임", new(5, 1), GetSrc("Monster","slime")));
+        //Monsters.Add(new("고블린", new(5, 2), GetSrc("Monster", "goblin")));
+        //Monsters.Add(new("오크", new(7, 2), GetSrc("Monster", "orc")));
+        //Monsters.Add(new("드레이크", new(8, 1), GetSrc("Monster", "drake")));
+        //Monsters.Add(new("스텀프", new(5, 1), GetSrc("Monster", "stump")));
+
+        Boss = new Monster("드래곤", new(15, 2, 1, 1), GetSrc("Monster", "dragon"));
     }
 
     void InitItemEvent()
@@ -82,11 +89,11 @@ public class ResourceManager :  MonoBehaviour
 
         return index switch
         {
-            0 => new Monster("슬라임", new(3, 1), GetSrc("Monster","slime")),
-            1 => new Monster("고블린", new(3, 2), GetSrc("Monster", "goblin")),
-            2 => new Monster("오크", new(5, 2), GetSrc("Monster", "orc")),
-            3 => new Monster("드레이크", new(6, 1), GetSrc("Monster", "drake")),
-            4 => new Monster("스텀프", new(3, 1), GetSrc("Monster", "stump")),
+            0 => new Monster("슬라임", new(3, 1, 1, 1), GetSrc("Monster", "slime")),
+            1 => new Monster("고블린", new(3, 2, 1, 1), GetSrc("Monster", "goblin")),
+            2 => new Monster("오크", new(5, 2, 1, 1), GetSrc("Monster", "orc")),
+            3 => new Monster("드레이크", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
+            4 => new Monster("스텀프", new(3, 1, 1, 1), GetSrc("Monster", "stump")),
             _ => null,
         };
     }
@@ -105,8 +112,9 @@ public class ResourceManager :  MonoBehaviour
 }
 
 
-public enum EventType{
+public enum EventType
+{
     HP,
     Power,
-    
+
 }

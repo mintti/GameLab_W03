@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using System;
 
 public class BattleEvent : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class BattleEvent : MonoBehaviour
 
     public Image monsterImg;
     private bool _isLastBoss = false;
-    
+
     [Header("CombatPanelUI")]
     private GameObject _combatPanel;
     public TextMeshProUGUI combatText;
@@ -27,14 +28,15 @@ public class BattleEvent : MonoBehaviour
     public GameObject combatPanelExitButton;
     public GameObject gameOverButton;
 
-    
+
+
     public void Init(Player knight, Monster monster)
     {
         _combatPanel ??= gameObject;
         _resourceManager ??= GameObject.Find(nameof(ResourceManager)).GetComponent<ResourceManager>();
         _gameManager ??= GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
         _uiManager ??= GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
-        
+
         _knight = knight;
         _monster = monster;
         monsterImg.sprite = _monster.Sprite;
@@ -44,35 +46,74 @@ public class BattleEvent : MonoBehaviour
     public void Execute(bool isLastBoss = false)
     {
         _isLastBoss = isLastBoss;
-        
-        
+
+
         combatText.text = string.Empty;
         _combatPanel.SetActive(true);
         combatPanelExitButton.SetActive(false);
-        
+
         UpdateMonsterInfoText();
-        
+
         StartCoroutine(Battle());
     }
-    
+
+    bool Dodges(int unitDex)
+    {
+        System.Random random = new();
+
+        int randomNumber = random.Next(1, 101);
+
+        return randomNumber >= unitDex;
+    }
+
     IEnumerator Battle()
     {
         bool knightTurn = true;
         bool monsterTurn = false;
 
+        if (_knight.Status.Dex <= _monster.Status.Dex)
+        {
+            knightTurn = false;
+            monsterTurn = true;
+        }
+
+
+
         while (true)
         {
+
             if (knightTurn)
             {
-                _monster.Status.MaxHp -= _knight.Status.Power;
-                OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power,  _monster.Status.MaxHp);
-                
+                bool hit = Dodges(_monster.Status.Dex);
+
+                if (hit)
+                {
+                    if (_knight.Status.Power - _monster.Status.Defense > 0)
+                    {
+                        _monster.Status.MaxHp -= _knight.Status.Power - _monster.Status.Defense;
+                        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power - _monster.Status.Defense, _monster.Status.MaxHp);
+                    }
+
+                    if (_knight.Status.Power - _monster.Status.Defense <= 0)
+                    {
+                        _monster.Status.MaxHp -= 1;
+                        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, 1, _monster.Status.MaxHp);
+                    }
+
+                }
+
+                else
+                {
+                    OutputCombatMissText(_monster.Name, "<color=#33FF33>용사</color>");
+                }
+
+
                 knightTurn = false;
                 monsterTurn = true;
 
                 UpdateMonsterInfoText();
-                
-                if ( _monster.Status.MaxHp <= 0)
+
+                if (_monster.Status.MaxHp <= 0)
                 {
                     _gameManager.Coin++;
                     CombatPlayerWinText(_monster.Name);
@@ -88,12 +129,35 @@ public class BattleEvent : MonoBehaviour
             }
             else if (monsterTurn)
             {
-                _knight.Status.CurrentHp -= _monster.Status.Power;
-                OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", _monster.Status.Power, _knight.Status.CurrentHp);
-                
+                bool hit = Dodges(_knight.Status.Dex);
+
+                if (hit)
+                {
+                    if (_knight.Status.Power - _monster.Status.Defense > 0)
+                    {
+                        _knight.Status.CurrentHp -= _monster.Status.Power - _knight.Status.Defense;
+                        OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", _monster.Status.Defense - _knight.Status.Power, _knight.Status.CurrentHp);
+                    }
+
+                    if (_knight.Status.Power - _monster.Status.Defense <= 0)
+                    {
+                        _knight.Status.MaxHp -= 1;
+                        OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", 1, _knight.Status.MaxHp);
+                    }
+
+                }
+
+                else
+                {
+                    OutputCombatMissText("<color=#33FF33>용사</color>", _monster.Name);
+
+                }
+
+
+
                 monsterTurn = false;
                 knightTurn = true;
-                
+
                 if (_knight.Status.CurrentHp <= 0)
                 {
                     CombatMonsterWinText();
@@ -108,13 +172,13 @@ public class BattleEvent : MonoBehaviour
         }
     }
 
-    void Attack((string name, Status status) attacker, (string name, Status status) receiver )
+    void Attack((string name, Status status) attacker, (string name, Status status) receiver)
     {
         _monster.Status.MaxHp -= _knight.Status.Power;
-        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power,  _monster.Status.MaxHp);
+        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power, _monster.Status.MaxHp);
 
     }
-    
+
     private void End()
     {
         _combatPanel.SetActive(false);
@@ -133,8 +197,8 @@ public class BattleEvent : MonoBehaviour
             _gameManager.EventPrinting = false;
         }
     }
-    
-    
+
+
 
     #region Text Related
 
@@ -148,7 +212,7 @@ public class BattleEvent : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = name1 + "(이)가" + name1power + " 의 데미지를 입혔습니다. " + name2 + "의 남은 HP = " + name2currentHP;
+        string newCombatInfo = name1 + "(이)가 " + name1power + " 의 피해를 입혔습니다. " + name2 + "의 남은 HP = " + name2currentHP;
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
@@ -158,15 +222,33 @@ public class BattleEvent : MonoBehaviour
         {
             ScrollCombatText();
         }
-        
+
     }
 
-     void TestCombat()
+    void OutputCombatMissText(string name1, string name2)
+    {
+        lineCount++;
+
+        string currentText = combatText.text;
+        string newCombatInfo = name1 + "(이)가 " + name2 + " 공격을 회피했습니다.";
+        string updatedText = currentText + "\n" + newCombatInfo;
+
+        combatText.text = updatedText;
+
+
+        if (lineCount > maxLines)
+        {
+            ScrollCombatText();
+        }
+
+    }
+
+    void TestCombat()
     {
 
         OutputCombatText("player", "monster", 5, 5);
     }
-    
+
 
     void CombatPlayerWinText(string monsterName)
     {

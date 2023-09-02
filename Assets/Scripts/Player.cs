@@ -6,13 +6,13 @@ public class Player : MonoBehaviour
     private GameManager _gameManager;
     private MapManager _mapManager;
     private UIManager _uiManager;
-    
+
     [Header("오브젝트 및 스킬 정보")]
     public GameObject playerUI;
     private GameObject playerSkillUI;
     public FieldPiece CurrentFieldPiece { get; set; }
     public FieldType fieldType;
-    
+
     private int _selectedIdx;
     public int SelectedIdx
     {
@@ -23,17 +23,19 @@ public class Player : MonoBehaviour
             {
                 _selectedIdx = value;
                 _selectedIdx = Mathf.Min(_selectedIdx, 3);
-                _gameManager.ChangeBehavior(_selectedIdx); 
+                _gameManager.ChangeBehavior(_selectedIdx);
                 _uiManager.UpdateInfoText(_selectedIdx);
                 _uiManager.FocusSkill(playerSkillUI, _selectedIdx);
             }
         }
     }
-    
+
     [Header("스텟 및 코스트 정보")]
     public int defaultHp;
     public int defaultPower;
-    
+    public int defaultDefense;
+    public int defaultDex;
+
     private int _cost;
     public int Cost
     {
@@ -44,22 +46,22 @@ public class Player : MonoBehaviour
             _uiManager.UpdateCostText(_cost);
         }
     }
-    
+
     public bool IsTurnEnd;
-    
+
     public Status Status { get; set; }
 
-    
+
 
     public void Start()
     {
         SelectedIdx = 0;
-        _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
-        _mapManager = GameObject.Find(nameof(MapManager)).GetComponent<MapManager>(); 
+        _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
+        _mapManager = GameObject.Find(nameof(MapManager)).GetComponent<MapManager>();
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
-        
-        Status = new Status(defaultHp, defaultPower, true);
+
+        Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, true);
     }
 
     public void StartTurn()
@@ -74,7 +76,7 @@ public class Player : MonoBehaviour
     {
         IsTurnEnd = true;
         playerUI.SetActive(false);
-        if(fieldType == FieldType.Princess)
+        if (fieldType == FieldType.Princess)
             _mapManager.currentField = FieldType.Knight;
         else
             _mapManager.currentField = FieldType.Princess;
@@ -100,8 +102,8 @@ public class Player : MonoBehaviour
         else if (wheelInput2.y < 0) // 휠을 당겨 올렸을 때의 처리 ↓
         {
             if (SelectedIdx > 1) return; // 임시 스킬은 3개만 
-            SelectedIdx ++;
-        }  
+            SelectedIdx++;
+        }
     }
     #endregion
 }

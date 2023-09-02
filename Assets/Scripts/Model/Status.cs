@@ -20,7 +20,7 @@ public class Status
         set
         {
             _buff = value;
-            if(player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
         }
     }
     public int MaxHp
@@ -31,7 +31,7 @@ public class Status
             maxHp = Mathf.Max(value, 0);
             // Ensure CurrentHp doesn't exceed MaxHp
             currentHp = Mathf.Min(currentHp, maxHp);
-            if(player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
         }
     }
 
@@ -77,7 +77,7 @@ public class Status
         get => dex;
         set
         {
-            dex =  Mathf.Max(value, 0);
+            dex = Mathf.Max(value, 0);
         }
     }
 
@@ -92,15 +92,19 @@ public class Status
 
     public Status()
     {
-        
+
     }
-    
-    public Status(int maxHp, int power, bool isPlayer= false)
+
+    public Status(int maxHp, int power, int defnese, int dex, bool isPlayer = false)
     {
         player = isPlayer;
-        
+
         MaxHp = maxHp;
+
         currentHp = maxHp;
         Power = power;
+        Defense = defense;
+        Dex = dex;
+
     }
 }
