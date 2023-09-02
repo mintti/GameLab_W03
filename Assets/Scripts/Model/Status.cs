@@ -40,6 +40,10 @@ public class Status
         get { return currentHp; }
         set
         {
+            if (player && value < currentHp)
+            {
+                UIManager.Instance.BloodEffect();
+            }
             // Ensure CurrentHp is between 0 and MaxHp
             currentHp = Mathf.Clamp(value, 0, maxHp);
             if (player)

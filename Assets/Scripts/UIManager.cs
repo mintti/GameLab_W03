@@ -45,6 +45,22 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI blinkText1;
     public TextMeshProUGUI blinkText2;
 
+    [Header("BloodEffect")]
+    public Image bloodEffect;
+
+    [Header("타일 패널 UI")]
+    public GameObject tileInfPanel;
+    public TextMeshProUGUI tileName;
+    public GameObject monInf;
+    public GameObject eventInf;
+    public GameObject itemInf;
+    public Image MonImg;
+    public TextMeshProUGUI monHP;
+    public TextMeshProUGUI monPow;
+    public TextMeshProUGUI monName;
+    public TextMeshProUGUI eventText;
+    public TextMeshProUGUI itemText;
+
 
 
     private Dictionary<int, string> _princessSkillInfoDict = new()
@@ -241,20 +257,19 @@ public class UIManager : MonoBehaviour
     }
 
 
-    [Header("타일 패널 UI")]
-    public GameObject tileInfPanel;
-    public TextMeshProUGUI tileName;
-    public GameObject monInf;
-    public Image MonImg;
-    public TextMeshProUGUI monHP;
-    public TextMeshProUGUI monPow;
-    public TextMeshProUGUI monName;
-
 
     public void TileInfUI(MapType mapType, object obj = null)
     {
-        if(mapType == MapType.Monster)
+        tileInfPanel.SetActive(false);
+        tileName.enabled = false;
+        monInf.SetActive(false);
+        eventInf.SetActive(false);
+        itemInf.SetActive(false);
+
+        if (mapType == MapType.Monster)
         {
+            Debug.Log("들어옴");
+            tileName.enabled = true;
             tileInfPanel.SetActive(true);
             monInf.SetActive(true);
 
@@ -265,10 +280,42 @@ public class UIManager : MonoBehaviour
             monPow.text = "POW : " + monster.Status.Power;
             monName.text = monster.Name;
         }
-        else
+
+        else if (mapType == MapType.Item)
         {
-            tileInfPanel.SetActive(false);
+            tileName.enabled = true;
+            tileInfPanel.SetActive(true);
+            itemInf.SetActive(true);
+
+            tileName.text = "아이템";
+            itemText.text = "좋은일이 일어날 것 같은 아이템 입니다.";
         }
 
+        else if (mapType == MapType.Event)
+        {
+            tileName.enabled = true;
+            tileInfPanel.SetActive(true);
+            eventInf.SetActive(true);
+
+            tileName.text = "이벤트";
+            eventText.text = "무슨 일이 일어날 것 같습니다.";
+
+        }
+
+    }
+
+
+    public void BloodEffect()
+    {
+        StartCoroutine(ShowBloodScreen());
+    }
+
+    IEnumerator ShowBloodScreen()
+    {
+        bloodEffect.gameObject.SetActive(true);
+        bloodEffect.color = new Color(1, 0, 0, Random.Range(0.2f, 0.3f));
+        yield return new WaitForSeconds(0.2f);
+        bloodEffect.gameObject.SetActive(false);
+        bloodEffect.color = Color.clear;
     }
 }
