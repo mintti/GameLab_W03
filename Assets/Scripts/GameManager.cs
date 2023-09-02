@@ -107,10 +107,9 @@ public class GameManager : MonoBehaviour
         MapManager.LightField(FieldType.Knight,  knight.CurrentFieldPiece.gridPosition);
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
         princess.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(19,19));
+        // MapManager.LightField(FieldType.Princess, new Vector2Int(19,19));
 
         MapManager.RefreshMap();
-        // MapManager.LightField(FieldType.Princess, new Vector2(19,19));
-        // princess.CurrentFieldPiece = MapManager.princessFields[19,19];
     }
 
     IEnumerator PlayGame()
