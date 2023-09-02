@@ -38,10 +38,10 @@ public class FieldEvent : MonoBehaviour
 
         switch(info.Type){
             case EventType.HP:
-                _gameManager.knight.gameObject.GetComponent<Knight>().Status.CurrentHp += info.EffectAmount;
+                _gameManager.knight.Status.CurrentHp += info.EffectAmount;
             break;
             case EventType.Power:
-                _gameManager.knight.gameObject.GetComponent<Knight>().Status.Power += info.EffectAmount;
+                _gameManager.knight.Status.Power += info.EffectAmount;
 
             break;
 

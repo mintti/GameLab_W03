@@ -24,18 +24,6 @@ public class UIManager : MonoBehaviour
 
     public TextMeshProUGUI skillInfoText;
 
-    [Header("CombatPanelUI")]
-    public GameObject combatPanel;
-    public TextMeshProUGUI combatText;
-    public TextMeshProUGUI monsterInf;
-
-    private int maxLines = 5;
-    private int lineCount = 0;
-    public GameObject scrollbarVertical;
-
-    public GameObject combatPanelExitButton;
-    public GameObject gameOverButton;
-
     [Header("화면 제어")]
     public GameObject gameOverObj;
     public GameObject gameClearObj;
@@ -79,7 +67,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
-        _player1 = GameObject.Find(nameof(Knight)).GetComponent<Player>();
+        _player1 = GameObject.Find("Knight").GetComponent<Player>();
         _player2 = GameObject.Find(nameof(Princess)).GetComponent<Player>();
         infoText.text = string.Empty;
     }
@@ -121,83 +109,6 @@ public class UIManager : MonoBehaviour
         blinkText2.enabled = true;
         nextBlinkTime2 = 0f;
     }
-
-    public void OutputCombatText(string name1, string name2, int name1power, int name2currentHP)
-    {
-        if (name2currentHP < 0)
-        {
-            name2currentHP = 0;
-        }
-
-        lineCount++;
-
-        string currentText = combatText.text;
-        string newCombatInfo = name1 + "(이)가" + name1power + " 의 데미지를 입혔습니다. " + name2 + "의 남은 HP = " + name2currentHP;
-        string updatedText = currentText + "\n" + newCombatInfo;
-
-        combatText.text = updatedText;
-
-
-        if (lineCount > maxLines)
-        {
-            ScrollCombatText();
-        }
-
-    }
-
-    public void TestCombat()
-    {
-
-        OutputCombatText("player", "monster", 5, 5);
-    }
-
-    public void CombatPlayerWinText(string monsterName)
-    {
-        lineCount++;
-
-        string currentText = combatText.text;
-        string newCombatInfo = "용사가 " + monsterName + "(을)를 무찔렀습니다!";
-        string updatedText = currentText + "\n" + newCombatInfo;
-
-        combatText.text = updatedText;
-
-        if (lineCount > maxLines)
-        {
-            ScrollCombatText();
-        }
-
-    }
-
-    public void CombatMonsterWinText()
-    {
-        lineCount++;
-
-        string currentText = combatText.text;
-        string newCombatInfo = "용사의 눈앞이 깜깜해집니다..";
-        string updatedText = currentText + "\n" + newCombatInfo;
-
-        combatText.text = updatedText;
-
-        if (lineCount > maxLines)
-        {
-            ScrollCombatText();
-        }
-    }
-
-    private void ScrollCombatText()
-    {
-        RectTransform contentRectTransform = combatText.transform.parent.GetComponent<RectTransform>();
-        contentRectTransform.sizeDelta = new Vector2(contentRectTransform.sizeDelta.x, contentRectTransform.sizeDelta.y + 50f);
-
-        scrollbarVertical.GetComponent<Scrollbar>().value = 0f;
-    }
-
-    public void ClearCombatText()
-    {
-        combatText.text = "";
-        lineCount = 0;
-    }
-
     public void FocusSkill(GameObject skillui, int index)
     {
 
@@ -255,7 +166,7 @@ public class UIManager : MonoBehaviour
     public void UpdateKnightStatusInfo(Status status)
     {
         hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
-        powerText.text = $"<color=#FFD400>파워</color>  {(status.Buff ? $"{status.Power +2}(버프)" : status.Power)}";
+        powerText.text = $"<color=#FFD400>파워</color>  {status.Power}{(status.Buff ? $"(버프)" : "")}";
     }
 
     public void ActiveEndingScene()

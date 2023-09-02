@@ -11,7 +11,7 @@ public class HealEvent : MonoBehaviour
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
     }
 
-    public void Execute(Knight knight, Sprite sprite)
+    public void Execute(Player knight, Sprite sprite)
     {
         gameObject.SetActive(true);
         knight.Status.CurrentHp += healPoint;

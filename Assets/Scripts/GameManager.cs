@@ -237,7 +237,7 @@ public class GameManager : MonoBehaviour
         if ((field.gridPosition.x == 19 && field.gridPosition.y == 19) ||
             (field.gridPosition.x == 19 && field.gridPosition.y == 18))
         {
-            battleEvent.Init(knight.gameObject.GetComponent<Knight>(), _resourceManager.Boss);
+            battleEvent.Init(knight, _resourceManager.Boss);
             battleEvent.Execute(true);
             return true;
         }
@@ -325,7 +325,7 @@ public class GameManager : MonoBehaviour
     private  bool BuffKnight()
     {
         bool result = true;
-        var knight_ = knight.gameObject.GetComponent<Knight>();
+        var knight_ = knight;
 
         if (!knight_.Status.Buff)
         {
@@ -460,8 +460,7 @@ public class GameManager : MonoBehaviour
         switch (field.MapType)
         {
             case MapType.Monster : 
-                // battleEvent.Init(knight.gameObject.GetComponent<Knight>(), _resourceManager.GetRandomMonster());
-                battleEvent.Init(knight.gameObject.GetComponent<Knight>(), field.monsterInfo);
+                battleEvent.Init(knight, _resourceManager.GetRandomMonster());
                 battleEvent.Execute();
                 break;
             case MapType.Event :
@@ -476,7 +475,7 @@ public class GameManager : MonoBehaviour
                 break;
             case MapType.Heal :
                 healEvent.Execute(
-                    knight.GetComponent<Knight>(), _resourceManager.healEventSprite);
+                    knight, _resourceManager.healEventSprite);
                 break;
         }
 
@@ -512,7 +511,7 @@ public class GameManager : MonoBehaviour
     {
         if (Coin >= 2)
         {
-            var status = knight.gameObject.GetComponent<Knight>().Status;
+            var status = knight.Status;
             status.MaxHp += 1;   
             status.CurrentHp += 1;   
             Log("최대 체력이 증가했습니다.");
@@ -529,7 +528,7 @@ public class GameManager : MonoBehaviour
         
         if (Coin >= 2)
         {
-            knight.gameObject.GetComponent<Knight>().Status.Power += 1;   
+            knight.Status.Power += 1;   
             Log("파워가 증가했습니다.");
             Coin -= 2;
         }
