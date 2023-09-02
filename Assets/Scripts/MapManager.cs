@@ -16,6 +16,7 @@ public enum FieldType
 public class MapManager : MonoBehaviour
 {
     public GameManager gameManager;
+    public UIManager _UIManager;
     public Camera fieldCamera;
 
     [Header("Generator")]
@@ -40,6 +41,7 @@ public class MapManager : MonoBehaviour
     public TileBase CanSelectTile;
     public TileBase BlockTile;
     public TileBase EmptyTile;
+    public TileBase DoorTile;
     public TileBase DragonTile;
 
     public Dictionary<int, FieldPiece[,]> AllFieldMapData = new Dictionary<int, FieldPiece[,]>();
@@ -50,11 +52,10 @@ public class MapManager : MonoBehaviour
 
     GameObject selectCusorObj;
     public List<FieldPiece> canSelectList = new List<FieldPiece>();
-    Vector2 currentMouseGridPos;
     float cellSize = 1.28f;
 
 
-    FieldType currentField;
+    public FieldType currentField = FieldType.Field;
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
@@ -93,12 +94,22 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].Init(new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
             }
         }
+        MapData[0, 0].SetMapType(MapType.Player);
+        while(true){
+            int i = (int)(Random.value * fieldSizeList[currentFloor].x);
+            int j = (int)(Random.value * fieldSizeList[currentFloor].y);
+            if(MapData[i, j].MapType == MapType.Empty){
+                MapData[i, j].SetMapType(MapType.Door);
+                break;
+            }
+        }
         float remainRatio = 1-mapBlockRatio;
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
         remainRatio -= mapItemboxRatio;
         GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
         remainRatio -= mapEventRatio;
         GenerateFieldObjects(MapData, mapMonsterRatio/remainRatio, MapType.Monster);
+
         return MapData;
     }
     
@@ -125,11 +136,24 @@ public class MapManager : MonoBehaviour
         if (!gameManager.EventPrinting)
         {
             Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
-            PlaceSelectCursor(mousePosition, ObjectField.transform.position);
-            if(Input.GetMouseButtonDown(0)){
-                Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
-                if(isInGrid(grid)){
+            Vector2Int grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
+            if(isInGrid(grid)){
+                PlaceSelectCursor(mousePosition, ObjectField.transform.position);
+                if(Input.GetMouseButtonDown(0)){
                     gameManager.ClickMap(AllFieldMapData[currentFloor][(int)grid.x, (int)grid.y]);
+                }
+                
+                if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Monster){
+                    _UIManager.SetInfoUI(MapType.Monster, monsterInfo);
+                    Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].monsterInfo.Name);
+                }
+                else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Item){
+                    _UIManager.SetInfoUI(MapType.Item, null);
+                    Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].itemInfo.Type);
+                }
+                else if(AllFieldMapData[currentFloor][grid.x, grid.y].MapType == MapType.Event){
+                    _UIManager.SetInfoUI(MapType.Event, null);
+                    Debug.Log(AllFieldMapData[currentFloor][grid.x, grid.y].fieldEventInfo.Type);
                 } 
             }
         }
@@ -183,9 +207,9 @@ public class MapManager : MonoBehaviour
         return position * cellSize + new Vector2(cellSize / 2 + ObjectField.transform.position.x, cellSize / 2 + ObjectField.transform.position.y);
     }
 
-    public Vector2 WorldPositionToGrid(Vector2 worldPosition, Vector2 offset){
+    public Vector2Int WorldPositionToGrid(Vector2 worldPosition, Vector2 offset){
         Vector2 tmp = worldPosition - offset;
-        return  new Vector2((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
+        return  new Vector2Int((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
     }
 
     
@@ -199,6 +223,7 @@ public class MapManager : MonoBehaviour
         BuildMap(MapType.Monster, FieldTileMap, MonsterTile);
         BuildMap(MapType.Event, FieldTileMap, EventTile);
         BuildMap(MapType.Heal, FieldTileMap, HealTile);
+        BuildMap(MapType.Door, FieldTileMap, DoorTile);
         BuildMap(MapType.Dragon, FieldTileMap, DragonTile);
     }
     
@@ -230,19 +255,20 @@ public class MapManager : MonoBehaviour
 
     }
 
-    public void UpdateMapType(FieldPiece fieldPiece, MapType type, Monster moneter = null, FieldEventInfo eventInfo = null, ItemInfo itemInfo = null){
+    public void UpdateMapType(FieldPiece fieldPiece, MapType type){
         fieldPiece.SetMapType(type);
         
         if(type == MapType.Monster){
-            fieldPiece.monsterInfo = moneter;
+            // fieldPiece.monsterInfo = moneter;
+            fieldPiece.monsterInfo = gameManager._resourceManager.GetRandomMonster();
         }
         else if(type == MapType.Item){
-            fieldPiece.fieldEventInfo = eventInfo;
-
+            // fieldPiece.itemInfo = itemInfo;
+            fieldPiece.itemInfo = gameManager._resourceManager.GetRandomItemEvent();
         }
         else if(type == MapType.Event){
-            fieldPiece.itemInfo = itemInfo;
-
+            // fieldPiece.fieldEventInfo = eventInfo;
+            fieldPiece.fieldEventInfo = gameManager._resourceManager.GetRandomFieldEvent();
         }
     }
 

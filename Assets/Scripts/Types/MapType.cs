@@ -7,5 +7,7 @@ public enum MapType
     Heal,
     Item,
     Hide,
+    Door,
+    Player,
     Dragon
 }

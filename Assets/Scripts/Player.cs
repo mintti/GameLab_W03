@@ -4,11 +4,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private GameManager _gameManager;
+    private MapManager _mapManager;
     private UIManager _uiManager;
     public Vector3 CurrentPosition { get; set; }
     public GameObject playerUI;
     private GameObject playerSkillUI;
     public FieldPiece CurrentFieldPiece { get; set; }
+    public FieldType fieldType;
     
     private int _cost;
     public int Cost
@@ -46,6 +48,7 @@ public class Player : MonoBehaviour
     {
         SelectedIdx = 0;
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
+        _mapManager = GameObject.Find(nameof(MapManager)).GetComponent<MapManager>(); 
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
     }
@@ -62,6 +65,10 @@ public class Player : MonoBehaviour
     {
         IsTurnEnd = true;
         playerUI.SetActive(false);
+        if(fieldType == FieldType.Princess)
+            _mapManager.currentField = FieldType.Knight;
+        else
+            _mapManager.currentField = FieldType.Princess;
     }
 
     public void Update()

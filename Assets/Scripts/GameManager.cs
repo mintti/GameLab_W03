@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private ResourceManager _resourceManager;
+    public ResourceManager _resourceManager;
     private UIManager _uiManager;
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
@@ -96,15 +96,19 @@ public class GameManager : MonoBehaviour
 
         Turn = 1;
         Coin = 0;
-        StartCoroutine(nameof(PlayGame));
+        // StartCoroutine(nameof(PlayGame));
+        MapManager.BuildAllField(FieldType.Field);
     }
 
 
     void InitPlayerPosition()
     {
+        knight.fieldType = FieldType.Knight;
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
         knight.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(0,0));
         MapManager.LightField(FieldType.Knight,  knight.CurrentFieldPiece.gridPosition);
+
+        princess.fieldType = FieldType.Princess;
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
         princess.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(19,19));
         // MapManager.LightField(FieldType.Princess, new Vector2Int(19,19));
@@ -453,16 +457,19 @@ public class GameManager : MonoBehaviour
         switch (field.MapType)
         {
             case MapType.Monster : 
-                battleEvent.Init(knight.gameObject.GetComponent<Knight>(), _resourceManager.GetRandomMonster());
+                // battleEvent.Init(knight.gameObject.GetComponent<Knight>(), _resourceManager.GetRandomMonster());
+                battleEvent.Init(knight.gameObject.GetComponent<Knight>(), field.monsterInfo);
                 battleEvent.Execute();
                 break;
             case MapType.Event :
-                var fevt = _resourceManager.GetRandomFieldEvent();
-                fieldEvent.Execute(fevt);
+                // var fevt = _resourceManager.GetRandomFieldEvent();
+                // fieldEvent.Execute(fevt);
+                fieldEvent.Execute(field.fieldEventInfo);
                 break;
             case MapType.Item : 
-                var ievt = _resourceManager.GetRandomItemEvent();
-                itemEvent.Execute(ievt);
+                // var ievt = _resourceManager.GetRandomItemEvent();
+                // itemEvent.Execute(ievt);
+                itemEvent.Execute(field.itemInfo);
                 break;
             case MapType.Heal :
                 healEvent.Execute(

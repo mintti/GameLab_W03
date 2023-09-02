@@ -8,6 +8,6 @@ public class TitleScript : MonoBehaviour
     public string SceneName;
     public void B_GameStart()
     {
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene(SceneName);
     }
 }
