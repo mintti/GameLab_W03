@@ -460,7 +460,7 @@ public class GameManager : MonoBehaviour
         switch (field.MapType)
         {
             case MapType.Monster : 
-                battleEvent.Init(knight, _resourceManager.GetRandomMonster());
+                battleEvent.Init(knight, field.monsterInfo);
                 battleEvent.Execute();
                 break;
             case MapType.Event :
