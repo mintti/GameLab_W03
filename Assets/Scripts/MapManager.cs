@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.UIElements;
+using Mono.Cecil.Cil;
+using System.Reflection;
 
 public enum FieldType
 {
@@ -17,9 +20,7 @@ public class MapManager : MonoBehaviour
 
     [Header("Generator")]
     public GameObject generatorManagerObj;
-    public int fieldWidth = 20;
-    public int fieldHeight = 20;
-    public FieldPiece[,] FieldMapData;
+    public List<Vector2Int> fieldSizeList;
     public float mapEmptyRatio = 0.35f;
     public float mapMonsterRatio = 0.25f;
     public float mapEventRatio = 0.2f;
@@ -41,129 +42,128 @@ public class MapManager : MonoBehaviour
     public TileBase EmptyTile;
     public TileBase DragonTile;
 
-    bool isCanFieldSelect = true;
     bool isPrincessMapSelect = true;
     bool isKnightMapSelect = true;
 
+    // public FieldPiece[,] AllFieldMapData[currentFloor];
+    public Dictionary<int, FieldPiece[,]> AllFieldMapData = new Dictionary<int, FieldPiece[,]>();
+    int floorCount = 0;
+    int currentFloor = 0;
+
+
 
     GameObject selectCusorObj;
-    List<FieldPiece> canSelectList = new List<FieldPiece>();
+    public List<FieldPiece> canSelectList = new List<FieldPiece>();
     Vector2 currentMouseGridPos;
     float cellSize = 1.28f;
 
 
-    public FieldPiece[,] princessFields;
-    public FieldPiece[,] knightFields;
-
-
     FieldType currentField;
-    bool isMapOpen = false;
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
     }
-    public void CreateMap(FieldType type){
 
-        GenerateField();
-        princessFields = new FieldPiece[fieldHeight, fieldWidth];
-        knightFields = new FieldPiece[fieldHeight, fieldWidth];
+    public void InitMap(){
+        floorCount = fieldSizeList.Count;
+        currentFloor = 0;
+        for(int i = 0; i < floorCount; ++i){
+            if (!AllFieldMapData.ContainsKey(i))
+                AllFieldMapData.Add(i, CreateMap(fieldSizeList[i]));
+        }
 
-        
-        for (int i = 0; i < fieldWidth; i++)
+    }
+    public FieldPiece GetFieldPiece(int floor, Vector2Int position){
+            return AllFieldMapData[floor][position.x, position.y];
+    }
+    public FieldPiece GetFieldPiece(Vector2Int position){
+            return AllFieldMapData[currentFloor][position.x, position.y];
+    }
+    public FieldPiece[,] CreateMap(Vector2Int fieldSize){
+
+        GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
+        generatorManager.width = fieldSize.x + 2;
+        generatorManager.height = fieldSize.y + 2;
+        generatorManager.ClearAllMaps();
+        generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
+        generatorManager.GenerateNewMap("Maze"); 
+
+        FieldPiece[,] MapData = new FieldPiece[fieldSize.x,fieldSize.y];
+        for (int i = 0; i < fieldSize.x; i++)
         {
-            for (int j = 0; j < fieldHeight; j++)
+            for (int j = 0; j < fieldSize.y; j++)
             {
-                princessFields[j, i]= new FieldPiece
-                { 
-
-                    IsLight = false,
-                    MapType = MapType.Hide,
-                    gridPosition = new Vector2Int(i, j)
-                };
-                princessFields[j, i].Init(gameManager, this);
-                knightFields[j, i] = new FieldPiece
-                { 
-                    IsLight = false,
-                    MapType = MapType.Hide,
-                    gridPosition = new Vector2Int(i, j)
-                };
-                knightFields[j, i].Init(gameManager, this);
-    
+                MapData[i, j] = new FieldPiece();
+                MapData[i, j].Init(new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
             }
         }
-        
-        LightField(FieldType.Princess, new Vector2(fieldWidth-1,fieldHeight-1));
-        LightField(FieldType.Princess, new Vector2(fieldWidth-2,fieldHeight-1));
-        LightField(FieldType.Princess, new Vector2(fieldWidth-1,fieldHeight-2));
-        LightField(FieldType.Princess, new Vector2(fieldWidth-2,fieldHeight-2));
-        BuildAllField(type);
+        float remainRatio = 1-mapBlockRatio;
+        GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
+        remainRatio -= mapItemboxRatio;
+        GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
+        remainRatio -= mapEventRatio;
+        GenerateFieldObjects(MapData, mapMonsterRatio/remainRatio, MapType.Monster);
+        return MapData;
     }
     
+    void GenerateFieldObjects(FieldPiece[,] mapData, float generateRatio, MapType value)
+    {
+        for (int i = 0; i < fieldSizeList[currentFloor].x; i++)
+        {
+            for (int j = 0; j < fieldSizeList[currentFloor].y; j++)
+            {
+                if((i == 0 && j == 0) || (i == fieldSizeList[currentFloor].x -1 && j == fieldSizeList[currentFloor].y -1)){
+                    continue;
+                }
+                if(mapData[i, j].MapType == MapType.Empty){
+                    float val = Random.value;
+                    if(val < generateRatio){
+                        UpdateMapType(mapData[i, j], value);
+                    }
+                }
+            }
+        }
+    }
     private void Update()
     {
         if (!gameManager.EventPrinting)
         {
             Vector2 mousePosition = fieldCamera.ScreenToWorldPoint(Input.mousePosition);
-            if(isCanFieldSelect){
-                PlaceSelectCursor(mousePosition, ObjectField.transform.position);
-            }
+            PlaceSelectCursor(mousePosition, ObjectField.transform.position);
             if(Input.GetMouseButtonDown(0)){
                 Vector2 grid = WorldPositionToGrid(mousePosition, ObjectField.transform.position);
                 if(isInGrid(grid)){
-                    gameManager.ClickMap(FieldMapData[(int)grid.y, (int)grid.x]);
-                    // foreach(FieldPiece piece in canSelectList){
-                    //     if(piece._canSelect){ piece._canSelect = false; }
-                    // }
-                    canSelectList.Clear();
+                    gameManager.ClickMap(AllFieldMapData[currentFloor][(int)grid.x, (int)grid.y]);
                 } 
             }
         }
     }
-    public void LightField(FieldType type, Vector2 position){
+    public void LightField(FieldType type, Vector2Int position){
         if(type == FieldType.Princess){
-            princessFields[(int) position.y,(int) position.x].IsLight = true;
-            princessFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y,(int) position.x].MapType;
+            AllFieldMapData[currentFloor][position.x, position.y].PrincessIsLight = true;
         }
         else if(type == FieldType.Knight){
-            knightFields[(int) position.y,(int) position.x].IsLight = true;
-            knightFields[(int) position.y,(int) position.x].MapType = FieldMapData[(int) position.y ,(int) position.x].MapType;
+            AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
         }
-        BuildAllField(type);
-
     }
 
-    private List<FieldPiece> _backup;
-    public void showCanSelectField(List<FieldPiece> canSelectFields)
+    // private List<FieldPiece> _backup;
+    public void showCanSelectField(List<FieldPiece> _canSelectFields)
     {
-        if(_backup != null)
-        {
-            foreach (var piece in _backup)
-            {
-
-                FieldMapData[piece.gridPosition.y, piece.gridPosition.x]._canSelect = false;
-            }
-            _backup = null;
+        // canSelectList.Clear();
+        canSelectList = new List<FieldPiece>(_canSelectFields);
+        
+        UITileMap.ClearAllTiles();
+        foreach (FieldPiece piece in _canSelectFields)
+        {   
+            UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
+            
+            canSelectList.Add(AllFieldMapData[currentFloor][piece.gridPosition.x, piece.gridPosition.y]);
         }
         
-        _backup = canSelectFields;
-        UITileMap.ClearAllTiles();
-        foreach (FieldPiece piece in canSelectFields)
-        {   
-            Debug.Log(piece.gridPosition);
-            UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
-            isCanFieldSelect = true;
-            
-            piece._canSelect = true;
-            // princessFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
-            // canSelectList.Add(princessFields[piece.gridPosition.y, piece.gridPosition.x]);
-            // knightFields[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
-            // canSelectList.Add(knightFields[piece.gridPosition.y, piece.gridPosition.x]);
-            FieldMapData[piece.gridPosition.y, piece.gridPosition.x]._canSelect = true;
-            canSelectList.Add(FieldMapData[piece.gridPosition.y, piece.gridPosition.x]);
-        }
     }
     bool isInGrid(Vector2 gridPosition){
-        if(gridPosition.x >= 0 && gridPosition.x < fieldWidth && gridPosition.y >= 0 && gridPosition.y < fieldHeight){
+        if(gridPosition.x >= 0 && gridPosition.x < fieldSizeList[currentFloor].x && gridPosition.y >= 0 && gridPosition.y < fieldSizeList[currentFloor].y){
             return true;
         }
         return false;
@@ -192,115 +192,27 @@ public class MapManager : MonoBehaviour
         return  new Vector2((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
     }
 
-    void GenerateField(){
-        GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
-        generatorManager.width = fieldWidth + 2;
-        generatorManager.height = fieldHeight + 2;
-        generatorManager.ClearAllMaps();
-        generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
-        generatorManager.GenerateNewMap("Maze"); 
-
-        FieldMapData = new FieldPiece[fieldHeight,fieldWidth];
-        for (int i = 0; i < fieldWidth; i++)
-        {
-            for (int j = 0; j < fieldHeight; j++)
-            {
-                FieldMapData[j, i] = new FieldPiece
-                {
-                    MapType = generatorManager.MapData[j + 1, i + 1] ? MapType.Block : MapType.Empty,
-                    gridPosition = new Vector2Int(i, j)
-                };
-                
-                FieldMapData[j, i].Init(gameManager, this);
-            }
-        }
-        float remainRatio = 1-mapBlockRatio;
-        GenerateFieldObjects(mapItemboxRatio/remainRatio, MapType.Item);
-        remainRatio -= mapItemboxRatio;
-        GenerateFieldObjects(mapEventRatio/remainRatio, MapType.Event);
-        remainRatio -= mapEventRatio;
-        GenerateFieldObjects(mapMonsterRatio/remainRatio, MapType.Monster);
-        FieldMapData[0,0].MapType = MapType.Empty;
-        FieldMapData[fieldHeight-1,fieldWidth-1].MapType = MapType.Empty;
-        FieldMapData[fieldHeight-1,fieldWidth-2].MapType = MapType.Block;
-        FieldMapData[fieldHeight-2,fieldWidth-1].MapType = MapType.Dragon;
-        FieldMapData[fieldHeight-2,fieldWidth-2].MapType = MapType.Block;
-        // BuildAllField(FieldType.Field);
-    }
-    public void DoWave(float waveMonsterRatio){
-        GenerateFieldObjects(waveMonsterRatio, MapType.Monster);
-        FieldMapData[(int)gameManager.knight.CurrentFieldPiece.gridPosition.y, (int)gameManager.knight.CurrentFieldPiece.gridPosition.x].MapType = MapType.Empty;
-        FieldMapData[(int)gameManager.princess.CurrentFieldPiece.gridPosition.y, (int)gameManager.princess.CurrentFieldPiece.gridPosition.x].MapType = MapType.Empty;
-        
-        for (int i = 0; i < fieldWidth; i++)
-        {
-            for (int j = 0; j < fieldHeight; j++)
-            {
-                if(princessFields[j, i].IsLight) 
-                    princessFields[j, i].MapType = FieldMapData[j, i].MapType;
-                else 
-                    princessFields[j, i].MapType = MapType.Hide;
-
-                if(knightFields[j, i].IsLight) 
-                    knightFields[j, i].MapType = FieldMapData[j, i].MapType;
-                else 
-                    knightFields[j, i].MapType = MapType.Hide;
-            }
-        }
-        RefreshMap();
-    }
-
     
-    
-    void GenerateFieldObjects(float generateRatio, MapType value)
-    {
-        for (int i = 0; i < fieldWidth; i++)
-        {
-            for (int j = 0; j < fieldHeight; j++)
-            {
-                if((i == 0 && j == 0) || (i == fieldWidth -1 && j == fieldHeight -1)){
-                    continue;
-                }
-                if(FieldMapData[j, i].MapType == MapType.Empty){
-                    float val = Random.value;
-                    if(val < generateRatio){
-                        FieldMapData[j, i].MapType = value;
-                    }
-                }
-            }
-        }
-    }
 
     public void BuildAllField(FieldType type){
         currentField = type;
-        FieldPiece[,] fieldPieces = princessFields;
         FieldTileMap.ClearAllTiles();
-        if(type == FieldType.Princess){
-            fieldPieces = princessFields;
-        }
-        else if(type == FieldType.Knight){
-            fieldPieces = knightFields;
-        }
-        FieldTileMap.ClearAllTiles();
-        BuildMap(fieldPieces, MapType.Block, FieldTileMap, BlockTile);
-        BuildMap(fieldPieces, MapType.Item, FieldTileMap, ItemTile);
-        BuildMap(fieldPieces, MapType.Empty, FieldTileMap, EmptyTile);
-        BuildMap(fieldPieces, MapType.Monster, FieldTileMap, MonsterTile);
-        BuildMap(fieldPieces, MapType.Event, FieldTileMap, EventTile);
-        BuildMap(fieldPieces, MapType.Heal, FieldTileMap, HealTile);
-        BuildMap(fieldPieces, MapType.Dragon, FieldTileMap, DragonTile);
-        BuildMap(fieldPieces, MapType.Hide, FieldTileMap, HideTile);
-
+        BuildMap(MapType.Block, FieldTileMap, BlockTile);
+        BuildMap(MapType.Item, FieldTileMap, ItemTile);
+        BuildMap(MapType.Empty, FieldTileMap, EmptyTile);
+        BuildMap(MapType.Monster, FieldTileMap, MonsterTile);
+        BuildMap(MapType.Event, FieldTileMap, EventTile);
+        BuildMap(MapType.Heal, FieldTileMap, HealTile);
+        BuildMap(MapType.Dragon, FieldTileMap, DragonTile);
     }
     
-    public void BuildMap(FieldPiece[,] mapData, MapType type, Tilemap map, TileBase tile)
+    public void BuildMap(MapType mapType, Tilemap map, TileBase tile)
     {
-        for (int x = 0; x < fieldWidth; x++){
-            for (int y = 0; y < fieldHeight; y++){
-                if (mapData[y, x].MapType == type)
+        for (int x = 0; x < fieldSizeList[currentFloor].x; x++){
+            for (int y = 0; y < fieldSizeList[currentFloor].y; y++){
+                if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
                 {
-                    if(!mapData[y, x].IsLight){ 
-                        mapData[y, x].MapType = MapType.Hide;
+                    if((currentField == FieldType.Princess && !AllFieldMapData[currentFloor][x, y].PrincessIsLight) || (currentField == FieldType.Knight && !AllFieldMapData[currentFloor][x, y].KnightIsLight)){ 
                         map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
                     }
                     else{
@@ -313,9 +225,7 @@ public class MapManager : MonoBehaviour
     
     public void ClearMapPiece(FieldPiece fieldPiece){
         
-        princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
-        knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
-        FieldMapData[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = MapType.Empty;
+        fieldPiece.SetMapType(MapType.Empty);
         RefreshMap();
     }
 
@@ -324,60 +234,66 @@ public class MapManager : MonoBehaviour
 
     }
 
-    public void SetMapPiece(FieldPiece fieldPiece, MapType type){
-        princessFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
-        knightFields[fieldPiece.gridPosition.y, fieldPiece.gridPosition.x].MapType = type;
+    public void UpdateMapType(FieldPiece fieldPiece, MapType type, Monster moneter = null, FieldEventInfo eventInfo = null, ItemInfo itemInfo = null){
+        fieldPiece.SetMapType(type);
+        
+        if(type == MapType.Monster){
+            fieldPiece.monsterInfo = moneter;
+        }
+        else if(type == MapType.Item){
+            fieldPiece.fieldEventInfo = eventInfo;
+
+        }
+        else if(type == MapType.Event){
+            fieldPiece.itemInfo = itemInfo;
+
+        }
     }
+
     void printMap(FieldPiece[,] pieces){
         string arrayStr = "";
-            for (int j = 0; j < fieldHeight; j++)
+            for (int j = 0; j < fieldSizeList[currentFloor].y; j++)
             {
-                for (int i = 0; i < fieldWidth; i++)
+                for (int i = 0; i < fieldSizeList[currentFloor].x; i++)
                 {
-                    arrayStr += pieces[j,i].MapType + " ";
+                    arrayStr += pieces[i,j].MapType + " ";
                 }
                 arrayStr += "\n";
             }
         Debug.Log(arrayStr);
     }
+    public FieldPiece[,] GetFloorField(int floor){
+        return AllFieldMapData[floor];
+    }
+    public FieldPiece[,] GetCurrentFloorField(){
+        return AllFieldMapData[currentFloor];
+    }
 }
+
 
 public class FieldPiece
 {
-    private GameManager _gameManager;
-    private MapManager _mapManager;
-    // private SpriteRenderer _renderer;
-
     private MapType _mapType = MapType.Empty;
     public MapType MapType {
         get { return _mapType; }
-        set { _mapType = value; }
-    }
-    // public Sprite Sprite;
-
-    public bool IsLight = false;
-
-    public bool _canSelect = false;
-
-
-    public int EventIndex { get; set; }
-
-    public Vector2Int gridPosition;
-
-    public void Init(GameManager gameManager, MapManager mapManager)
-    {
-        _gameManager = gameManager;
-        _mapManager = mapManager;
+        private set { _mapType = value; }
     }
 
-    public void UpdateMapType(MapType type, int index = -1)
-    {
+    public void Init(Vector2Int _gridPosition, MapType type){
+        gridPosition = _gridPosition;
         _mapType = type;
-        Debug.Log(_mapManager);
-        _mapManager.SetMapPiece(this, type);
-
-        EventIndex = index;
-        
-        // 타입정보에 따라 맵 오브젝트 업데이트 필요
     }
+    public void SetMapType(MapType type){
+        _mapType = type;
+    }
+
+    public bool PrincessIsLight = false;
+    public bool KnightIsLight = false;
+
+    public Vector2Int gridPosition{private set; get;}
+
+    public Monster monsterInfo;
+    public FieldEventInfo fieldEventInfo;
+    public ItemInfo itemInfo;
+
 }

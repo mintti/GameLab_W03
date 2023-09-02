@@ -43,8 +43,8 @@ public class GameManager : MonoBehaviour
     
     [Header("필드 관련")]
     public Transform FieldGenTransform;
-    private FieldPiece[,] knightFields;
-    private FieldPiece[,] princessFields;
+    // private FieldPiece[,] knightFields;
+    // private FieldPiece[,] princessFields;
 
     // [Header("맵 관련")]
     // public Transform MapGenTransform;
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Init()
     {
-        CreateMap();
+        MapManager.InitMap();
         InitPlayerPosition();
 
         Turn = 1;
@@ -99,20 +99,18 @@ public class GameManager : MonoBehaviour
         StartCoroutine(nameof(PlayGame));
     }
 
-    void CreateMap()
-    {
-        MapManager.CreateMap(FieldType.Knight);
-    }
 
     void InitPlayerPosition()
     {
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
-        MapManager.LightField(FieldType.Knight, new Vector2(0,0));
-        knight.CurrentFieldPiece = MapManager.knightFields[0,0];
-
+        knight.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(0,0));
+        MapManager.LightField(FieldType.Knight,  knight.CurrentFieldPiece.gridPosition);
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
-        MapManager.LightField(FieldType.Princess, new Vector2(19,19));
-        princess.CurrentFieldPiece = MapManager.princessFields[19,19];
+        princess.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(19,19));
+
+        MapManager.RefreshMap();
+        // MapManager.LightField(FieldType.Princess, new Vector2(19,19));
+        // princess.CurrentFieldPiece = MapManager.princessFields[19,19];
     }
 
     IEnumerator PlayGame()
@@ -136,11 +134,11 @@ public class GameManager : MonoBehaviour
                 yield break;
             }
             
-            Turn++;
-            if (Turn % waveInterval == 0)
-            {
-                MapManager.DoWave(.1f);
-            }
+            // Turn++;
+            // if (Turn % waveInterval == 0)
+            // {
+            //     MapManager.DoWave(.1f);
+            // }
         }
     }
 
@@ -169,7 +167,8 @@ public class GameManager : MonoBehaviour
     public bool ClickMap(FieldPiece field)
     {
         bool complete = true;
-        if (field._canSelect) // 필드에서 판단
+        // if (field._canSelect) // 필드에서 판단
+        if (MapManager.canSelectList.Contains(field)) // 필드에서 판단
         {
             if(whoseTurn.Equals(nameof(princess))) // 공주의 턴
             {
@@ -251,18 +250,22 @@ public class GameManager : MonoBehaviour
                 case MapType.Empty : break; // 이벤트가 없으면 종료
                 default : 
                     ExecuteMapEvent(field);
-                    field.UpdateMapType(MapType.Empty);
+                    
+                    // field.UpdateMapType(MapType.Empty);
+                    MapManager.UpdateMapType(field, MapType.Empty);
                     break;
             }
             
             // 이동'
             Debug.Log("move" +field.gridPosition );
-            knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
+            // knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
+            knight.transform.position = MapManager.GridToWorldPosition(new Vector2(field.gridPosition.x,field.gridPosition.y));
             knight.CurrentFieldPiece = field;
         }
 
         // 맵을 밝힘
         TurnOnMapPiece(field, true, false);
+
         
         // 이동 가능 영역 업데이트
         if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
@@ -275,23 +278,22 @@ public class GameManager : MonoBehaviour
     {
         bool result = true;
 
-        if (!field.IsLight)
+        if(isKnight && !field.KnightIsLight) {
+            field.KnightIsLight = true;
+            MapManager.LightField(FieldType.Knight, field.gridPosition);
+        }
+        else if(!isKnight && !field.PrincessIsLight)
         {
-            field.IsLight = true;
-            if(isKnight) 
-                MapManager.LightField(FieldType.Knight, field.gridPosition);
-            else
-            {
-                MapManager.LightField(FieldType.Princess, field.gridPosition);
-                ChangeBehavior(princess.SelectedIdx);
-            }
+            field.PrincessIsLight = true;
+            MapManager.LightField(FieldType.Princess, field.gridPosition);
+            ChangeBehavior(princess.SelectedIdx);
         }
         else
         {
             if(outputLog) Log("이미 밝혀져 있는 맵은 밝힐 수 없습니다.");
             result = false;
         }
-
+        MapManager.RefreshMap();
         return result;
     }
 
@@ -301,7 +303,8 @@ public class GameManager : MonoBehaviour
 
         if (field.MapType == MapType.Empty)
         {
-            field.UpdateMapType(MapType.Heal);
+            // field.UpdateMapType(MapType.Heal);
+            MapManager.UpdateMapType(field, MapType.Heal);
             MapManager.RefreshMap();
         }
         else
@@ -344,7 +347,8 @@ public class GameManager : MonoBehaviour
     public void ChangeBehavior(int index)
     {
         List<FieldPiece> changePiece = new();
-        FieldPiece[,] baseFields = whoseTurn.Equals(nameof(princess)) ? MapManager.princessFields : MapManager.knightFields;
+        // FieldPiece[,] baseFields = whoseTurn.Equals(nameof(princess)) ? MapManager.princessFields : MapManager.knightFields;
+        FieldPiece[,] baseFields = MapManager.GetCurrentFloorField();
         FieldPiece     curPiece  = whoseTurn.Equals(nameof(princess)) ? princess.CurrentFieldPiece : knight.CurrentFieldPiece;
         
         if (whoseTurn.Equals(nameof(princess)))
@@ -352,20 +356,21 @@ public class GameManager : MonoBehaviour
             switch (index)
             {
                 case 0:
-                    foreach (var piece in MapManager.princessFields)
+                    foreach (var piece in baseFields)
                     {
-                        if (piece.IsLight)
+                        if (piece.PrincessIsLight)
                         {
-                            changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, piece,
+                            // changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, piece,
+                            changePiece = changePiece.Concat(GetFieldKnightSkill1(baseFields, piece,
                                 new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
                         }
                     }
                     
                     break;
                 case 1:
-                    foreach (var piece in MapManager.princessFields)
+                    foreach (var piece in baseFields)
                     {
-                        if(piece.IsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
+                        if(piece.PrincessIsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
                     }
                     break;
                 case 2:
@@ -385,7 +390,7 @@ public class GameManager : MonoBehaviour
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x, curPiece.gridPosition.y+1);
                     break;
                 case 1:
-                    changePiece = GetFieldKnightSkill1(MapManager.knightFields, curPiece, new []{-1, 1, 0, 0}, new[]{0, 0, -1, 1}).ToList();
+                    changePiece = GetFieldKnightSkill1(baseFields, curPiece, new []{-1, 1, 0, 0}, new[]{0, 0, -1, 1}).ToList();
                     break;
                 case 2:
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x-2, curPiece.gridPosition.y);
@@ -398,7 +403,6 @@ public class GameManager : MonoBehaviour
         
         
         // [TODO] MapManger에게 changePiece 전달
-        Debug.Log(changePiece[0].gridPosition);
         MapManager.showCanSelectField(changePiece);
     }
 
@@ -434,7 +438,7 @@ public class GameManager : MonoBehaviour
     {
         if (!(x < 0 || x >= baseFields.GetLength(0) || y < 0 || y >= baseFields.GetLength(1)))
         {
-            var piece = baseFields[y, x];
+            var piece = baseFields[x, y];
             if(!list.Contains(piece)) list.Add(piece);
         }
     }
@@ -467,7 +471,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        field.MapType = MapType.Empty;
+        MapManager.UpdateMapType(field, MapType.Empty);
     }
     #endregion
 
