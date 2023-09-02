@@ -6,27 +6,14 @@ public class Player : MonoBehaviour
     private GameManager _gameManager;
     private MapManager _mapManager;
     private UIManager _uiManager;
-    public Vector3 CurrentPosition { get; set; }
+    
+    [Header("오브젝트 및 스킬 정보")]
     public GameObject playerUI;
     private GameObject playerSkillUI;
     public FieldPiece CurrentFieldPiece { get; set; }
     public FieldType fieldType;
     
-    private int _cost;
-    public int Cost
-    {
-        get => _cost;
-        set
-        {
-            _cost = value;
-            _uiManager.UpdateCostText(_cost);
-        }
-    }
-
-    public bool IsTurnEnd;
-
     private int _selectedIdx;
-
     public int SelectedIdx
     {
         get => _selectedIdx;
@@ -39,10 +26,30 @@ public class Player : MonoBehaviour
                 _gameManager.ChangeBehavior(_selectedIdx); 
                 _uiManager.UpdateInfoText(_selectedIdx);
                 _uiManager.FocusSkill(playerSkillUI, _selectedIdx);
-                
             }
         }
     }
+    
+    [Header("스텟 및 코스트 정보")]
+    public int defaultHp;
+    public int defaultPower;
+    
+    private int _cost;
+    public int Cost
+    {
+        get => _cost;
+        set
+        {
+            _cost = value;
+            _uiManager.UpdateCostText(_cost);
+        }
+    }
+    
+    public bool IsTurnEnd;
+    
+    public Status Status { get; set; }
+
+    
 
     public void Start()
     {
@@ -51,6 +58,8 @@ public class Player : MonoBehaviour
         _mapManager = GameObject.Find(nameof(MapManager)).GetComponent<MapManager>(); 
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
+        
+        Status = new Status(defaultHp, defaultPower, true);
     }
 
     public void StartTurn()

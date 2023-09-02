@@ -7,6 +7,8 @@ public class Status
     private int currentHp;
     private int power;
     private int defense;
+    private int dex;
+    private int exp;
 
     private bool _buff;
 
@@ -51,7 +53,10 @@ public class Status
 
     public int Power
     {
-        get { return power; }
+        get
+        {
+            return power + (Buff ? 2 : 0);
+        }
         set
         {
             power = Mathf.Max(value, 0);
@@ -63,6 +68,24 @@ public class Status
     {
         get { return defense; }
         set { defense = Mathf.Max(value, 0); }
+    }
+
+    public int Dex
+    {
+        get => dex;
+        set
+        {
+            dex =  Mathf.Max(value, 0);
+        }
+    }
+
+    public int Exp
+    {
+        get => exp;
+        set
+        {
+            exp = Mathf.Max(value, 0);
+        }
     }
 
     public Status()
