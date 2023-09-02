@@ -77,31 +77,23 @@ public class BattleEvent : MonoBehaviour
             monsterTurn = true;
         }
 
-
+        int playerDam = Mathf.Max(_knight.Status.Power - _monster.Status.Defense, 0);
+        int monsterDam = Mathf.Max(_monster.Status.Defense - _knight.Status.Power, 0);
 
         while (true)
         {
-
             if (knightTurn)
             {
-                bool hit = Dodges(_monster.Status.Dex);
-
-                if (hit)
+                if ((playerDam == monsterDam) && playerDam == 0)
                 {
-                    if (_knight.Status.Power - _monster.Status.Defense > 0)
-                    {
-                        _monster.Status.MaxHp -= _knight.Status.Power - _monster.Status.Defense;
-                        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power - _monster.Status.Defense, _monster.Status.MaxHp);
-                    }
-
-                    if (_knight.Status.Power - _monster.Status.Defense <= 0)
-                    {
-                        _monster.Status.MaxHp -= 1;
-                        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, 1, _monster.Status.MaxHp);
-                    }
-
+                    playerDam = monsterDam = 1;
                 }
-
+                
+                if (Dodges(_monster.Status.Dex))
+                {
+                    _monster.Status.MaxHp -= playerDam;
+                    OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, playerDam, _monster.Status.MaxHp);
+                }
                 else
                 {
                     OutputCombatMissText(_monster.Name, "<color=#33FF33>용사</color>");
@@ -129,31 +121,19 @@ public class BattleEvent : MonoBehaviour
             }
             else if (monsterTurn)
             {
-                bool hit = Dodges(_knight.Status.Dex);
-
-                if (hit)
+                if (Dodges(_knight.Status.Dex))
                 {
                     if (_knight.Status.Power - _monster.Status.Defense > 0)
                     {
-                        _knight.Status.CurrentHp -= _monster.Status.Power - _knight.Status.Defense;
-                        OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", _monster.Status.Defense - _knight.Status.Power, _knight.Status.CurrentHp);
+                        _knight.Status.CurrentHp -= monsterDam;
+                        OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", monsterDam, _knight.Status.CurrentHp);
                     }
-
-                    if (_knight.Status.Power - _monster.Status.Defense <= 0)
-                    {
-                        _knight.Status.MaxHp -= 1;
-                        OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", 1, _knight.Status.MaxHp);
-                    }
-
                 }
-
                 else
                 {
                     OutputCombatMissText("<color=#33FF33>용사</color>", _monster.Name);
 
                 }
-
-
 
                 monsterTurn = false;
                 knightTurn = true;
