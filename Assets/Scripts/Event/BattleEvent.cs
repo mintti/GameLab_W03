@@ -7,7 +7,6 @@ using System;
 
 public class BattleEvent : MonoBehaviour
 {
-    private ResourceManager _resourceManager;
     private GameManager _gameManager;
     private UIManager _uiManager;
     private Player _knight;
@@ -33,7 +32,6 @@ public class BattleEvent : MonoBehaviour
     public void Init(Player knight, Monster monster)
     {
         _combatPanel ??= gameObject;
-        _resourceManager ??= GameObject.Find(nameof(ResourceManager)).GetComponent<ResourceManager>();
         _gameManager ??= GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
         _uiManager ??= GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
 
@@ -299,7 +297,7 @@ public class BattleEvent : MonoBehaviour
     IEnumerator PerformLevelUp()
     {
         _knight.Status.Exp += _monster.Status.Exp;
-        int expNeed = _resourceManager.ExpNeedForLevelUp[_knight.Status.Level -1];
+        int expNeed = DataManager.Instance.ExpNeedForLevelUp[_knight.Status.Level -1];
 
         yield return new WaitForSeconds(0.5f);
 
