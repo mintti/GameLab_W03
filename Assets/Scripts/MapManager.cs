@@ -158,6 +158,7 @@ public class MapManager : MonoBehaviour
                         //_UIManager.SetInfoUI(MapType.Event, null);
                         // Debug.Log(fieldPiece.fieldEventInfo.Type);
                     }
+                    else _UIManager.TileInfUI(MapType.Empty);
                     currentHoverGrid = grid;
                 }
             }
