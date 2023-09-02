@@ -151,11 +151,11 @@ public class MapManager : MonoBehaviour
                         // Debug.Log(fieldPiece.monsterInfo.Name);
                     }
                     else if(fieldPiece.MapType == MapType.Item){
-                        //_UIManager.SetInfoUI(MapType.Item, null);
-                        // Debug.Log(fieldPiece.itemInfo.Type);
+                            _UIManager.TileInfUI(MapType.Item, null);
+                            // Debug.Log(fieldPiece.itemInfo.Type);
                     }
-                    else if(fieldPiece.MapType == MapType.Event){
-                        //_UIManager.SetInfoUI(MapType.Event, null);
+                       else if(fieldPiece.MapType == MapType.Event){
+                        _UIManager.TileInfUI(MapType.Event, null);
                         // Debug.Log(fieldPiece.fieldEventInfo.Type);
                     }
                     else _UIManager.TileInfUI(MapType.Empty);
