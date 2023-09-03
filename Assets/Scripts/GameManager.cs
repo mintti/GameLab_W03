@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
                 complete = knight.SelectedIdx switch
                 {
                     0 => MoveKnight(field),
-                    1 => TurnOnMapPiece(field, true),
+                    1 => Rest(),
                     _ => false,
                 };
             }
@@ -310,7 +310,20 @@ public class GameManager : MonoBehaviour
 
     private bool Rest()
     {
-        return true;
+        bool result = true;
+
+        if (knight.Cost >= 1)
+        {
+            knight.Status.CurrentHp += knight.Cost;
+            knight.Cost = 0;
+        }
+        else
+        {
+            Log("휴식에 필요한 코스트가 충분하지 않습니다.");
+            result = false;
+        }
+
+        return result;
     }
 
     private bool MakeHealZone(FieldPiece field)
@@ -383,6 +396,7 @@ public class GameManager : MonoBehaviour
             switch (index)
             {
                 case 0:
+                    // 공주가 밝힌 칸에서의 8방향 값을 전달
                     foreach (var piece in baseFields)
                     {
                         if (piece.PrincessIsLight)
@@ -392,18 +406,18 @@ public class GameManager : MonoBehaviour
                                 new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
                         }
                     }
-                    
                     break;
                 case 1:
+                    // 공주가 서 있는 위치 전달
+                    changePiece.Add(princess.CurrentFieldPiece);
+                    break;
+                case 2:
+                    // 비어있는 칸만 전달
                     foreach (var piece in baseFields)
                     {
                         if(piece.PrincessIsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
                     }
                     break;
-                case 2:
-                    changePiece.Add(princess.CurrentFieldPiece);
-                    break;
-                    // return;
             }
         }
         else
@@ -411,25 +425,31 @@ public class GameManager : MonoBehaviour
             switch (index)
             {
                 case 0:
+                    // 1칸 간격의 4방향 전달
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x-1, curPiece.gridPosition.y);
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x+1, curPiece.gridPosition.y);
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x, curPiece.gridPosition.y-1);
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x, curPiece.gridPosition.y+1);
                     break;
                 case 1:
-                    changePiece = GetFieldKnightSkill1(baseFields, curPiece, new []{-1, 1, 0, 0}, new[]{0, 0, -1, 1}).ToList();
+                    // 용사가 서 있는 위치 전달 
+                    changePiece.Add(knight.CurrentFieldPiece);
                     break;
                 case 2:
+                    // 2칸 간격으로 4방향 전당
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x-2, curPiece.gridPosition.y);
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x+2, curPiece.gridPosition.y);
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x, curPiece.gridPosition.y-2);
                     AddPieceInList(changePiece, baseFields, curPiece.gridPosition.x, curPiece.gridPosition.y+2);
                     break;
+                case 3 :  // 8방향 전달 
+                    changePiece = GetFieldKnightSkill1(baseFields, curPiece, new []{-1, 1, 0, 0}, new[]{0, 0, -1, 1}).ToList();
+                    break;
             }
         }
         
         
-        // [TODO] MapManger에게 changePiece 전달
+        // MapManger에게 changePiece 전달
         MapManager.showCanSelectField(changePiece);
     }
 

@@ -104,7 +104,7 @@ public class Player : MonoBehaviour
         }
         else if (wheelInput2.y < 0) // 휠을 당겨 올렸을 때의 처리 ↓
         {
-            if (SelectedIdx > 1) return; // 임시 스킬은 3개만 
+            if (SelectedIdx > 0) return; // 임시 스킬은 3개만 
             SelectedIdx++;
         }
     }

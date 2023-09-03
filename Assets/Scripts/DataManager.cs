@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    public static DataManager Instance { get; set; }
+    public static DataManager Instance { get; private set; }
 
     public void Awake()
     {
