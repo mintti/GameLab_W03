@@ -32,10 +32,6 @@ public class UIManager : MonoBehaviour
     public GameObject gameClearObj;
     public GameObject endingScreen;
 
-    [Header("미니 상점")]
-    public TextMeshProUGUI ShopProductInfoText;
-    public TextMeshProUGUI CoinText;
-
     [Header("턴 종료 UI")]
     public float blinkInterval = 0.5f;
     private bool shouldBlink1 = false;
@@ -247,17 +243,6 @@ public class UIManager : MonoBehaviour
         
         infoTextObj.SetActive(false);
     }
-
-    public void UpdateCoinText(int coin)
-    {
-        CoinText.text = coin.ToString();
-    }
-
-    public void UpdateMiniShopInfoText(string text)
-    {
-        ShopProductInfoText.text = text;
-    }
-
 
 
     public void TileInfUI(MapType mapType, object obj = null)

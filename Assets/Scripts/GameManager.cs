@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour
         set
         {
             _coin = value;
-            _uiManager.UpdateCoinText(_coin);
         }
     }
     
