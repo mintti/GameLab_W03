@@ -68,6 +68,9 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI itemText;
 
 
+    [Header("탑/층 관련")]
+    public GameObject[] currentFloorArrows;
+
 
     private Dictionary<int, string> _princessSkillInfoDict = new()
     {
@@ -245,6 +248,21 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
+    #region 탑 / 층
+
+    public void UpdateCurrentDisplayFloor(int floor)
+    {
+        foreach (var arrow in currentFloorArrows)
+        {
+            arrow.SetActive(false);
+        }
+        
+        currentFloorArrows[floor-1].SetActive(true);
+    }
+    
+
+    #endregion
+    
     public void ActiveEndingScene()
     {
         endingScreen.SetActive(true);

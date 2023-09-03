@@ -52,6 +52,22 @@ public class GameManager : MonoBehaviour
     // private MapPiece[,] KnightMaps;
     // private MapPiece[,] PrincessMaps;
 
+    private int _displayFloor;
+    public int DisplayFloor
+    {
+        get => _displayFloor;
+        set
+        {
+            _displayFloor = value;
+            if (_displayFloor != 0)
+            {
+                UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
+                // [TODO] MAP 업데이트? 변경?
+            }
+        }
+    }
+    
+    
     [Header("플레이어")]
     public Player knight;
     public Player princess;
@@ -95,8 +111,14 @@ public class GameManager : MonoBehaviour
         MapManager.InitMap();
         InitPlayerPosition();
 
+        // 게임 정보 초기화
         Turn = 1;
         StatusPoint = 0;
+
+        knight.SelectedFloor = 1;
+        princess.SelectedFloor = 3;
+        
+        // 시작
         StartCoroutine(nameof(PlayGame));
 
         // Map Test 위에줄 주석치고 밑에거 주석풀기
@@ -152,12 +174,26 @@ public class GameManager : MonoBehaviour
     {
         do
         {
+            DisplayFloor = player.SelectedFloor; // 이전 바라보고 있던 대상 층으로 이동
             ChangeBehavior(player.SelectedIdx);
             
             player.StartTurn();
             CameraManager.Target = player.transform;
             yield return new WaitUntil(() => player.IsTurnEnd);
         } while (!player.IsTurnEnd);
+    }
+
+    public void B_SelectedFloor(int floor)
+    {
+        DisplayFloor = floor;
+        if (whoseTurn == nameof(princess))
+        {
+            princess.SelectedFloor = floor;
+        }
+        else
+        {
+            knight.SelectedFloor = floor;
+        }
     }
 
     /// <summary>
@@ -524,7 +560,7 @@ public class GameManager : MonoBehaviour
         MapManager.UpdateMapType(field, MapType.Empty);
     }
     #endregion
-
+    
     private void Ending()
     {
         EventPrinting = true;
