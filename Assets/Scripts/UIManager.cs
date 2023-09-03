@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviour
     public Image MonImg;
     public TextMeshProUGUI monHP;
     public TextMeshProUGUI monPow;
+    public TextMeshProUGUI monDefense;
+    public TextMeshProUGUI monDex;
     public TextMeshProUGUI monName;
     public TextMeshProUGUI eventText;
     public TextMeshProUGUI itemText;
@@ -276,8 +278,10 @@ public class UIManager : MonoBehaviour
             Monster monster = obj as Monster;
             MonImg.sprite = monster.Sprite;
             tileName.text = "몬스터";
-            monHP.text = "HP : " + monster.Status.MaxHp;
-            monPow.text = "POW : " + monster.Status.Power;
+            monHP.text = "<color=#D1180B>체력</color> : " + monster.Status.MaxHp;
+            monPow.text = "<color=#FFD400>파워</color> : " + monster.Status.Power;
+            monDefense.text = "<color=#0000FF>방어</color> : " + monster.Status.Defense;
+            monDex.text = "<color=#80FF00>민첩</color> : " + monster.Status.Dex;
             monName.text = monster.Name;
         }
 
