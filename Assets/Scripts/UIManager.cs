@@ -181,7 +181,7 @@ public class UIManager : MonoBehaviour
         }
 
         skillInfoText.text = text;
-        skillInfoText.gameObject.GetComponent<TextMeshProUGUI>().text = text;
+        //skillInfoText.gameObject.GetComponent<TextMeshProUGUI>().text = text;
     }
 
     public void UpdateKnightStatusInfo(Status status)
@@ -213,7 +213,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateTurnText(int turn)
     {
-        turnText.text = $"{turn} 턴";
+        turnText.text = $"남은 턴 : {turn}";
         waveText.text = $"{_gameManager.waveInterval - (turn % _gameManager.waveInterval)}턴 후 몬스터가 증식합니다.";
     }
 
