@@ -52,6 +52,27 @@ public class GameManager : MonoBehaviour
     // private MapPiece[,] KnightMaps;
     // private MapPiece[,] PrincessMaps;
 
+    private int _displayFloor;
+    public int DisplayFloor
+    {
+        get => _displayFloor;
+        set
+        {
+            _displayFloor = value;
+            if (_displayFloor != 0)
+            {
+                UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
+                // [TODO] MAP 업데이트? 변경?
+            }
+        }
+    }
+
+    /// <summary>
+    /// 현재 용사가 존재하는 층의 정보
+    /// </summary>
+    public int CurrentKnightFloor;
+    
+    
     [Header("플레이어")]
     public Player knight;
     public Player princess;
@@ -76,6 +97,10 @@ public class GameManager : MonoBehaviour
 
     public bool EventPrinting { get; set; }
     
+    [Header("웨이브 시스템")]
+    private bool dotDamageTime;
+    private int turnsBeforeAscend;
+    
     public void Start()
     {
         _resourceManager = GetComponentInChildren<ResourceManager>();
@@ -95,8 +120,14 @@ public class GameManager : MonoBehaviour
         MapManager.InitMap();
         InitPlayerPosition();
 
+        // 게임 정보 초기화
         Turn = 1;
         StatusPoint = 0;
+
+        knight.SelectedFloor = CurrentKnightFloor = 1;
+        princess.SelectedFloor = 3;
+        
+        // 시작
         StartCoroutine(nameof(PlayGame));
 
         // Map Test 위에줄 주석치고 밑에거 주석풀기
@@ -110,7 +141,7 @@ public class GameManager : MonoBehaviour
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
         knight.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(0,0));
         MapManager.LightFieldKnightMove(knight.CurrentFieldPiece.gridPosition);
-
+        
         princess.fieldType = FieldType.Princess;
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
         princess.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(19,19));
@@ -127,6 +158,11 @@ public class GameManager : MonoBehaviour
             whoseTurn = nameof(knight);
             MapManager.BuildAllField(FieldType.Knight);
             yield return StartCoroutine(PlayPlayer(knight));
+            if (dotDamageTime)
+            {
+                // [TODO] 도트 데미지 액션 출력
+                knight.Status.CurrentHp -= GetDotDam();
+            }
 
             Camera.main.backgroundColor = new Color(1, 0.6650944f, 0.9062265f, 1);
             whoseTurn = nameof(princess);
@@ -140,24 +176,59 @@ public class GameManager : MonoBehaviour
                 yield break;
             }
             
-            // Turn++;
+            Turn++;
             // if (Turn % waveInterval == 0)
             // {
             //     MapManager.DoWave(.1f);
             // }
+            
+            // 도트 데미지 여부 설정
+            if (GetDotDam() > 0)
+            {
+                if (!dotDamageTime)
+                {
+                    // [TODO] 도트 데미지가 시작된다는 안내?
+                    dotDamageTime = true;
+                }
+            }
         }
+    }
+
+    private int GetDotDam()
+    {
+        return _dataManager.WaveCountByFloor[CurrentKnightFloor - 1] - (turnsBeforeAscend - Turn);   // 이전에 오르는데 사용됬던 턴수는 차감 
+    } 
+
+    public void UpFloor()
+    {
+        dotDamageTime = false;
+        turnsBeforeAscend = Turn;
     }
 
     IEnumerator PlayPlayer(Player player)
     {
         do
         {
+            DisplayFloor = player.SelectedFloor; // 이전 바라보고 있던 대상 층으로 이동
             ChangeBehavior(player.SelectedIdx);
             
             player.StartTurn();
             CameraManager.Target = player.transform;
             yield return new WaitUntil(() => player.IsTurnEnd);
         } while (!player.IsTurnEnd);
+    }
+
+    public void B_SelectedFloor(int floor)
+    {
+        DisplayFloor = floor;
+        if (whoseTurn == nameof(princess))
+        {
+            princess.SelectedFloor = floor;
+        }
+        else
+        {
+            knight.SelectedFloor = floor;
+        }
     }
 
     /// <summary>
@@ -524,7 +595,7 @@ public class GameManager : MonoBehaviour
         MapManager.UpdateMapType(field, MapType.Empty);
     }
     #endregion
-
+    
     private void Ending()
     {
         EventPrinting = true;

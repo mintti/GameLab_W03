@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
@@ -51,6 +52,7 @@ public class Player : MonoBehaviour
 
     public Status Status { get; set; }
 
+    [FormerlySerializedAs("selectedFloor")] [Header("other")] public int SelectedFloor;
 
 
     public void Start()
