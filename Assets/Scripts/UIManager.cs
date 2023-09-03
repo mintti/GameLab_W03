@@ -22,13 +22,14 @@ public class UIManager : MonoBehaviour
 
     [Header("플레이어 정보")]
     public TextMeshProUGUI knightLvText;
-    public TextMeshProUGUI levelUpInfoText;
+    public Text levelUpInfoText;
     public TextMeshProUGUI hpText;
     public TextMeshProUGUI powerText;
     public TextMeshProUGUI defenseText;
     public TextMeshProUGUI dexText;
     public Button[] statusUpButtons;
     public TextMeshProUGUI statusPoint;
+    public RectTransform expBar;
     
 
 
@@ -197,8 +198,10 @@ public class UIManager : MonoBehaviour
         
         // 용사, 레벨
         knightLvText.text = $"용사 LV.{status.Level}";
-        int expToNextLevel = DataManager.Instance.ExpNeedForLevelUp[status.Level - 1] - status.Exp;
-        levelUpInfoText.text = $"다음 레벨까지 {expToNextLevel} 경험치 획득";
+        levelUpInfoText.text = $"EXP {status.Exp}/{DataManager.Instance.ExpNeedForLevelUp[status.Level - 1]}";
+        
+        int calculWidth = 350 *  status.Exp/DataManager.Instance.ExpNeedForLevelUp[status.Level - 1];
+        expBar.sizeDelta = new Vector2(calculWidth, expBar.sizeDelta.y);
         
         // 스텟
         hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
