@@ -106,9 +106,7 @@ public class BattleEvent : MonoBehaviour
 
                 if (_monster.Status.MaxHp <= 0)
                 {
-                    _gameManager.Coin++;
                     CombatPlayerWinText(_monster.Name);
-                    AppendBattleInfoText("\n1 코인을 얻었습니다.");
                     
                     yield return PerformLevelUp();
                     
