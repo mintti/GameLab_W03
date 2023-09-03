@@ -18,8 +18,10 @@ public class DataManager : MonoBehaviour
             Destroy(this);
         }
     }
-    
+
     [Header("Knight Status")]
+    [SerializeField]
+    public int StatusPoint;
     public List<int> ExpNeedForLevelUp = new()
         { 1, 7, 10, 13, 15, 18, 23, 28, 33 };
     

@@ -308,6 +308,7 @@ public class BattleEvent : MonoBehaviour
             
             yield return new WaitForSeconds(0.5f);
             AppendBattleInfoText($"\n용사의 레벨이 {_knight.Status.Level}로 올랐다!");
+            _gameManager.StatusPoint++;
         }
     }
     #endregion

@@ -56,13 +56,13 @@ public class GameManager : MonoBehaviour
     public Player knight;
     public Player princess;
     
-    private int _coin;
-    public int Coin
+    public int StatusPoint
     {
-        get => _coin;
+        get => DataManager.Instance.StatusPoint;
         set
         {
-            _coin = value;
+            DataManager.Instance.StatusPoint = value;
+            _uiManager.UpdateKnightStatusInfo();
         }
     }
     
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         _resourceManager = GetComponentInChildren<ResourceManager>();
-        _dataManager = GetComponentInChildren<DataManager>();
+        _dataManager = GameObject.Find(nameof(DataManager)).GetComponent<DataManager>();
         MapManager = GetComponentInChildren<MapManager>();
         CameraManager = Camera.main.GetComponent<CameraManager>();
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         InitPlayerPosition();
 
         Turn = 1;
-        Coin = 0;
+        StatusPoint = 0;
         StartCoroutine(nameof(PlayGame));
 
         // Map Test 위에줄 주석치고 밑에거 주석풀기

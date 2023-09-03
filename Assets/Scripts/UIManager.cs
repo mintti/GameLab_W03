@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor;
+using UnityEditor.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -18,11 +20,16 @@ public class UIManager : MonoBehaviour
     [Header("CostUI")]
     public TextMeshProUGUI leftCostLeft;
 
-    [Header("플레이어 정보")] 
+    [Header("플레이어 정보")]
+    public TextMeshProUGUI knightLvText;
+    public TextMeshProUGUI levelUpInfoText;
     public TextMeshProUGUI hpText;
     public TextMeshProUGUI powerText;
     public TextMeshProUGUI defenseText;
     public TextMeshProUGUI dexText;
+    public Button[] statusUpButtons;
+    public TextMeshProUGUI statusPoint;
+    
 
 
     public TextMeshProUGUI skillInfoText;
@@ -86,6 +93,7 @@ public class UIManager : MonoBehaviour
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
         _player1 = GameObject.Find("Knight").GetComponent<Player>();
         _player2 = GameObject.Find(nameof(Princess)).GetComponent<Player>();
+        
         infoText.text = string.Empty;
     }
 
@@ -180,14 +188,59 @@ public class UIManager : MonoBehaviour
         //skillInfoText.gameObject.GetComponent<TextMeshProUGUI>().text = text;
     }
 
-    public void UpdateKnightStatusInfo(Status status)
+    #region Player LV/Status Info
+    public void UpdateKnightStatusInfo()
     {
+        Status status = _gameManager.knight.Status;
+
+        if (status == null) return;
+        
+        // 용사, 레벨
+        knightLvText.text = $"용사 LV.{status.Level}";
+        int expToNextLevel = DataManager.Instance.ExpNeedForLevelUp[status.Level - 1] - status.Exp;
+        levelUpInfoText.text = $"다음 레벨까지 {expToNextLevel} 경험치 획득";
+        
+        // 스텟
         hpText.text = $"<color=#D1180B>체력</color>  {status.CurrentHp}/{status.MaxHp}";
         powerText.text = $"<color=#FFD400>파워</color>  {status.Power}{(status.Buff ? $"(버프)" : "")}";
         defenseText.text = $"<color=#0000FF>방어</color>  {status.Defense}";
         dexText.text = $"<color=#80FF00>민첩</color>  {status.Dex}";
 
+
+        statusPoint.text = $"Status Point {_gameManager.StatusPoint}";
+        
+        // 스텟 업 버튼
+        bool canUp = _gameManager.StatusPoint > 0;
+        foreach (var btn in statusUpButtons)
+        {
+            btn.interactable = canUp;
+        }
     }
+
+    public void StatusUp(string statusName)
+    {
+        Status status = _gameManager.knight.Status;
+        switch (statusName)
+        {
+            case "hp" :
+                status.MaxHp++;
+                status.CurrentHp++;        
+                break;
+            case "power" :
+                status.Power++;
+                break;
+            case "defense" :
+                status.Defense++;
+                break;
+            case "dex" :
+                status.Dex++;
+                break;
+        }
+
+        _gameManager.StatusPoint--;
+        UpdateKnightStatusInfo();
+    }
+    #endregion
 
     public void ActiveEndingScene()
     {
@@ -288,7 +341,6 @@ public class UIManager : MonoBehaviour
 
             tileName.text = "이벤트";
             eventText.text = "무슨 일이 일어날 것 같습니다.";
-
         }
 
     }

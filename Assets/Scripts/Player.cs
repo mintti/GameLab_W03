@@ -63,7 +63,7 @@ public class Player : MonoBehaviour
 
         Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, true);
 
-        _uiManager.UpdateKnightStatusInfo(Status);
+        _uiManager.UpdateKnightStatusInfo();
 
     }
 
