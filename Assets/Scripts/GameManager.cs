@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer.Internal.Converters;
@@ -14,7 +15,6 @@ public class GameManager : MonoBehaviour
     private UIManager _uiManager;
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
-    
 
     [Header("게임 관련")] 
     public GameObject moveNextFloorObj;
@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     public bool HasKey { get; set; }
     public bool GameEnd = false;
     public string whoseTurn;
-
     public int _turn;
 
     public int Turn
@@ -66,6 +65,8 @@ public class GameManager : MonoBehaviour
             {
                 UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
                 MapManager.ChangeFloor(_displayFloor);
+                
+                // 현재 표시된 층에 따라 Player 오브젝트 표시 
                 if(_displayFloor != CurrentKnightFloor)
                     knight.SetSpriteRenderer(false);
                 else
@@ -74,6 +75,17 @@ public class GameManager : MonoBehaviour
                     princess.SetSpriteRenderer(false);
                 else
                     princess.SetSpriteRenderer(true);
+
+                // 층에 따라 업데이트
+                if (whoseTurn.Equals(nameof(princess)))
+                {
+                    ChangeBehavior(princess.SelectedIdx);
+                }
+                else
+                {
+                    ChangeBehavior(knight.SelectedIdx);
+                }
+                
             }
         }
     }
@@ -234,14 +246,15 @@ public class GameManager : MonoBehaviour
 
     public void B_SelectedFloor(int floor)
     {
-        DisplayFloor = floor;
         if (whoseTurn == nameof(princess))
         {
+            DisplayFloor = floor;
             princess.SelectedFloor = floor;
         }
         else
         {
-            knight.SelectedFloor = floor;
+            // [TODO] 층 변경 불가하다는 텍스트 출력
+            // knight.SelectedFloor = floor;
         }
     }
 
