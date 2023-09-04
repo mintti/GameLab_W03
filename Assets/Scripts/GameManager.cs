@@ -666,8 +666,10 @@ public class GameManager : MonoBehaviour
         
         knight.transform.position = MapManager.GridToWorldPosition(nextFloorInitPosField.gridPosition);
         knight.CurrentFieldPiece = nextFloorInitPosField;
+        MapManager.LightTempKnightMove(nextFloorInitPosField.gridPosition);
         
         MapManager.RefreshMap();
+        ChangeBehavior(knight.SelectedIdx);
     }
 
 
