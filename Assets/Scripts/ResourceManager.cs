@@ -55,10 +55,17 @@ public class ResourceManager : MonoBehaviour
     }
 
 
-    public Monster Boss;
+
+    public Monster Ruggle;
+    public Monster DeathKnight;
+    public Monster Dragon;
+
+
     void InitMonster()
     {
-        Boss = new Monster("드래곤", new(15, 2, 1, 1), GetSrc("Monster", "dragon"));
+        DeathKnight = new Monster("러글", new(10, 3, 3, 10), GetSrc("Monster", "ruggle"));
+        Ruggle = new Monster("데스나이트", new(15, 5, 5, 15), GetSrc("Monster", "deathknight"));
+        Dragon = new Monster("드래곤", new(20, 10, 10, 20), GetSrc("Monster", "dragon"));
     }
 
     void InitItemEvent()
