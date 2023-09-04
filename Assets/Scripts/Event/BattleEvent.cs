@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 
 public class BattleEvent : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class BattleEvent : MonoBehaviour
 
     public Image monsterImg;
     private bool _isLastBoss = false;
+
+    private int _attDefCount;
 
     [Header("CombatPanelUI")]
     private GameObject _combatPanel;
@@ -38,6 +41,7 @@ public class BattleEvent : MonoBehaviour
         _knight = knight;
         _monster = monster;
         monsterImg.sprite = _monster.Sprite;
+        _attDefCount = 0;
         ClearCombatText();
     }
 
@@ -114,6 +118,21 @@ public class BattleEvent : MonoBehaviour
                     // 종료 로직
                     yield break;
                 }
+
+                
+                _attDefCount++;
+                if (DataManager.Instance.ARTI_AddAtack)
+                {
+                    var value = 2 * DataManager.Instance.ARTI_AddAtack_Interval;
+
+                    if (_attDefCount >= value)
+                    {
+                        AppendBattleInfoText("\n아티펙트의 효과로 한번 더 공격합니다.");
+                        knightTurn = true;
+                        monsterTurn = false;
+                        _attDefCount = -1;
+                    }
+                }
             }
             else if (monsterTurn)
             {
@@ -142,6 +161,8 @@ public class BattleEvent : MonoBehaviour
                     _combatPanel.SetActive(false);
                     yield break;
                 }
+                
+                _attDefCount++;
             }
 
             yield return new WaitForSeconds(0.6f);

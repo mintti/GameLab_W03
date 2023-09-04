@@ -466,4 +466,9 @@ public class UIManager : MonoBehaviour
         _gameManager.EventPrinting = false;
         somethingBoxObj.SetActive(false);
     }
+
+    public void UpdateArtifactInfo()
+    {
+        
+    }
 }
