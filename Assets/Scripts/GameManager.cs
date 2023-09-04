@@ -440,7 +440,7 @@ public class GameManager : MonoBehaviour
 
         if (!knight_.Status.Buff)
         {
-            int  cost = _dataManager.princessSkillCost[0];
+            int  cost = _dataManager.princessSkillCost[princess.SelectedIdx];
 
             if (princess.Cost >= cost)
             {
