@@ -72,19 +72,63 @@ public class ResourceManager : MonoBehaviour
         return Resources.Load<Sprite>($"{folder}/{name}");
     }
 
-    public Monster GetRandomMonster()
+    public Monster GetRandomMonster(int monlevel)
     {
-        int index = Random.Range(0, 5);
+        int index = 0;
+
+        if (monlevel == 1)
+        {
+            index = Random.Range(0, 5);
+        }
 
         return index switch
         {
-            0 => new Monster("<color=#FF0000>슬라임</color>", new(3, 1, 1, 1), GetSrc("Monster", "slime")),
-            1 => new Monster("<color=#FF0000>고블린</color>", new(3, 2, 1, 1), GetSrc("Monster", "goblin")),
-            2 => new Monster("<color=#FF0000>오크</color>", new(5, 2, 1, 1), GetSrc("Monster", "orc")),
-            3 => new Monster("<color=#FF0000>드레이크</color>", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
-            4 => new Monster("<color=#FF0000>스텀프</color>", new(3, 1, 1, 1), GetSrc("Monster", "stump")),
+            0 => new Monster("Lv.1 <color=#FF0000>슬라임</color>", new(2, 1, 0, 5), GetSrc("Monster", "slime")),
+            //******************************************↑Level1↑******************************************
+            1 => new Monster("Lv.2 <color=#FF0000>고블린</color>", new(3, 1, 1, 7), GetSrc("Monster", "goblin")),
+            2 => new Monster("Lv.2 <color=#FF0000>슬라임</color>", new(3, 1, 0, 6), GetSrc("Monster", "slime")),
+            //******************************************↑Level2↑******************************************
+            3 => new Monster("Lv.3 <color=#FF0000>고블린</color>", new(4, 2, 1, 9), GetSrc("Monster", "goblin")),
+            4 => new Monster("Lv.3 <color=#FF0000>슬라임</color>", new(4, 1, 1, 8), GetSrc("Monster", "slime")),
+            //******************************************↑Level3↑******************************************
+            5 => new Monster("Lv.4 <color=#FF0000>고블린</color>", new(4, 2, 2, 11), GetSrc("Monster", "goblin")),
+            6 => new Monster("Lv.4 <color=#FF0000>슬라임</color>", new(4, 2, 1, 11), GetSrc("Monster", "slime")),
+            7 => new Monster("Lv.4 <color=#FF0000>오크</color>", new(5, 3, 2, 9), GetSrc("Monster", "orc")),
+            //******************************************↑Level4↑******************************************
+            8 => new Monster("Lv.5 <color=#FF0000>고블린</color>", new(4, 3, 2, 11), GetSrc("Monster", "goblin")),
+            9 => new Monster("Lv.5 <color=#FF0000>오크</color>", new(6, 2, 3, 9), GetSrc("Monster", "orc")),
+            //******************************************↑Level5↑******************************************
+            10 => new Monster("Lv.6 <color=#FF0000>고블린</color>", new(4, 3, 3, 11), GetSrc("Monster", "goblin")),
+            11 => new Monster("Lv.6 <color=#FF0000>오크</color>", new(6, 3, 3, 9), GetSrc("Monster", "orc")),
+            12 => new Monster("Lv.6 <color=#FF0000>스텀프</color>", new(6, 2, 4, 15), GetSrc("Monster", "stump")),
+            //******************************************↑Level6↑******************************************
+            13 => new Monster("Lv.7 <color=#FF0000>고블린</color>", new(4, 3, 3, 11), GetSrc("Monster", "goblin")),
+            14 => new Monster("Lv.7 <color=#FF0000>오크</color>", new(6, 3, 3, 9), GetSrc("Monster", "orc")),
+            15 => new Monster("Lv.7 <color=#FF0000>스텀프</color>", new(6, 2, 4, 15), GetSrc("Monster", "stump")),
+            //******************************************↑Level7↑******************************************
+            16 => new Monster("Lv.8 <color=#FF0000>고블린</color>", new(4, 3, 3, 11), GetSrc("Monster", "goblin")),
+            17 => new Monster("Lv.8 <color=#FF0000>오크</color>", new(6, 3, 3, 9), GetSrc("Monster", "orc")),
+            18 => new Monster("Lv.8 <color=#FF0000>스텀프</color>", new(6, 2, 4, 15), GetSrc("Monster", "stump")),
+            19 => new Monster("Lv.8 <color=#FF0000>드레이크</color>", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
+            //******************************************↑Level8↑******************************************
+            20 => new Monster("Lv.9 <color=#FF0000>오크</color>", new(6, 3, 3, 9), GetSrc("Monster", "orc")),
+            21 => new Monster("Lv.9 <color=#FF0000>스텀프</color>", new(6, 2, 4, 15), GetSrc("Monster", "stump")),
+            22 => new Monster("Lv.9 <color=#FF0000>드레이크</color>", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
+            //******************************************↑Level9↑******************************************
+            23 => new Monster("Lv.9 <color=#FF0000>스텀프</color>", new(6, 2, 4, 15), GetSrc("Monster", "stump")),
+            24 => new Monster("Lv.9 <color=#FF0000>드레이크</color>", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
+            //******************************************↑Level10↑******************************************
+            25 => new Monster("Lv.9 <color=#FF0000>스텀프</color>", new(6, 2, 4, 15), GetSrc("Monster", "stump")),
+            26 => new Monster("Lv.9 <color=#FF0000>드레이크</color>", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
+            //******************************************↑Level11↑******************************************
+
+
+
             _ => null,
         };
+
+
+
     }
 
     public FieldEventInfo GetRandomFieldEvent()
