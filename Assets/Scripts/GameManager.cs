@@ -343,10 +343,10 @@ public class GameManager : MonoBehaviour
                 Debug.Log("move" +field.gridPosition );
                 knight.transform.position = MapManager.GridToWorldPosition(new Vector2(field.gridPosition.x,field.gridPosition.y));
                 knight.CurrentFieldPiece = field;
+                // 맵을 밝힘
+                MapManager.LightTempKnightMove(field.gridPosition);
             }
 
-            // 맵을 밝힘
-            MapManager.LightTempKnightMove(field.gridPosition);
             // TurnOnMapPiece(field, true, false);
 
             // 이동 가능 영역 업데이트
@@ -368,7 +368,7 @@ public class GameManager : MonoBehaviour
             
         if (!isKnight && princess.Cost >= cost)
         {
-            field.IsLight = true;
+            // field.IsLight = true;
             //MapManager.LightField(FieldType.Princess, field.gridPosition);
             MapManager.LightFieldPrincess(field.gridPosition);
             MapManager.RefreshMap();

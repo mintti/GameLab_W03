@@ -59,6 +59,7 @@ public class MapManager : MonoBehaviour
     GameObject selectCusorObj;
     public List<FieldPiece> canSelectList = new List<FieldPiece>();
     public List<FieldPiece> KnightTempLight = new List<FieldPiece>(9);
+    public List<FieldPiece> PrincessTempLight = new List<FieldPiece>(4);
     float cellSize = 1.28f;
     GeneratorManager generatorManager;
 
@@ -80,7 +81,10 @@ public class MapManager : MonoBehaviour
                 AllFieldMapData.Add(i, CreateMap(i, _fieldSizeList[i]));
             fieldFloorOffset[i] = new Vector3((20 -_fieldSizeList[i].x)/2, (20 -_fieldSizeList[i].x)/2, 0);
         }        
-        
+        PrincessTempLight.Add(AllFieldMapData[2][19,19]);
+        PrincessTempLight.Add(AllFieldMapData[2][19,18]);
+        PrincessTempLight.Add(AllFieldMapData[2][18,19]);
+        PrincessTempLight.Add(AllFieldMapData[2][18,18]);
         currentFloor = 0;
 
     }
@@ -121,13 +125,9 @@ public class MapManager : MonoBehaviour
         }
         if(floor == 2){ 
             MapData[19,19].SetMapType(MapType.Princess);
-            MapData[19,19].IsLight = true;
             MapData[19,18].SetMapType(MapType.Dragon);
-            MapData[19,18].IsLight = true;
             MapData[18,19].SetMapType(MapType.Block);
-            MapData[18,19].IsLight = true;
             MapData[18,18].SetMapType(MapType.Block);
-            MapData[18,18].IsLight = true;
         }
         float remainRatio = 1-mapBlockRatio;
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
@@ -288,6 +288,7 @@ public class MapManager : MonoBehaviour
         BuildMap(MapType.Heal, FieldTileMap, HealTile);
         BuildMap(MapType.Door, FieldTileMap, DoorTile);
         BuildMap(MapType.Dragon, FieldTileMap, DragonTile);
+
     }
     
     public void BuildMap(MapType mapType, Tilemap map, TileBase tile)
@@ -296,7 +297,11 @@ public class MapManager : MonoBehaviour
             for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
                 if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
                 {
-                    if(AllFieldMapData[currentFloor][x, y].IsLight || KnightTempLight.Contains(AllFieldMapData[currentFloor][x, y])){ 
+                    if(AllFieldMapData[currentFloor][x, y].IsLight){ 
+                        LightTileMap.SetTile(new Vector3Int(x+1, y+1, 0), IsLightTile);    
+                        map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
+                    }
+                    else if(KnightTempLight.Contains(AllFieldMapData[currentFloor][x, y]) || PrincessTempLight.Contains(AllFieldMapData[currentFloor][x, y])){
                         map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
                     }
                     else{
@@ -316,12 +321,12 @@ public class MapManager : MonoBehaviour
         
         FieldTileMap.ClearAllTiles();
         UITileMap.ClearAllTiles();
+        LightTileMap.ClearAllTiles();
         FloorTileMap.ClearAllTiles();
         WallTileMap.ClearAllTiles();
     }
 
     public void RefreshMap(){
-        ClearAllMaps();
         BuildAllField();
     }
 
