@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using System;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class BattleEvent : MonoBehaviour
 {
@@ -112,6 +113,8 @@ public class BattleEvent : MonoBehaviour
                     CombatPlayerWinText(_monster.Name);
                     
                     yield return PerformLevelUp();
+                    
+                    if(_isLastBoss) _gameManager.ShowSelectArtifact(); // 아티펙트 선택 화면 추가
                     
                     combatPanelExitButton.SetActive(true);
                     combatPanelExitButton.GetComponent<Button>().onClick.AddListener(End);

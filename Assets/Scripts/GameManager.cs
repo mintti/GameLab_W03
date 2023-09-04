@@ -692,10 +692,30 @@ public class GameManager : MonoBehaviour
         ChangeBehavior(knight.SelectedIdx);
     }
 
+    public void ShowSelectArtifact(int count = 3 )
+    {
+        var canSelectArtifactList = _resourceManager.Artifacts.Where(x => !_dataManager.HasArtifactList.Contains(x)).ToList();
+        var indexs = new List<int>();
+
+        do
+        {
+            int index = Random.Range(0, canSelectArtifactList.Count);
+            if (!indexs.Contains(index)) indexs.Add(index);
+
+        } while (indexs.Count < count);
+        
+        // 화면 설정
+        _uiManager.artifactSelectorObj.SetActive(true);
+        for (int idx = 0; idx < count; idx++)
+        {
+            _uiManager.UIArtifacts[idx].Init(canSelectArtifactList[idx]);
+        }
+    }
+    
     public void GetArtifact(Artifact artifact)
     {
         _dataManager.HasArtifactList.Add(artifact);
-        _uiManager.UpdateArtifactInfo();
+        _uiManager.AddHasArtifactUI(artifact);
 
         switch (artifact.Type)
         {
@@ -726,18 +746,19 @@ public class GameManager : MonoBehaviour
             case ArtifactType.AddAttack :
                 _dataManager.ARTI_AddAtack = true;
                 break;
-            
         }
+    }
+
+    public void CompleteSelectArtifact()
+    {
+        _uiManager.artifactSelectorObj.SetActive(false);
     }
 
     public void ClearBoss()
     {
         HasKey = true;
         _uiManager.UpdateKnightStatusInfo();
-
-        // [TODO] 열쇠를 얻었다는 정보를 UI에 표시?
     }
-        
 
     #endregion
 

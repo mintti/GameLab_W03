@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
 using UnityEditor.UI;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class UIManager : MonoBehaviour
@@ -79,6 +80,13 @@ public class UIManager : MonoBehaviour
     [Header("탑/층 관련")]
     public GameObject[] currentFloorArrows;
     public GameObject BurningObj;
+
+    [Header("아티펙트 관련")] 
+    public GameObject artifactSelectorObj;
+    [FormerlySerializedAs("CanSelectArtifacts")] public UIArtifact[] UIArtifacts;
+
+    public Transform playerArtifactListTr;
+    public GameObject playerHasArtifactPrefab;
 
 
     private Dictionary<int, string> _princessSkillInfoDict = new()
@@ -232,8 +240,6 @@ public class UIManager : MonoBehaviour
         }
 
         doorKey.SetActive(_gameManager.HasKey);
-
-
     }
 
     public void StatusUp(string statusName)
@@ -432,8 +438,7 @@ public class UIManager : MonoBehaviour
         }
 
     }
-
-
+    
     public void BloodEffect()
     {
         StartCoroutine(ShowBloodScreen());
@@ -467,8 +472,9 @@ public class UIManager : MonoBehaviour
         somethingBoxObj.SetActive(false);
     }
 
-    public void UpdateArtifactInfo()
+    public void AddHasArtifactUI(Artifact artifact)
     {
-        
+        var obj = Instantiate(playerHasArtifactPrefab, playerArtifactListTr);
+        obj.GetComponent<UIArtifact>().Init(artifact);
     }
 }

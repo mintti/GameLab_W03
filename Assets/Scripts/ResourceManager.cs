@@ -18,11 +18,12 @@ public class ResourceManager : MonoBehaviour
 
     public Sprite healEventSprite;
     
-    public void Awake()
+    public void Start()
     {
         InitFieldEvent();
         InitMonster();
         InitItemEvent();
+        InitArtifact();
 
         // LoadData();
     }
