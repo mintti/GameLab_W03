@@ -661,6 +661,13 @@ public class GameManager : MonoBehaviour
         
         CurrentKnightFloor++;
         DisplayFloor = CurrentKnightFloor;
+
+        var nextFloorInitPosField = MapManager.AllFieldMapData[CurrentKnightFloor][0, 0];
+        
+        knight.transform.position = MapManager.GridToWorldPosition(nextFloorInitPosField.gridPosition);
+        knight.CurrentFieldPiece = nextFloorInitPosField;
+        
+        MapManager.RefreshMap();
     }
 
 
