@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
 using UnityEditor.UI;
+using Random = UnityEngine.Random;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,6 +14,12 @@ public class UIManager : MonoBehaviour
     private GameManager _gameManager;
     private Player _player1;
     private Player _player2;
+
+    [Header("Common")]
+    public GameObject somethingBoxObj;
+
+    public TextMeshProUGUI somethingText;
+    public Action SomethingAction { get; set; }
 
     [Header("게임 정보")]
     public TextMeshProUGUI turnText;
@@ -385,5 +393,18 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         bloodEffect.gameObject.SetActive(false);
         bloodEffect.color = Color.clear;
+    }
+
+    public void ActiveSomeThingBox(string text, Action endAction = null)
+    {
+        somethingBoxObj.SetActive(true);
+        somethingText.text = text;
+        SomethingAction = endAction;
+    }
+    
+    public void B_YES()
+    {
+        SomethingAction?.Invoke();
+        somethingBoxObj.SetActive(false);
     }
 }
