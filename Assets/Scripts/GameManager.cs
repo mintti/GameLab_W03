@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
     {
         MapManager.InitMap();
 
-        knight.SelectedFloor = CurrentKnightFloor = 0;
+        knight.SelectedFloor = CurrentKnightFloor = 1;
         princess.SelectedFloor = 3;
         MapManager.ChangeFloor(CurrentKnightFloor);
         InitPlayerPosition();

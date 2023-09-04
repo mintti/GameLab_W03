@@ -82,7 +82,7 @@ public class MapManager : MonoBehaviour
 
     }
     public FieldPiece GetFieldPiece(int floor, Vector2Int position){
-            return AllFieldMapData[floor][position.x, position.y];
+            return AllFieldMapData[floor-1][position.x, position.y];
     }
     public FieldPiece GetFieldPiece(Vector2Int position){
             return AllFieldMapData[currentFloor][position.x, position.y];
@@ -112,6 +112,21 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].SetMapType(MapType.Door);
                 break;
             }
+        }
+        if(floor == 2){
+
+            MapData[19,19].SetMapType(MapType.Princess);
+            MapData[19,19].PrincessIsLight = true;
+            MapData[19,19].KnightIsLight = true;
+            MapData[19,18].SetMapType(MapType.Dragon);
+            MapData[19,19].PrincessIsLight = true;
+            MapData[19,19].KnightIsLight = true;
+            MapData[18,19].SetMapType(MapType.Block);
+            MapData[19,19].PrincessIsLight = true;
+            MapData[19,19].KnightIsLight = true;
+            MapData[18,18].SetMapType(MapType.Block);
+            MapData[19,19].PrincessIsLight = true;
+            MapData[19,19].KnightIsLight = true;
         }
         float remainRatio = 1-mapBlockRatio;
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
@@ -198,17 +213,8 @@ public class MapManager : MonoBehaviour
     }
 
     public void ChangeFloor(int floor){
-        currentFloor = floor;
+        currentFloor = floor -1;
         ObjectField.transform.position = fieldFloorOffset[currentFloor] * cellSize;
-        RefreshMap();
-    }
-    public void TestChangeFloor(){
-        int floor = currentFloor;
-        if(currentFloor == 0)
-            floor = 1;
-        else 
-            floor = 0;
-        ChangeFloor(floor);
         RefreshMap();
     }
 
