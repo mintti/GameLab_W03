@@ -17,7 +17,6 @@ public class UIManager : MonoBehaviour
 
     [Header("Common")]
     public GameObject somethingBoxObj;
-
     public TextMeshProUGUI somethingText;
     public Action SomethingAction { get; set; }
 
@@ -39,8 +38,6 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI statusPoint;
     public RectTransform expBar;
     
-
-
     public TextMeshProUGUI skillInfoText;
 
     [Header("화면 제어")]
@@ -79,6 +76,7 @@ public class UIManager : MonoBehaviour
 
     [Header("탑/층 관련")]
     public GameObject[] currentFloorArrows;
+    public GameObject BurningObj;
 
 
     private Dictionary<int, string> _princessSkillInfoDict = new()

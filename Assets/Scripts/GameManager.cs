@@ -1,10 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer.Internal.Converters;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -111,9 +107,20 @@ public class GameManager : MonoBehaviour
     public HealEvent healEvent;
 
     public bool EventPrinting { get; set; }
+
+    [Header("웨이브 시스템")] private bool _dotDamageTime;
+
+    private bool DotDamageTime
+    {
+        get => _dotDamageTime;
+        set
+        {
+            _dotDamageTime = value;
+            if (_dotDamageTime) _uiManager.BurningObj.SetActive(true);
+        }
+    }
     
-    [Header("웨이브 시스템")]
-    private bool dotDamageTime;
+    
     private int turnsBeforeAscend;
 
     public void Start()
@@ -175,7 +182,7 @@ public class GameManager : MonoBehaviour
             whoseTurn = nameof(knight);
             MapManager.BuildAllField();
             yield return StartCoroutine(PlayPlayer(knight));
-            if (dotDamageTime)
+            if (DotDamageTime)
             {
                 // [TODO] 도트 데미지 액션 출력
                 knight.Status.CurrentHp -= GetDotDam();
@@ -202,10 +209,10 @@ public class GameManager : MonoBehaviour
             // 도트 데미지 여부 설정
             if (GetDotDam() > 0)
             {
-                if (!dotDamageTime)
+                if (!DotDamageTime)
                 {
-                    // [TODO] 도트 데미지가 시작된다는 안내?
-                    dotDamageTime = true;
+                    Log($"<color=#D73502>{CurrentKnightFloor}층이 불타기 시작합니다.</color>");
+                    DotDamageTime = true;
                 }
             }
         }
@@ -218,12 +225,6 @@ public class GameManager : MonoBehaviour
     }
 
     public bool CheckDotDam() => GetDotDam() > 0;
-
-    public void UpFloor()
-    {
-        dotDamageTime = false;
-        turnsBeforeAscend = Turn;
-    }
 
     IEnumerator PlayPlayer(Player player)
     {
@@ -657,9 +658,13 @@ public class GameManager : MonoBehaviour
     {
         HasKey = false;
         
+        // 도트 데미지 관련 초기화
+        DotDamageTime = false;
+        turnsBeforeAscend = Turn;
+        
+        // 층 이동
         CurrentKnightFloor++;
         DisplayFloor = CurrentKnightFloor;
-
         var nextFloorInitPosField = MapManager.AllFieldMapData[CurrentKnightFloor][0, 0];
         
         knight.transform.position = MapManager.GridToWorldPosition(nextFloorInitPosField.gridPosition);
