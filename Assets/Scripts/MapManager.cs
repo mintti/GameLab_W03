@@ -327,7 +327,7 @@ public class MapManager : MonoBehaviour
         foreach (FieldPiece piece in _canSelectFields)
         {   
             if(isInGrid(piece.gridPosition)){
-                if(((piece.IsLight || KnightTempLight.Contains(piece)) && piece.MapType == MapType.Block) || (gameManager.whoseTurn.Equals(nameof(gameManager.knight)) && gameManager.knight.Cost == 0) || (gameManager.whoseTurn.Equals(nameof(gameManager.princess)) && gameManager.princess.Cost == 0)){
+                if(((piece.IsLight || KnightTempLight.Contains(piece)) && piece.MapType == MapType.Block) || !piece.IsLight && ((gameManager.whoseTurn.Equals(nameof(gameManager.knight)) && gameManager.knight.Cost == 0) || (gameManager.whoseTurn.Equals(nameof(gameManager.princess)) && gameManager.princess.Cost == 0))){
                     UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), RedCanSelectTile);
                 }
                 else{

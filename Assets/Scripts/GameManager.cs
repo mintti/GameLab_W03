@@ -675,7 +675,9 @@ public class GameManager : MonoBehaviour
         
         // 층 이동
         CurrentKnightFloor++;
-        DisplayFloor = CurrentKnightFloor;
+        DisplayFloor = CurrentKnightFloor; 
+        knight.SelectedFloor = CurrentKnightFloor;
+
         var nextFloorInitPosField = MapManager.AllFieldMapData[CurrentKnightFloor][0, 0];
         
         knight.transform.position = MapManager.GridToWorldPosition(nextFloorInitPosField.gridPosition);
