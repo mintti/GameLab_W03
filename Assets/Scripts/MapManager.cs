@@ -128,16 +128,25 @@ public class MapManager : MonoBehaviour
         generatorManager.GenerateNewMap("Maze"); 
 
         FieldPiece[,] MapData = new FieldPiece[fieldSize.x,fieldSize.y];
+        Tilemap currentTileMap;
+        if(floor == 0){
+            currentTileMap = WallTileMap1;
+        }
+        else if(floor == 1){
+            currentTileMap = WallTileMap2;
+        }
+        else {
+            currentTileMap = WallTileMap3;
+        }
         for (int i = 0; i < fieldSize.x; i++)
         {
             for (int j = 0; j < fieldSize.y; j++)
             {
                 MapData[i, j] = new FieldPiece();
-                MapData[i, j].Init(floor, new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
+                MapData[i, j].Init(floor, new Vector2Int(i, j), currentTileMap.GetTile(new Vector3Int(i+1, j+1, 0)) != null ? MapType.Block : MapType.Empty);
             }
         }
         MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].SetMapType(MapType.Door);
-        Debug.Log("boss");
         while(true){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
@@ -192,12 +201,10 @@ public class MapManager : MonoBehaviour
                 if(floorMonsterNum == 0) break;
             }
         }
-        remainRatio -= mapMonsterRatio;
 
-        GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
-        remainRatio -= mapItemboxRatio;
+        GenerateFieldObjects(MapData, mapItemboxRatio, MapType.Item);
 
-        GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
+        GenerateFieldObjects(MapData, mapEventRatio, MapType.Event);
         MapData[0, 0].SetMapType(MapType.Empty);
 
 
