@@ -21,12 +21,9 @@ public class MapManager : MonoBehaviour
 
     [Header("Generator")]
     public GameObject generatorManagerObj;
-    public List<Vector2Int> _fieldSizeList;
-    public float mapEmptyRatio = 0.35f;
-    public float mapMonsterRatio = 0.25f;
-    public float mapEventRatio = 0.2f;
-    public float mapItemboxRatio = 0.1f;
-    public float mapBlockRatio = 0.1f;
+    List<Vector2Int> _fieldSizeList;
+    float mapEventRatio = 0.2f;
+    float mapItemboxRatio = 0.1f;
 
     
     [Header("Field")]
@@ -66,7 +63,6 @@ public class MapManager : MonoBehaviour
     public List<FieldPiece> PrincessTempLight = new List<FieldPiece>(4);
     public List<FieldPiece> DoorTempLight = new List<FieldPiece>();
     float cellSize = 1.28f;
-    GeneratorManager generatorManager;
 
 
 
@@ -79,6 +75,8 @@ public class MapManager : MonoBehaviour
     }
 
     public void InitMap(){
+        mapEventRatio = DataManager.Instance.mapEventRatio;
+        mapItemboxRatio = DataManager.Instance.mapItemboxRatio;
         _fieldSizeList = new List<Vector2Int>(DataManager.Instance.fieldSizeList);
         floorCount = _fieldSizeList.Count;
         fieldFloorOffset = new Vector3[floorCount];
@@ -104,11 +102,6 @@ public class MapManager : MonoBehaviour
     }
     public FieldPiece[,] CreateMap(int floor, Vector2Int fieldSize){
 
-        generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
-        generatorManager.width = fieldSize.x + 2;
-        generatorManager.height = fieldSize.y + 2;
-        generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
-        generatorManager.GenerateNewMap("Maze"); 
 
         FieldPiece[,] MapData = new FieldPiece[fieldSize.x,fieldSize.y];
         Tilemap currentTileMap;
@@ -148,7 +141,6 @@ public class MapManager : MonoBehaviour
             MapData[18,19].SetMapType(MapType.Block);
             MapData[18,18].SetMapType(MapType.Block);
         }
-        float remainRatio = 1-mapBlockRatio;
         int floorMonsterNum = 0;
         // create monster
         List<Vector3Int> floorRemainMonsterNum = new List<Vector3Int>();
@@ -435,7 +427,6 @@ public class MapManager : MonoBehaviour
     // }
     
     public void ClearMapPiece(FieldPiece fieldPiece){
-        generatorManager.ClearAllMaps();
         fieldPiece.SetMapType(MapType.Empty);
         RefreshMap();
     }
