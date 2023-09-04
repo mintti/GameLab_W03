@@ -222,7 +222,7 @@ public class UIManager : MonoBehaviour
         dexText.text = $"<color=#80FF00>민첩</color>  {status.Dex}";
 
 
-        statusPoint.text = $"Status Point {_gameManager.StatusPoint}";
+        statusPoint.text = $"스탯 포인트 <color=#8A2BE2>{_gameManager.StatusPoint}</color>";
         
         // 스텟 업 버튼
         bool canUp = _gameManager.StatusPoint > 0;
