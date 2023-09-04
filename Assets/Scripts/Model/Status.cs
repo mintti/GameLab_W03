@@ -108,7 +108,7 @@ public class Status
 
     }
 
-    public Status(int maxHp, int power, int defnese, int dex, int exp, bool isPlayer = false)
+    public Status(int maxHp, int power, int defense, int dex, int exp, bool isPlayer = false)
     {
         player = isPlayer;
 
