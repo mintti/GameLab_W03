@@ -12,5 +12,4 @@ public enum MapType
     Knight,
     Princess,
     Dragon,
-    Key,
 }

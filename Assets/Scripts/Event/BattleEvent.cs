@@ -45,7 +45,6 @@ public class BattleEvent : MonoBehaviour
     {
         _isLastBoss = isLastBoss;
 
-
         combatText.text = string.Empty;
         _combatPanel.SetActive(true);
         combatPanelExitButton.SetActive(false);
@@ -159,19 +158,19 @@ public class BattleEvent : MonoBehaviour
     private void End()
     {
         _combatPanel.SetActive(false);
+        
+        // 공통 동작
+        combatPanelExitButton.SetActive(true);
+        if (_knight.Status.Buff)
+        {
+            _knight.Status.Buff = false;
+        }
+        _gameManager.EventPrinting = false;
+        
+        // 보스를 깬 경우, 클리어 정보 추가
         if (_isLastBoss)
         {
-            _combatPanel.SetActive(false);
-            _uiManager.ActiveEndingScene();
-        }
-        else
-        {
-            combatPanelExitButton.SetActive(true);
-            if (_knight.Status.Buff)
-            {
-                _knight.Status.Buff = false;
-            }
-            _gameManager.EventPrinting = false;
+            _gameManager.ClearBoss();
         }
     }
 
