@@ -130,11 +130,14 @@ public class MapManager : MonoBehaviour
             MapData[18,18].SetMapType(MapType.Block);
         }
         float remainRatio = 1-mapBlockRatio;
+        // create monster
+        GenerateFieldObjects(MapData, mapMonsterRatio/remainRatio, MapType.Monster);
+        remainRatio -= (_fieldSizeList[floor].x*_fieldSizeList[floor].y);
+
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
         remainRatio -= mapItemboxRatio;
+
         GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
-        remainRatio -= mapEventRatio;
-        GenerateFieldObjects(MapData, mapMonsterRatio/remainRatio, MapType.Monster);
         MapData[0, 0].SetMapType(MapType.Empty);
 
         return MapData;
