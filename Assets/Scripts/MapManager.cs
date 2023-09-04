@@ -147,6 +147,7 @@ public class MapManager : MonoBehaviour
             }
         }
         MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].SetMapType(MapType.Door);
+        MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].IsLight = true;
         while(true){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
