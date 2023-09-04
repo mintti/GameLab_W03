@@ -110,7 +110,8 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    public int MaxCost;
+    public int PrincessMaxCost;
+    public int KnightMaxCost;
 
     [Header("이벤트 관련")]
     public BattleEvent battleEvent;
@@ -142,6 +143,8 @@ public class GameManager : MonoBehaviour
     {
         MapManager.InitMap();
 
+        PrincessMaxCost = _dataManager.PrincessMaxCost;
+        KnightMaxCost = _dataManager.KnightMaxCost;
         knight.SelectedFloor = CurrentKnightFloor = 1;
         princess.SelectedFloor = 3;
         MapManager.ChangeFloor(CurrentKnightFloor);
@@ -238,7 +241,10 @@ public class GameManager : MonoBehaviour
             DisplayFloor = player.SelectedFloor; // 이전 바라보고 있던 대상 층으로 이동
             ChangeBehavior(player.SelectedIdx);
             
-            player.StartTurn();
+            if(player == knight)
+                player.StartTurn(KnightMaxCost);
+            else
+                player.StartTurn(PrincessMaxCost);
             CameraManager.Target = player.transform;
             yield return new WaitUntil(() => player.IsTurnEnd);
         } while (!player.IsTurnEnd);

@@ -113,13 +113,11 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].Init(floor, new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
             }
         }
+        MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].SetMapType(MapType.Door);
+        Debug.Log("boss");
         while(true){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
-            if(MapData[i, j].MapType == MapType.Empty){
-                MapData[i, j].SetMapType(MapType.Door);
-                break;
-            }
             if(MapData[i, j].MapType == MapType.Empty){
                 MapData[i, j].SetMapType(MapType.Boss);
                 break;
@@ -132,11 +130,48 @@ public class MapManager : MonoBehaviour
             MapData[18,18].SetMapType(MapType.Block);
         }
         float remainRatio = 1-mapBlockRatio;
+        int floorMonsterNum = 0;
+        // create monster
+        List<Vector3Int> floorRemainMonsterNum = new List<Vector3Int>();
+        foreach(Vector3Int monsterNum in DataManager.Instance.monsterNumberPerFloor){
+            if(monsterNum.x-1 == floor){
+                floorMonsterNum += monsterNum.z;
+                floorRemainMonsterNum.Add(monsterNum);
+            }
+        }
+        float monsterRatio = (float)floorMonsterNum / (float)(_fieldSizeList[floor].x*_fieldSizeList[floor].y);
+        while(floorMonsterNum != 0){
+            for (int i = 0; i < _fieldSizeList[currentFloor].x; i++)
+            {
+                for (int j = 0; j < _fieldSizeList[currentFloor].y; j++)
+                {
+                    if((i == 0 && j == 0) || (i == _fieldSizeList[currentFloor].x -1 && j == _fieldSizeList[currentFloor].y -1)){
+                        continue;
+                    }
+                    if(MapData[i, j].MapType == MapType.Empty){
+                        float val = Random.value;
+                        if(val < monsterRatio){
+                            MapData[i,j].SetMapType(MapType.Monster);
+                            int selectMonsterLevelIdx = Random.Range(0, floorRemainMonsterNum.Count);
+                            while(floorRemainMonsterNum[selectMonsterLevelIdx].z == 0 && floorMonsterNum != 0){
+                                selectMonsterLevelIdx = (selectMonsterLevelIdx + 1) % floorRemainMonsterNum.Count;
+                            }
+                            MapData[i,j].monsterInfo = gameManager._resourceManager.GetRandomMonster(floorRemainMonsterNum[selectMonsterLevelIdx].y);
+                            floorRemainMonsterNum[selectMonsterLevelIdx] -= new Vector3Int(0,0,1);
+                            floorMonsterNum -= 1;
+                            if(floorMonsterNum == 0) break;
+                        }
+                    }
+                }
+                if(floorMonsterNum == 0) break;
+            }
+        }
+        remainRatio -= mapMonsterRatio;
+
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
         remainRatio -= mapItemboxRatio;
+
         GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
-        remainRatio -= mapEventRatio;
-        GenerateFieldObjects(MapData, mapMonsterRatio/remainRatio, MapType.Monster);
         MapData[0, 0].SetMapType(MapType.Empty);
 
         return MapData;
@@ -368,11 +403,7 @@ public class MapManager : MonoBehaviour
     public void UpdateMapType(FieldPiece fieldPiece, MapType type){
         fieldPiece.SetMapType(type);
         
-        if(type == MapType.Monster){
-            // fieldPiece.monsterInfo = moneter;
-             fieldPiece.monsterInfo = gameManager._resourceManager.GetRandomMonster(1);
-        }
-        else if(type == MapType.Item){
+        if(type == MapType.Item){
             // fieldPiece.itemInfo = itemInfo;
             fieldPiece.itemInfo = gameManager._resourceManager.GetRandomItemEvent();
         }

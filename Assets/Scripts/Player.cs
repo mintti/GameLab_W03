@@ -71,9 +71,9 @@ public class Player : MonoBehaviour
 
     }
 
-    public void StartTurn()
+    public void StartTurn(int cost)
     {
-        Cost = _gameManager.MaxCost;
+        Cost = cost;
         IsTurnEnd = false;
         playerUI.SetActive(true);
         _uiManager.UpdateInfoText(_selectedIdx);

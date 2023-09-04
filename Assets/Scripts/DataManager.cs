@@ -30,6 +30,9 @@ public class DataManager : MonoBehaviour
         { 1, 7, 10, 13, 15, 18, 23, 28, 33 };
     
     [Header("Player Skill")]
+    
+    public int PrincessMaxCost;
+    public int KnightMaxCost;
     public int[] princessSkillCost;
     public int[] knightSkillCost;
 
