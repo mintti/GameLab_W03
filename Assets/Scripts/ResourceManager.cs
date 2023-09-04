@@ -51,11 +51,16 @@ public class ResourceManager : MonoBehaviour
     {
         FieldEvents = new();
         FieldEvents.Add(new(EventType.HP, 1, GetSrc("FieldEvent", "blessinglake"), "축복의 샘입니다.\n\n체력이 1 회복됩니다."));
+        FieldEvents.Add(new(EventType.HP, 1, GetSrc("FieldEvent", "blessinglake"), "축복의 샘입니다.\n\n체력이 1 회복됩니다."));
         FieldEvents.Add(new(EventType.HP, -2, GetSrc("FieldEvent", "goblinevent"), "수풀을 헤치며 지나가고 있었습니다. 갑자기 주위에서 고블린 덮칩니다./힘겹게 급습을 막아냈으나, 너무나 지칩니다.\n\n체력이 2 줄어듭니다."));
+        FieldEvents.Add(new(EventType.HP, -2, GetSrc("FieldEvent", "goblinevent"), "수풀을 헤치며 지나가고 있었습니다. 갑자기 주위에서 고블린 덮칩니다./힘겹게 급습을 막아냈으나, 너무나 지칩니다.\n\n체력이 2 줄어듭니다."));
+        FieldEvents.Add(new(EventType.HP, 2, GetSrc("FieldEvent", "fruitevent"), "수풀을 헤치며 지나가고 있었습니다. 기다렸다는 듯, 탐스러워 보이는 열매를 찾았습니다./아직 신은 나를 버리지 않았나 봅니다. \n\n체력이 2 회복됩니다."));
         FieldEvents.Add(new(EventType.HP, 2, GetSrc("FieldEvent", "fruitevent"), "수풀을 헤치며 지나가고 있었습니다. 기다렸다는 듯, 탐스러워 보이는 열매를 찾았습니다./아직 신은 나를 버리지 않았나 봅니다. \n\n체력이 2 회복됩니다."));
         FieldEvents.Add(new(EventType.Power, 1, GetSrc("FieldEvent", "boyevent"), "늑대들에게 둘러싸여 있는 한 소년을 발견하고, 검을 뽑고 달려가 늑대들을 물리쳤습니다./소년은 감사하다는 인사를 하며, 자기도 꼭 커서 용사가 될 것이라 다짐합니다. 흐뭇한 표정을 지으며 갈 길을 이어서 갑니다. \n파워가 1 올라갑니다."));
         FieldEvents.Add(new(EventType.Dex, 3, GetSrc("FieldEvent", "ghost"), "갑자기 등골이 오싹해 집니다. 뒤를 돌아보니 귀신이 저를 쳐다보고 있습니다./화들짝 놀라 전력질주 합니다. \n\n 민첩이 3 증가합니다."));
         FieldEvents.Add(new(EventType.HP, -1, GetSrc("FieldEvent", "blood"), "서둘러 나아가다, 바닥에 고인 핏물에 미끄러집니다. \n\n체력이 1 줄어듭니다."));
+        FieldEvents.Add(new(EventType.HP, -1, GetSrc("FieldEvent", "blood"), "서둘러 나아가다, 바닥에 고인 핏물에 미끄러집니다. \n\n체력이 1 줄어듭니다."));
+        FieldEvents.Add(new(EventType.HP, -3, GetSrc("FieldEvent", "arrow"), "'딸깍'\n불길한 예감이 듭니다./사방에서 화살이 날라옵니다. 빠르게 피했지만, 모두 피할 순 없었습니다. \n\n체력이 3 줄어듭니다."));
     }
 
     public void InitArtifact()
