@@ -681,6 +681,8 @@ public class GameManager : MonoBehaviour
         knight.transform.position = MapManager.GridToWorldPosition(nextFloorInitPosField.gridPosition);
         knight.CurrentFieldPiece = nextFloorInitPosField;
         MapManager.LightTempKnightMove(nextFloorInitPosField.gridPosition);
+
+        knight.Status.CurrentHp = knight.Status.MaxHp; // 체력 맥스로
         
         MapManager.RefreshMap();
         ChangeBehavior(knight.SelectedIdx);
