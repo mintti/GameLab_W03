@@ -258,7 +258,7 @@ public class UIManager : MonoBehaviour
                 status.Defense++;
                 break;
             case "dex" :
-                status.Dex++;
+                status.Dex+=3;
                 break;
         }
 
@@ -306,7 +306,7 @@ public class UIManager : MonoBehaviour
 
         if (_gameManager.CheckDotDam())
         {
-            waveText.text = $"용사의 차례가 종료 후 { _gameManager.GetDotDam()} 데미지를 입습니다.";
+            waveText.text = $"<color=#FF0000>용사의 차례가 종료 후 { _gameManager.GetDotDam()} 데미지를 입습니다.</color>";
         }
         else
         { 

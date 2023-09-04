@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         set
         {
             _dotDamageTime = value;
-            if (_dotDamageTime) _uiManager.BurningObj.SetActive(true);
+            _uiManager.BurningObj.SetActive(_dotDamageTime);
         }
     }
     
@@ -674,7 +674,7 @@ public class GameManager : MonoBehaviour
         // 도트 데미지 관련 초기화
         DotDamageTime = false;
         turnsBeforeAscend = Turn;
-        
+        _uiManager.UpdateTurnText(Turn);
         // 층 이동
         CurrentKnightFloor++;
         DisplayFloor = CurrentKnightFloor; 
