@@ -75,7 +75,7 @@ public class BattleEvent : MonoBehaviour
         }
 
         int playerDam = Mathf.Max(_knight.Status.Power - _monster.Status.Defense, 1);
-        int monsterDam = Mathf.Max(_monster.Status.Defense - _knight.Status.Power, 1);
+        int monsterDam = Mathf.Max(_monster.Status.Power - _knight.Status.Defense, 1);
 
         //if ((playerDam == monsterDam) && playerDam == 0)
         //{
