@@ -61,7 +61,7 @@ public class MapManager : MonoBehaviour
 
     public FieldType currentField = FieldType.Field;
 
-    public Vector3 fieldFloorOffset;
+    public Vector3[] fieldFloorOffset;
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
@@ -70,11 +70,14 @@ public class MapManager : MonoBehaviour
     public void InitMap(){
         _fieldSizeList = new List<Vector2Int>(DataManager.Instance.fieldSizeList);
         floorCount = _fieldSizeList.Count;
+        fieldFloorOffset = new Vector3[floorCount];
         for(int i = 0; i < floorCount; ++i){
             currentFloor = i;
             if (!AllFieldMapData.ContainsKey(i))
                 AllFieldMapData.Add(i, CreateMap(i, _fieldSizeList[i]));
+            fieldFloorOffset[i] = new Vector3((20 -_fieldSizeList[i].x)/2, (20 -_fieldSizeList[i].x)/2, 0);
         }
+        
         currentFloor = 0;
 
     }
@@ -195,9 +198,8 @@ public class MapManager : MonoBehaviour
     }
 
     public void ChangeFloor(int floor){
-        fieldFloorOffset = new Vector3((20 -_fieldSizeList[floor].x)/2, (20 -_fieldSizeList[floor].x)/2, 0);
         currentFloor = floor;
-        ObjectField.transform.position = fieldFloorOffset * cellSize;
+        ObjectField.transform.position = fieldFloorOffset[currentFloor] * cellSize;
         RefreshMap();
     }
     public void TestChangeFloor(){
@@ -308,9 +310,6 @@ public class MapManager : MonoBehaviour
     public void RefreshMap(){
         ClearAllMaps();
         BuildAllField(currentField);
-        if(gameManager.princess.CurrentFieldPiece.currentFloor == currentFloor){
-            // gameManager.princess.
-        }
     }
 
     public void UpdateMapType(FieldPiece fieldPiece, MapType type){

@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     private MapManager _mapManager;
     private UIManager _uiManager;
 
+    SpriteRenderer spriteRenderer;
+
     [Header("오브젝트 및 스킬 정보")]
     public GameObject playerUI;
     private GameObject playerSkillUI;
@@ -61,6 +63,7 @@ public class Player : MonoBehaviour
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
         _mapManager = GameObject.Find(nameof(MapManager)).GetComponent<MapManager>();
         _uiManager = GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
 
         Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, true);
@@ -109,6 +112,9 @@ public class Player : MonoBehaviour
             if (SelectedIdx > 0) return; // 임시 스킬은 3개만 
             SelectedIdx++;
         }
+    }
+    public void SetSpriteRenderer(bool spriteEnable){
+        spriteRenderer.enabled = spriteEnable;
     }
     #endregion
 }

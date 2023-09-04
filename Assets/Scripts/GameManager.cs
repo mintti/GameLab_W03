@@ -63,6 +63,10 @@ public class GameManager : MonoBehaviour
             {
                 UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
                 MapManager.ChangeFloor(_displayFloor);
+                if(_displayFloor != knight.SelectedFloor)
+                    knight.SetSpriteRenderer(false);
+                else
+                    knight.SetSpriteRenderer(true);
             }
         }
     }
@@ -100,7 +104,7 @@ public class GameManager : MonoBehaviour
     [Header("웨이브 시스템")]
     private bool dotDamageTime;
     private int turnsBeforeAscend;
-    
+
     public void Start()
     {
         _resourceManager = GetComponentInChildren<ResourceManager>();
@@ -118,14 +122,15 @@ public class GameManager : MonoBehaviour
     private void Init()
     {
         MapManager.InitMap();
+
+        knight.SelectedFloor = CurrentKnightFloor = 0;
+        princess.SelectedFloor = 3;
+        MapManager.ChangeFloor(CurrentKnightFloor);
         InitPlayerPosition();
 
         // 게임 정보 초기화
         Turn = 1;
         StatusPoint = 0;
-
-        knight.SelectedFloor = CurrentKnightFloor = 1;
-        princess.SelectedFloor = 3;
         
         // 시작
         StartCoroutine(nameof(PlayGame));
@@ -139,12 +144,12 @@ public class GameManager : MonoBehaviour
     {
         knight.fieldType = FieldType.Knight;
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
-        knight.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(0,0));
+        knight.CurrentFieldPiece = MapManager.GetFieldPiece(knight.SelectedFloor, new Vector2Int(0,0));
         MapManager.LightFieldKnightMove(knight.CurrentFieldPiece.gridPosition);
         
         princess.fieldType = FieldType.Princess;
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
-        princess.CurrentFieldPiece = MapManager.GetFieldPiece(1, new Vector2Int(19,19));
+        princess.CurrentFieldPiece = MapManager.GetFieldPiece(princess.SelectedFloor, new Vector2Int(19,19));
         // MapManager.LightField(FieldType.Princess, new Vector2Int(19,19));
 
         MapManager.RefreshMap();
