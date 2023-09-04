@@ -645,7 +645,7 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case MapType.Door :
-                _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
+                // _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
                 if (HasKey)
                 {
                     _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
