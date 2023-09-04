@@ -192,16 +192,16 @@ public class MapManager : MonoBehaviour
     public void LightField(Vector2Int position){
             AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
     }
-    public void LightField9Can(Vector2Int position){
+    public void LightFieldPrincess(Vector2Int position){
         AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
-        if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].IsLight = true;
         if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].IsLight = true;
-        if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].IsLight = true;
-        if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].IsLight = true;
-        if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].IsLight = true;
         if(isInGrid(new Vector2Int(position.x+1, position.y)))AllFieldMapData[currentFloor][position.x+1, position.y].IsLight = true;
-        if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].IsLight = true;
         if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].IsLight = true;
+        // if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].IsLight = true;
+        // if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].IsLight = true;
+        // if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].IsLight = true;
+        // if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].IsLight = true;
+        // if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].IsLight = true;
     }
     public void LightTempKnightMove(Vector2Int position){
         KnightTempLight.Clear();

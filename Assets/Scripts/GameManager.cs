@@ -370,7 +370,7 @@ public class GameManager : MonoBehaviour
         {
             field.IsLight = true;
             //MapManager.LightField(FieldType.Princess, field.gridPosition);
-            MapManager.LightField9Can(field.gridPosition);
+            MapManager.LightFieldPrincess(field.gridPosition);
             MapManager.RefreshMap();
             ChangeBehavior(princess.SelectedIdx);
             princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
