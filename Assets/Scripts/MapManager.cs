@@ -357,6 +357,7 @@ public class MapManager : MonoBehaviour
         BuildMap(MapType.Event, FieldTileMap, EventTile);
         BuildMap(MapType.Heal, FieldTileMap, HealTile);
         BuildMap(MapType.Door, FieldTileMap, DoorTile);
+        BuildMap(MapType.Boss, FieldTileMap, BossTile);
         BuildMap(MapType.Dragon, FieldTileMap, DragonTile);
 
     }
