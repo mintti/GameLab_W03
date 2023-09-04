@@ -131,7 +131,7 @@ public class BattleEvent : MonoBehaviour
 
                     if (_attDefCount >= value)
                     {
-                        AppendBattleInfoText("\n아티펙트의 효과로 한번 더 공격합니다.");
+                        AppendBattleInfoText("\n<color=#682699>아티펙트의 효과로 한번 더 공격합니다.</color>");
                         knightTurn = true;
                         monsterTurn = false;
                         _attDefCount = -1;
