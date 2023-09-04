@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
     {
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
         knight.CurrentFieldPiece = MapManager.GetFieldPiece(knight.SelectedFloor, new Vector2Int(0,0));
-        MapManager.LightFieldKnightMove(knight.CurrentFieldPiece.gridPosition);
+        MapManager.LightTempKnightMove(knight.CurrentFieldPiece.gridPosition);
         
         MapManager.ChangeFloor(princess.SelectedFloor);
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
@@ -330,8 +330,8 @@ public class GameManager : MonoBehaviour
             }
 
             // 맵을 밝힘
-            MapManager.LightFieldKnightMove(field.gridPosition);
-            TurnOnMapPiece(field, true, false);
+            MapManager.LightTempKnightMove(field.gridPosition);
+            // TurnOnMapPiece(field, true, false);
 
             // 이동 가능 영역 업데이트
             ChangeBehavior(knight.SelectedIdx);
@@ -350,11 +350,11 @@ public class GameManager : MonoBehaviour
         bool result = true;
         int cost = _dataManager.princessSkillCost[0];
             
-        if (princess.Cost >= cost)
+        if (!isKnight && princess.Cost >= cost)
         {
             field.IsLight = true;
             //MapManager.LightField(FieldType.Princess, field.gridPosition);
-            MapManager.LightFieldKnightMove(field.gridPosition);
+            MapManager.LightField9Can(field.gridPosition);
             MapManager.RefreshMap();
             ChangeBehavior(princess.SelectedIdx);
             princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
