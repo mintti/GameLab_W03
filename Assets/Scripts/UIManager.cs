@@ -82,13 +82,13 @@ public class UIManager : MonoBehaviour
 
     private Dictionary<int, string> _princessSkillInfoDict = new()
     {
-        {0, "특정 타일의 3x3을 밝힙니다. (행동력 1 소모)"},
+        {0, "특정 타일의 3x3을 영구적으로 밝힙니다. (행동력 1 소모)"},
         {1, "다음 턴, 용사의 파워를 2 증가시킵니다. (행동력 3 소모)"},
     };
 
     private Dictionary<int, string> _knightSkillInfoDict = new()
     {
-        {0, "한 칸 이동합니다. (행동력 1 소모)"},
+        {0, "한 칸 이동합니다.(행동력 1 소모) 공주가 밝힌 곳은, 행동력이 소모되지 않습니다." },
         {1, "남은 행동력을 소모하여, 소모한 행동력 만큼 회복합니다. (행동력 x N 소모)" },
     };
 
