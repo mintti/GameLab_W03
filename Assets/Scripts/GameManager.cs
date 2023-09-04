@@ -697,11 +697,19 @@ public class GameManager : MonoBehaviour
     public void ShowSelectArtifact(int count = 3 )
     {
         var canSelectArtifactList = _resourceManager.Artifacts.Where(x => !_dataManager.HasArtifactList.Contains(x)).ToList();
-        var indexs = new List<int>();
+        var shuffleList = new List<Artifact>();
 
+        for (int i = canSelectArtifactList.Count - 1; i >= 0; i--)
+        {
+            int index = Random.Range(0, i);
+            shuffleList.Add(canSelectArtifactList[index]);
+            canSelectArtifactList.RemoveAt(index);
+        }
+        
+        var indexs = new List<int>();
         do
         {
-            int index = Random.Range(0, canSelectArtifactList.Count);
+            int index = Random.Range(0, shuffleList.Count);
             if (!indexs.Contains(index)) indexs.Add(index);
 
         } while (indexs.Count < count);
@@ -710,7 +718,7 @@ public class GameManager : MonoBehaviour
         _uiManager.artifactSelectorObj.SetActive(true);
         for (int idx = 0; idx < count; idx++)
         {
-            _uiManager.UIArtifacts[idx].Init(canSelectArtifactList[idx]);
+            _uiManager.UIArtifacts[idx].Init(shuffleList[idx]);
         }
     }
     
