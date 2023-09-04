@@ -64,9 +64,10 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
                 MapManager.ChangeFloor(_displayFloor);
                 if(_displayFloor != knight.SelectedFloor)
-                    knight.SetSpriteRenderer(false);
+                    knight.gameObject.SetActive(false);
                 else
-                    knight.SetSpriteRenderer(true);
+                    // knight.SetSpriteRenderer(true);
+                    knight.gameObject.SetActive(true);
             }
         }
     }
