@@ -64,13 +64,13 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
                 MapManager.ChangeFloor(_displayFloor);
                 if(_displayFloor != CurrentKnightFloor)
-                    knight.gameObject.SetActive(false);
+                    knight.SetSpriteRenderer(false);
                 else
-                    knight.gameObject.SetActive(true);
+                    knight.SetSpriteRenderer(true);
                 if(_displayFloor != 3)
-                    princess.gameObject.SetActive(false);
+                    princess.SetSpriteRenderer(false);
                 else
-                    princess.gameObject.SetActive(true);
+                    princess.SetSpriteRenderer(true);
             }
         }
     }

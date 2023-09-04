@@ -77,6 +77,19 @@ public class MapManager : MonoBehaviour
             fieldFloorOffset[i] = new Vector3((20 -_fieldSizeList[i].x)/2, (20 -_fieldSizeList[i].x)/2, 0);
         }
         
+        AllFieldMapData[2][19,19].SetMapType(MapType.Princess);
+        AllFieldMapData[2][19,19].IsLight = true;
+        AllFieldMapData[2][19,18].SetMapType(MapType.Dragon);
+        AllFieldMapData[2][19,19].IsLight = true;
+        AllFieldMapData[2][18,19].SetMapType(MapType.Block);
+        AllFieldMapData[2][19,19].IsLight = true;
+        AllFieldMapData[2][18,18].SetMapType(MapType.Block);
+        AllFieldMapData[2][19,19].IsLight = true;
+        
+        Debug.Log(AllFieldMapData[2][19,18].MapType+ " " + AllFieldMapData[2][19,18].IsLight);
+        Debug.Log(AllFieldMapData[2][18,19].MapType+ " " + AllFieldMapData[2][18,19].IsLight);
+        Debug.Log(AllFieldMapData[2][18,18].MapType+ " " + AllFieldMapData[2][18,18].IsLight);
+        
         currentFloor = 0;
 
     }
@@ -103,7 +116,6 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].Init(floor, new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
             }
         }
-        MapData[0, 0].SetMapType(MapType.Knight);
         while(true){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
@@ -112,22 +124,13 @@ public class MapManager : MonoBehaviour
                 break;
             }
         }
-        if(floor == 2){
-            MapData[19,19].SetMapType(MapType.Princess);
-            MapData[19,19].IsLight = true;
-            MapData[19,18].SetMapType(MapType.Dragon);
-            MapData[19,19].IsLight = true;
-            MapData[18,19].SetMapType(MapType.Block);
-            MapData[19,19].IsLight = true;
-            MapData[18,18].SetMapType(MapType.Block);
-            MapData[19,19].IsLight = true;
-        }
         float remainRatio = 1-mapBlockRatio;
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
         remainRatio -= mapItemboxRatio;
         GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
         remainRatio -= mapEventRatio;
         GenerateFieldObjects(MapData, mapMonsterRatio/remainRatio, MapType.Monster);
+        MapData[0, 0].SetMapType(MapType.Empty);
 
         return MapData;
     }

@@ -9,6 +9,7 @@ public class DataManager : MonoBehaviour
 
     //MapManager
     public List<Vector2Int> fieldSizeList;
+    public List<Vector3Int> monsterNumberPerFloor;
 
     public void Awake()
     {
