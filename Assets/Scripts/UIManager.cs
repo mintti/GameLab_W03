@@ -37,7 +37,8 @@ public class UIManager : MonoBehaviour
     public Button[] statusUpButtons;
     public TextMeshProUGUI statusPoint;
     public RectTransform expBar;
-    
+
+    public GameObject doorKey;
     public TextMeshProUGUI skillInfoText;
 
     [Header("화면 제어")]
@@ -227,8 +228,12 @@ public class UIManager : MonoBehaviour
         bool canUp = _gameManager.StatusPoint > 0;
         foreach (var btn in statusUpButtons)
         {
-            btn.interactable = canUp;
+            btn.gameObject.SetActive(canUp);
         }
+
+        doorKey.SetActive(_gameManager.HasKey);
+
+
     }
 
     public void StatusUp(string statusName)
@@ -237,8 +242,8 @@ public class UIManager : MonoBehaviour
         switch (statusName)
         {
             case "hp" :
-                status.MaxHp++;
-                status.CurrentHp++;        
+                status.MaxHp+=2;
+                status.CurrentHp+=2;        
                 break;
             case "power" :
                 status.Power++;
@@ -379,6 +384,16 @@ public class UIManager : MonoBehaviour
 
             tileName.text = "이벤트";
             eventText.text = "무슨 일이 일어날 것 같습니다.";
+        }
+
+        else if (mapType == MapType.Door)
+        {
+            tileName.enabled = true;
+            tileInfPanel.SetActive(true);
+            eventInf.SetActive(true);
+
+            tileName.text = "문";
+            eventText.text = "다음 층으로 넘어가는 문입니다. 층 보스가 열쇠를 가지고 있습니다.";
         }
 
         else if (mapType == MapType.Boss)

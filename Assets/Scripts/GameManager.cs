@@ -694,7 +694,8 @@ public class GameManager : MonoBehaviour
     public void ClearBoss()
     {
         HasKey = true;
-        
+        _uiManager.UpdateKnightStatusInfo();
+
         // [TODO] 열쇠를 얻었다는 정보를 UI에 표시?
     }
         
