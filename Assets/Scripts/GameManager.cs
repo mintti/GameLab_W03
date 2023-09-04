@@ -15,9 +15,6 @@ public class GameManager : MonoBehaviour
     private UIManager _uiManager;
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
-
-    [Header("게임 관련")] 
-    public GameObject moveNextFloorObj;
     
     public bool HasKey { get; set; }
     public bool GameEnd = false;
@@ -594,7 +591,9 @@ public class GameManager : MonoBehaviour
     /// <param name="field"></param>
     private void ExecuteMapEvent(FieldPiece field)
     {
+        var updateType = MapType.Empty;
         EventPrinting = true;
+        
         switch (field.MapType)
         {
             case MapType.Monster : 
@@ -612,41 +611,68 @@ public class GameManager : MonoBehaviour
                     knight, _resourceManager.healEventSprite);
                 break;
             case MapType.Dragon :
+                battleEvent.Init(knight, _resourceManager.Boss);
+                battleEvent.Execute(true);
                 break;
             case MapType.Boss :
+                switch (CurrentKnightFloor)
+                {
+                    case 1 :
+                        battleEvent.Init(knight, _resourceManager.Boss);
+                        battleEvent.Execute(true);
+                        break;
+                    case 2 :
+                        battleEvent.Init(knight, _resourceManager.Boss);
+                        battleEvent.Execute(true);
+                        break;
+                    case 3 :
+                        battleEvent.Init(knight, _resourceManager.Boss);
+                        battleEvent.Execute(true);
+                        break;
+                }
                 break;
             case MapType.Door :
+                updateType = MapType.Door; // 문은 영원한 문 상태입니다.
                 if (HasKey)
                 {
-                    moveNextFloorObj.SetActive(true);
+                    _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
                 }
                 else
                 {
-                    // [TODO] 열쇠가 없어서 문을 열 수 없다는 텍스트 출력
+                    Log("열쇠가 없어 문을 열 수 없습니다.");
                 }
                 break;
-            case MapType.Key :
-                HasKey = true;
+            case MapType.Princess :
+                _uiManager.ActiveEndingScene();
                 break;
-            
         }
 
-        MapManager.UpdateMapType(field, MapType.Empty);
+        MapManager.UpdateMapType(field, updateType);
     }
+    #endregion
 
+    #region 층 이동 관련
     /// <summary>
-    /// 
+    /// 층 관련
     /// </summary>
-    public void B_MoveNextFloor()
+    private void MoveNextFloor()
     {
-        moveNextFloorObj.SetActive(false);
-        
         HasKey = false;
         
-        CurrentKnightFloor ++;
+        CurrentKnightFloor++;
         DisplayFloor = CurrentKnightFloor;
+    }
+
+
+    public void ClearBoss()
+    {
+        HasKey = true;
+        
+        // [TODO] 열쇠를 얻었다는 정보를 UI에 표시?
         
     }
+        
+
     #endregion
     
     private void Ending()
