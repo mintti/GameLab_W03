@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
 
     public void StartTurn(int cost)
     {
+        SelectedIdx = 0;
         Cost = cost;
         IsTurnEnd = false;
         playerUI.SetActive(true);
@@ -88,7 +89,7 @@ public class Player : MonoBehaviour
 
     public void Update()
     {
-        if (!IsTurnEnd)
+        if (!IsTurnEnd && !_gameManager.EventPrinting)
         {
             CheckScroll();
         }

@@ -230,13 +230,15 @@ public class GameManager : MonoBehaviour
     {
         do
         {
-            DisplayFloor = player.SelectedFloor; // 이전 바라보고 있던 대상 층으로 이동
-            ChangeBehavior(player.SelectedIdx);
-            
             if(player == knight)
                 player.StartTurn(KnightMaxCost);
             else
                 player.StartTurn(PrincessMaxCost);
+            
+            DisplayFloor = player.SelectedFloor; // 이전 바라보고 있던 대상 층으로 이동
+            ChangeBehavior(player.SelectedIdx);
+            
+            
             CameraManager.Target = player.transform;
             yield return new WaitUntil(() => player.IsTurnEnd);
         } while (!player.IsTurnEnd);
@@ -273,7 +275,7 @@ public class GameManager : MonoBehaviour
                 complete = princess.SelectedIdx switch
                 {
                     0 => TurnOnMapPiece(field, false),
-                    1 => BuffKnight(),
+                    //1 => BuffKnight(),
                     _ => false,
                 };
             }
@@ -282,7 +284,7 @@ public class GameManager : MonoBehaviour
                 complete = knight.SelectedIdx switch
                 {
                     0 => MoveKnight(field),
-                    1 => Rest(),
+                    //1 => Rest(),
                     _ => false,
                 };
             }
@@ -391,7 +393,7 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
-    private bool Rest()
+    private void Rest()
     {
         bool result = true;
 
@@ -406,7 +408,7 @@ public class GameManager : MonoBehaviour
             result = false;
         }
 
-        return result;
+        //return result;
     }
 
     private bool MakeHealZone(FieldPiece field)
@@ -428,7 +430,7 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
-    private  bool BuffKnight()
+    private void BuffKnight()
     {
         bool result = true;
         var knight_ = knight;
@@ -454,7 +456,7 @@ public class GameManager : MonoBehaviour
             result = false;
         }
         
-        return result;
+        //return result;
     }
 
     #endregion
@@ -493,7 +495,8 @@ public class GameManager : MonoBehaviour
                     break;
                 case 1:
                     // 공주가 서 있는 위치 전달
-                    changePiece.Add(princess.CurrentFieldPiece);
+                    // changePiece.Add(princess.CurrentFieldPiece);
+                    _uiManager.ActiveSomeThingBox("용사를 강화하시겠습니까?", BuffKnight);
                     break;
                 case 2:
                     // 비어있는 칸만 전달
@@ -529,7 +532,15 @@ public class GameManager : MonoBehaviour
                     break;
                 case 1:
                     // 용사가 서 있는 위치 전달 
-                    changePiece.Add(knight.CurrentFieldPiece);
+                    if (knight.Cost > 0)
+                    {
+                        _uiManager.ActiveSomeThingBox($"휴식하시겠습니까?\n({knight.Cost}만큼 체력이 회복됩니다.)", Rest);
+                    }
+                    else
+                    {
+                        Log("휴식을 취할 코스트가 충분하지 않습니다.");
+                    }
+                    //changePiece.Add(knight.CurrentFieldPiece);
                     break;
                 case 2:
                     // 2칸 간격으로 4방향 전당

@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
     [Header("Common")]
     public GameObject somethingBoxObj;
     public TextMeshProUGUI somethingText;
-    public Action SomethingAction { get; set; }
+    private Action SomethingAction { get; set; }
 
     [Header("게임 정보")]
     public TextMeshProUGUI turnText;
@@ -100,6 +100,8 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        somethingBoxObj.SetActive(false);
+        
         _gameManager = GameObject.Find(nameof(GameManager)).GetComponent<GameManager>();
         _player1 = GameObject.Find("Knight").GetComponent<Player>();
         _player2 = GameObject.Find(nameof(Princess)).GetComponent<Player>();
@@ -433,14 +435,20 @@ public class UIManager : MonoBehaviour
 
     public void ActiveSomeThingBox(string text, Action endAction = null)
     {
+        _gameManager.EventPrinting = true;
         somethingBoxObj.SetActive(true);
         somethingText.text = text;
         SomethingAction = endAction;
     }
     
-    public void B_YES()
+    public void B_AnswerSomThingBox(bool answer)
     {
-        SomethingAction?.Invoke();
+        if (answer)
+        {
+            SomethingAction?.Invoke();
+        }
+
+        _gameManager.EventPrinting = false;
         somethingBoxObj.SetActive(false);
     }
 }
