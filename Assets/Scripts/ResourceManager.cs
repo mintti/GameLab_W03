@@ -89,7 +89,7 @@ public class ResourceManager : MonoBehaviour
     {
         Ruggle = new Monster("러글", new(10, 3, 3, 10, 5), GetSrc("Monster", "ruggle"));
         DeathKnight = new Monster("데스나이트", new(15, 5, 5, 15, 10), GetSrc("Monster", "deathknight"));
-        Dragon = new Monster("드래곤", new(20, 10, 10, 20, 20), GetSrc("Monster", "dragon"));
+        Dragon = new Monster("드래곤", new(20, 15, 10, 20, 20), GetSrc("Monster", "dragon"));
     }
 
     void InitItemEvent()
