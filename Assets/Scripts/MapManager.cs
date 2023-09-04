@@ -91,7 +91,6 @@ public class MapManager : MonoBehaviour
         PrincessTempLight.Add(AllFieldMapData[2][18,19]);
         PrincessTempLight.Add(AllFieldMapData[2][18,18]);
         currentFloor = 0;
-        MakeWallTileMap();
     }
     
     public void MakeWallTileMap(){
