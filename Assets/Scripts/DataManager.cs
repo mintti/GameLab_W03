@@ -8,8 +8,12 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance { get; private set; }
 
     //MapManager
+    [Header("Map Manager")]
+    public float mapEventRatio;
+    public float mapItemboxRatio;
     public List<Vector2Int> fieldSizeList;
     public List<Vector3Int> monsterNumberPerFloor;
+    
 
     public void Awake()
     {
