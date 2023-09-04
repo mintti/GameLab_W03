@@ -332,8 +332,7 @@ public class GameManager : MonoBehaviour
             TurnOnMapPiece(field, true, false);
 
             // 이동 가능 영역 업데이트
-            if(whoseTurn.Equals(nameof(princess))) ChangeBehavior(princess.SelectedIdx);
-            else ChangeBehavior(knight.SelectedIdx);
+            ChangeBehavior(knight.SelectedIdx);
         }
         else
         {
@@ -347,32 +346,23 @@ public class GameManager : MonoBehaviour
     private bool TurnOnMapPiece(FieldPiece field, bool isKnight = false, bool outputLog = true)
     {
         bool result = true;
-        int cost;
-        if(!field.IsLight)
-        {
-            cost = _dataManager.princessSkillCost[0];
+        int cost = _dataManager.princessSkillCost[0];
             
-            if (princess.Cost >= cost)
-            {
-                field.IsLight = true;
-                MapManager.LightField(FieldType.Princess, field.gridPosition);
-                ChangeBehavior(princess.SelectedIdx);
-                princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
-            }
-            else
-            {
-                Log("코스트가 부족하여 실행 할 수 없습니다.");
-                result = false;
-            }
-
+        if (princess.Cost >= cost)
+        {
+            field.IsLight = true;
+            //MapManager.LightField(FieldType.Princess, field.gridPosition);
+            MapManager.LightFieldKnightMove(field.gridPosition);
+            MapManager.RefreshMap();
+            ChangeBehavior(princess.SelectedIdx);
+            princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
         }
         else
         {
-            if(outputLog) Log("이미 밝혀져 있는 맵은 밝힐 수 없습니다.");
+            Log("코스트가 부족하여 실행 할 수 없습니다.");
             result = false;
         }
         
-        MapManager.RefreshMap();
         return result;
     }
 
@@ -464,12 +454,11 @@ public class GameManager : MonoBehaviour
             switch (index)
             {
                 case 0:
-                    // 공주가 밝힌 칸에서의 8방향 값을 전달
+                    // 공주가 밝히지 않은 칸 전달
                     foreach (var piece in baseFields)
                     {
-                        if (piece.IsLight)
+                        if (!piece.IsLight)
                         {
-                            // changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, piece,
                             changePiece = changePiece.Concat(GetFieldKnightSkill1(baseFields, piece,
                                 new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
                         }
@@ -484,6 +473,18 @@ public class GameManager : MonoBehaviour
                     foreach (var piece in baseFields)
                     {
                         if(piece.IsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
+                    }
+                    break;
+                case 3:
+                    // 공주가 밝힌 칸에서의 8방향 값을 전달
+                    foreach (var piece in baseFields)
+                    {
+                        if (piece.IsLight)
+                        {
+                            // changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, piece,
+                            changePiece = changePiece.Concat(GetFieldKnightSkill1(baseFields, piece,
+                                new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
+                        }
                     }
                     break;
             }
