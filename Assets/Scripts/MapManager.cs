@@ -46,6 +46,7 @@ public class MapManager : MonoBehaviour
     public TileBase HideTile;
     public TileBase HealTile;
     public TileBase CanSelectTile;
+    public TileBase RedCanSelectTile;
     public TileBase BlockTile;
     public TileBase EmptyTile;
     public TileBase DoorTile;
@@ -63,6 +64,7 @@ public class MapManager : MonoBehaviour
     public List<FieldPiece> canSelectList = new List<FieldPiece>();
     public List<FieldPiece> KnightTempLight = new List<FieldPiece>(9);
     public List<FieldPiece> PrincessTempLight = new List<FieldPiece>(4);
+    public List<FieldPiece> DoorTempLight = new List<FieldPiece>();
     float cellSize = 1.28f;
     GeneratorManager generatorManager;
 
@@ -147,7 +149,7 @@ public class MapManager : MonoBehaviour
             }
         }
         MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].SetMapType(MapType.Door);
-        MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].IsLight = true;
+        DoorTempLight.Add(MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1]);
         while(true){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
@@ -245,7 +247,7 @@ public class MapManager : MonoBehaviour
                 if(!grid.Equals(currentHoverGrid)){
                     PlaceSelectCursor(mousePosition, ObjectField.transform.position);
                     FieldPiece fieldPiece = AllFieldMapData[currentFloor][grid.x, grid.y];
-                    if(fieldPiece.IsLight || KnightTempLight.Contains(fieldPiece)){
+                    if(fieldPiece.IsLight || KnightTempLight.Contains(fieldPiece) || PrincessTempLight.Contains(fieldPiece) || DoorTempLight.Contains(fieldPiece)){
                         if(fieldPiece.MapType == MapType.Monster){
                             _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
                         }
@@ -260,6 +262,9 @@ public class MapManager : MonoBehaviour
                         }
                         else if(fieldPiece.MapType == MapType.Event){
                             _UIManager.TileInfUI(MapType.Event, null);
+                        }
+                        else if(fieldPiece.MapType == MapType.Door){
+                            _UIManager.TileInfUI(MapType.Door, null);
                         }
                         else _UIManager.TileInfUI(MapType.Empty);
                         currentHoverGrid = grid;
@@ -341,7 +346,14 @@ public class MapManager : MonoBehaviour
         foreach (FieldPiece piece in _canSelectFields)
         {   
             if(isInGrid(piece.gridPosition)){
-                UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
+                if(((piece.IsLight || KnightTempLight.Contains(piece)) && piece.MapType == MapType.Block) || (gameManager.whoseTurn.Equals(nameof(gameManager.knight)) && gameManager.knight.Cost == 0) || (gameManager.whoseTurn.Equals(nameof(gameManager.princess)) && gameManager.princess.Cost == 0)){
+                    Debug.Log("red " + ((piece.IsLight || KnightTempLight.Contains(piece)) && piece.MapType == MapType.Block));
+                    UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), RedCanSelectTile);
+                }
+                else{
+                    Debug.Log("green");
+                    UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
+                }
                 canSelectList.Add(AllFieldMapData[currentFloor][piece.gridPosition.x, piece.gridPosition.y]);
             }
         }
@@ -413,7 +425,7 @@ public class MapManager : MonoBehaviour
                 if(targetTile.IsLight){ 
                     LightTileMap.SetTile(new Vector3Int(x + 1, y + 1, 0), IsLightTile);    
                 }
-                else if(!KnightTempLight.Contains(targetTile) && !PrincessTempLight.Contains(targetTile)){
+                else if(!KnightTempLight.Contains(targetTile) && !PrincessTempLight.Contains(targetTile) && !DoorTempLight.Contains(targetTile)){
                     tile = HideTile;
                 }
 
@@ -422,26 +434,26 @@ public class MapManager : MonoBehaviour
         }
     }
     
-    public void BuildMap(MapType mapType, Tilemap map, TileBase tile)
-    {
-        for (int x = 0; x < _fieldSizeList[currentFloor].x; x++){
-            for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
-                if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
-                {
-                    if(AllFieldMapData[currentFloor][x, y].IsLight){ 
-                        LightTileMap.SetTile(new Vector3Int(x+1, y+1, 0), IsLightTile);    
-                        map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
-                    }
-                    else if(KnightTempLight.Contains(AllFieldMapData[currentFloor][x, y]) || PrincessTempLight.Contains(AllFieldMapData[currentFloor][x, y])){
-                        map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
-                    }
-                    else{
-                        map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
-                    }
-                }
-            }
-        }
-    }
+    // public void BuildMap(MapType mapType, Tilemap map, TileBase tile)
+    // {
+    //     for (int x = 0; x < _fieldSizeList[currentFloor].x; x++){
+    //         for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
+    //             if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
+    //             {
+    //                 if(AllFieldMapData[currentFloor][x, y].IsLight){ 
+    //                     LightTileMap.SetTile(new Vector3Int(x+1, y+1, 0), IsLightTile);    
+    //                     map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
+    //                 }
+    //                 else if(KnightTempLight.Contains(AllFieldMapData[currentFloor][x, y]) || PrincessTempLight.Contains(AllFieldMapData[currentFloor][x, y])){
+    //                     map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
+    //                 }
+    //                 else{
+    //                     map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     
     public void ClearMapPiece(FieldPiece fieldPiece){
         generatorManager.ClearAllMaps();
