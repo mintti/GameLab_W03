@@ -95,25 +95,6 @@ public class MapManager : MonoBehaviour
         currentFloor = 0;
     }
     
-    public void MakeWallTileMap(){
-        if(currentFloor == 0){
-            for (int i = 0; i < _fieldSizeList[currentFloor].x + 2; i++)
-            {
-                string str = "";
-                for (int j = 0; j < _fieldSizeList[currentFloor].y + 2; j++)
-                {
-                    if( WallTileMap2.GetTile(new Vector3Int(i, j, 0)) == null){
-                        str +=  " null";    
-
-                    }
-                    else
-                    str +=  " "  + WallTileMap2.GetTile(new Vector3Int(i, j, 0)).ToString();      
-                }
-                Debug.Log(str); 
-            }
-        }
-        
-    }
 
     public FieldPiece GetFieldPiece(int floor, Vector2Int position){
             return AllFieldMapData[floor-1][position.x, position.y];
@@ -347,11 +328,9 @@ public class MapManager : MonoBehaviour
         {   
             if(isInGrid(piece.gridPosition)){
                 if(((piece.IsLight || KnightTempLight.Contains(piece)) && piece.MapType == MapType.Block) || (gameManager.whoseTurn.Equals(nameof(gameManager.knight)) && gameManager.knight.Cost == 0) || (gameManager.whoseTurn.Equals(nameof(gameManager.princess)) && gameManager.princess.Cost == 0)){
-                    Debug.Log("red " + ((piece.IsLight || KnightTempLight.Contains(piece)) && piece.MapType == MapType.Block));
                     UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), RedCanSelectTile);
                 }
                 else{
-                    Debug.Log("green");
                     UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
                 }
                 canSelectList.Add(AllFieldMapData[currentFloor][piece.gridPosition.x, piece.gridPosition.y]);
