@@ -142,11 +142,9 @@ public class BattleEvent : MonoBehaviour
             {
                 if (Dodges(_knight.Status.Dex))
                 {
-                    if (_knight.Status.Power - _monster.Status.Defense > 0)
-                    {
-                        _knight.Status.CurrentHp -= monsterDam;
-                        OutputCombatText(_monster.Name, "<color=#008000>용사</color>", monsterDam, _knight.Status.CurrentHp);
-                    }
+                    _knight.Status.CurrentHp -= monsterDam;
+                    OutputCombatText(_monster.Name, "<color=#008000>용사</color>", monsterDam, _knight.Status.CurrentHp);
+
                 }
                 else
                 {
