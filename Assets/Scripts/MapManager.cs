@@ -35,6 +35,8 @@ public class MapManager : MonoBehaviour
     public Tilemap UITileMap;
     public Tilemap FloorTileMap;
     public Tilemap WallTileMap;
+    public Tilemap LightTileMap;
+    public TileBase IsLightTile;
     public TileBase ItemTile;
     public TileBase EventTile;
     public TileBase MonsterTile;
@@ -169,7 +171,7 @@ public class MapManager : MonoBehaviour
                 if(!grid.Equals(currentHoverGrid)){
                     PlaceSelectCursor(mousePosition, ObjectField.transform.position);
                     FieldPiece fieldPiece = AllFieldMapData[currentFloor][grid.x, grid.y];
-                    if(fieldPiece.IsLight){
+                    if(fieldPiece.IsLight || KnightTempLight.Contains(fieldPiece)){
                         if(fieldPiece.MapType == MapType.Monster){
                             _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
                         }
