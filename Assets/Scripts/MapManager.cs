@@ -55,6 +55,7 @@ public class MapManager : MonoBehaviour
 
     GameObject selectCusorObj;
     public List<FieldPiece> canSelectList = new List<FieldPiece>();
+    public List<FieldPiece> KnightTempLight = new List<FieldPiece>(9);
     float cellSize = 1.28f;
     GeneratorManager generatorManager;
 
@@ -162,20 +163,16 @@ public class MapManager : MonoBehaviour
                 }
                 if(!grid.Equals(currentHoverGrid)){
                     PlaceSelectCursor(mousePosition, ObjectField.transform.position);
-                    // Debug.Log(currentFloor);
                     FieldPiece fieldPiece = AllFieldMapData[currentFloor][grid.x, grid.y];
                     if(fieldPiece.IsLight){
                         if(fieldPiece.MapType == MapType.Monster){
                             _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
-                            // Debug.Log(fieldPiece.monsterInfo.Name);
                         }
                         else if(fieldPiece.MapType == MapType.Item){
                                 _UIManager.TileInfUI(MapType.Item, null);
-                                // Debug.Log(fieldPiece.itemInfo.Type);
                         }
                         else if(fieldPiece.MapType == MapType.Event){
                             _UIManager.TileInfUI(MapType.Event, null);
-                            // Debug.Log(fieldPiece.fieldEventInfo.Type);
                         }
                         else _UIManager.TileInfUI(MapType.Empty);
                         currentHoverGrid = grid;
@@ -191,15 +188,28 @@ public class MapManager : MonoBehaviour
             AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
     }
     public void LightFieldKnightMove(Vector2Int position){
-            AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x+1, position.y)))AllFieldMapData[currentFloor][position.x+1, position.y].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].IsLight = true;
-            if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].IsLight = true;
+        AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x+1, position.y)))AllFieldMapData[currentFloor][position.x+1, position.y].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].IsLight = true;
+        if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].IsLight = true;
+    }
+    public void LightTempKnightMove(Vector2Int position){
+        KnightTempLight.Clear();
+        KnightTempLight.Add(AllFieldMapData[currentFloor][position.x, position.y]);
+        if(isInGrid(new Vector2Int(position.x, position.y-1)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x, position.y-1]);
+        if(isInGrid(new Vector2Int(position.x, position.y+1)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x, position.y+1]);
+        if(isInGrid(new Vector2Int(position.x-1, position.y)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x-1, position.y]);
+        if(isInGrid(new Vector2Int(position.x-1, position.y-1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x-1, position.y-1]);
+        if(isInGrid(new Vector2Int(position.x-1, position.y+1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x-1, position.y+1]);
+        if(isInGrid(new Vector2Int(position.x+1, position.y)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x+1, position.y]);
+        if(isInGrid(new Vector2Int(position.x+1, position.y-1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x+1, position.y-1]);
+        if(isInGrid(new Vector2Int(position.x+1, position.y+1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x+1, position.y+1]);
+        
     }
 
     public void ChangeFloor(int floor){
@@ -278,11 +288,11 @@ public class MapManager : MonoBehaviour
             for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
                 if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
                 {
-                    if(!AllFieldMapData[currentFloor][x, y].IsLight){ 
-                        map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
+                    if(AllFieldMapData[currentFloor][x, y].IsLight || KnightTempLight.Contains(AllFieldMapData[currentFloor][x, y])){ 
+                        map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
                     }
                     else{
-                        map.SetTile(new Vector3Int(x+1, y+1, 0), tile);
+                        map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
                     }
                 }
             }
