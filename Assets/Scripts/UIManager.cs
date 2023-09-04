@@ -67,6 +67,7 @@ public class UIManager : MonoBehaviour
     public GameObject eventInf;
     public GameObject itemInf;
     public Image MonImg;
+    public Image key;
     public TextMeshProUGUI monHP;
     public TextMeshProUGUI monPow;
     public TextMeshProUGUI monDefense;
@@ -340,10 +341,10 @@ public class UIManager : MonoBehaviour
         monInf.SetActive(false);
         eventInf.SetActive(false);
         itemInf.SetActive(false);
+        key.enabled = false;
 
         if (mapType == MapType.Monster)
         {
-            Debug.Log("들어옴");
             tileName.enabled = true;
             tileInfPanel.SetActive(true);
             monInf.SetActive(true);
@@ -376,6 +377,39 @@ public class UIManager : MonoBehaviour
 
             tileName.text = "이벤트";
             eventText.text = "무슨 일이 일어날 것 같습니다.";
+        }
+
+        else if (mapType == MapType.Boss)
+        {
+            tileName.enabled = true;
+            tileInfPanel.SetActive(true);
+            monInf.SetActive(true);
+
+            Monster monster = obj as Monster;
+            MonImg.sprite = monster.Sprite;
+            tileName.text = "보스 몬스터";
+            key.enabled = true;
+            monHP.text = "<color=#D1180B>체력</color> : " + monster.Status.MaxHp;
+            monPow.text = "<color=#FFD400>파워</color> : " + monster.Status.Power;
+            monDefense.text = "<color=#0000FF>방어</color> : " + monster.Status.Defense;
+            monDex.text = "<color=#80FF00>민첩</color> : " + monster.Status.Dex;
+            monName.text = monster.Name;
+        }
+
+        else if (mapType == MapType.Dragon)
+        {
+            tileName.enabled = true;
+            tileInfPanel.SetActive(true);
+            monInf.SetActive(true);
+
+            Monster monster = obj as Monster;
+            MonImg.sprite = monster.Sprite;
+            tileName.text = "드래곤";
+            monHP.text = "<color=#D1180B>체력</color> : " + monster.Status.MaxHp;
+            monPow.text = "<color=#FFD400>파워</color> : " + monster.Status.Power;
+            monDefense.text = "<color=#0000FF>방어</color> : " + monster.Status.Defense;
+            monDex.text = "<color=#80FF00>민첩</color> : " + monster.Status.Dex;
+            monName.text = monster.Name;
         }
 
     }
