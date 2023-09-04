@@ -131,7 +131,7 @@ public class MapManager : MonoBehaviour
         }
         MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1].SetMapType(MapType.Door);
         DoorTempLight.Add(MapData[_fieldSizeList[floor].x-1, _fieldSizeList[floor].y-1]);
-        while(true){
+        while(floor != 2){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
             if(MapData[i, j].MapType == MapType.Empty){

@@ -334,13 +334,15 @@ public class GameManager : MonoBehaviour
                 {
                     case MapType.Empty : break; // 이벤트가 없으면 종료
                     default : 
+                        if(field.MapType == MapType.Item || field.MapType == MapType.Door) SoundManager.Instance.Play(0);
+                        else if(field.MapType == MapType.Monster || field.MapType == MapType.Event || field.MapType == MapType.Boss) SoundManager.Instance.Play(1);
                         ExecuteMapEvent(field);
                     
                         if(field.MapType != MapType.Door)
                             MapManager.UpdateMapType(field, MapType.Empty);
                         break;
                 }
-            
+
                 // 이동
                 Debug.Log("move" +field.gridPosition );
                 knight.transform.position = MapManager.GridToWorldPosition(new Vector2(field.gridPosition.x,field.gridPosition.y));

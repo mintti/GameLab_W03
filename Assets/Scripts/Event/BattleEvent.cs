@@ -113,6 +113,7 @@ public class BattleEvent : MonoBehaviour
                     CombatPlayerWinText(_monster.Name);
                     
                     yield return PerformLevelUp();
+                    SoundManager.Instance.Play(3);
                     
                     if(_isLastBoss) _gameManager.ShowSelectArtifact(); // 아티펙트 선택 화면 추가
                     
