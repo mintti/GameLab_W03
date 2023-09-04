@@ -305,9 +305,10 @@ public class MapManager : MonoBehaviour
         UITileMap.ClearAllTiles();
         foreach (FieldPiece piece in _canSelectFields)
         {   
-            UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
-            
-            canSelectList.Add(AllFieldMapData[currentFloor][piece.gridPosition.x, piece.gridPosition.y]);
+            if(isInGrid(piece.gridPosition)){
+                UITileMap.SetTile(new Vector3Int(piece.gridPosition.x + 1, piece.gridPosition.y+ 1, 0), CanSelectTile);
+                canSelectList.Add(AllFieldMapData[currentFloor][piece.gridPosition.x, piece.gridPosition.y]);
+            }
         }
         
     }
