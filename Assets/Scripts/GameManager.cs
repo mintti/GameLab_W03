@@ -64,14 +64,8 @@ public class GameManager : MonoBehaviour
                 MapManager.ChangeFloor(_displayFloor);
                 
                 // 현재 표시된 층에 따라 Player 오브젝트 표시 
-                if(_displayFloor != CurrentKnightFloor)
-                    knight.SetSpriteRenderer(false);
-                else
-                    knight.SetSpriteRenderer(true);
-                if(_displayFloor != 3)
-                    princess.SetSpriteRenderer(false);
-                else
-                    princess.SetSpriteRenderer(true);
+                knight.SetSpriteRenderer(_displayFloor == CurrentKnightFloor);
+                princess.SetSpriteRenderer(_displayFloor == 3);
 
                 // 층에 따라 업데이트
                 if (whoseTurn.Equals(nameof(princess)))
