@@ -281,8 +281,16 @@ public class UIManager : MonoBehaviour
 
     public void UpdateTurnText(int turn)
     {
-        turnText.text = $"남은 턴 : {turn}";
-        waveText.text = $"{_gameManager.waveInterval - (turn % _gameManager.waveInterval)}턴 후 몬스터가 증식합니다.";
+        turnText.text = $"현재 턴 : {turn}";
+
+        if (_gameManager.CheckDotDam())
+        {
+            waveText.text = $"용사의 차례가 종료 후 { _gameManager.GetDotDam()} 데미지를 입습니다.";
+        }
+        else
+        { 
+            waveText.text = $"{-_gameManager.GetDotDam()}턴 후 {_gameManager.CurrentKnightFloor}층이 분화합니다.";
+        }
     }
 
     public GameObject infoTextObj;

@@ -202,10 +202,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private int GetDotDam()
+    public int GetDotDam()
     {
-        return _dataManager.WaveCountByFloor[CurrentKnightFloor - 1] - (turnsBeforeAscend - Turn);   // 이전에 오르는데 사용됬던 턴수는 차감 
-    } 
+        var usedTurnThisFloor = Turn - turnsBeforeAscend;
+        return -(_dataManager.WaveCountByFloor[CurrentKnightFloor - 1] - usedTurnThisFloor);   // 이전에 오르는데 사용됬던 턴수는 차감 
+    }
+
+    public bool CheckDotDam() => GetDotDam() > 0;
 
     public void UpFloor()
     {
