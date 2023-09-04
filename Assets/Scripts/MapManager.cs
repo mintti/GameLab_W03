@@ -75,20 +75,7 @@ public class MapManager : MonoBehaviour
             if (!AllFieldMapData.ContainsKey(i))
                 AllFieldMapData.Add(i, CreateMap(i, _fieldSizeList[i]));
             fieldFloorOffset[i] = new Vector3((20 -_fieldSizeList[i].x)/2, (20 -_fieldSizeList[i].x)/2, 0);
-        }
-        
-        AllFieldMapData[2][19,19].SetMapType(MapType.Princess);
-        AllFieldMapData[2][19,19].IsLight = true;
-        AllFieldMapData[2][19,18].SetMapType(MapType.Dragon);
-        AllFieldMapData[2][19,19].IsLight = true;
-        AllFieldMapData[2][18,19].SetMapType(MapType.Block);
-        AllFieldMapData[2][19,19].IsLight = true;
-        AllFieldMapData[2][18,18].SetMapType(MapType.Block);
-        AllFieldMapData[2][19,19].IsLight = true;
-        
-        Debug.Log(AllFieldMapData[2][19,18].MapType+ " " + AllFieldMapData[2][19,18].IsLight);
-        Debug.Log(AllFieldMapData[2][18,19].MapType+ " " + AllFieldMapData[2][18,19].IsLight);
-        Debug.Log(AllFieldMapData[2][18,18].MapType+ " " + AllFieldMapData[2][18,18].IsLight);
+        }        
         
         currentFloor = 0;
 
@@ -123,6 +110,16 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].SetMapType(MapType.Door);
                 break;
             }
+        }
+        if(floor == 2){ 
+            MapData[19,19].SetMapType(MapType.Princess);
+            MapData[19,19].IsLight = true;
+            MapData[19,18].SetMapType(MapType.Dragon);
+            MapData[19,18].IsLight = true;
+            MapData[18,19].SetMapType(MapType.Block);
+            MapData[18,19].IsLight = true;
+            MapData[18,18].SetMapType(MapType.Block);
+            MapData[18,18].IsLight = true;
         }
         float remainRatio = 1-mapBlockRatio;
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
