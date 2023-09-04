@@ -91,7 +91,7 @@ public class BattleEvent : MonoBehaviour
                 if (Dodges(_monster.Status.Dex))
                 {
                     _monster.Status.MaxHp -= playerDam;
-                    OutputCombatText("<color=#008000>용사</color>", _monster.Name, playerDam, _monster.Status.MaxHp);
+                    OutputCombatText2(playerDam);
                 }
                 else
                 {
@@ -202,12 +202,31 @@ public class BattleEvent : MonoBehaviour
 
     }
 
+    void OutputCombatText2(int power)
+    {
+
+        lineCount++;
+
+        string currentText = combatText.text;
+        string newCombatInfo = "<color=#008000>용사</color>가 " + power + " 의 피해를 입혔습니다. " ;
+        string updatedText = currentText + "\n" + newCombatInfo;
+
+        combatText.text = updatedText;
+
+
+        if (lineCount > maxLines)
+        {
+            ScrollCombatText();
+        }
+
+    }
+
     void OutputCombatMissText(string name1, string name2)
     {
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = name1 + "(이)가 " + name2 + " 공격을 <color=#FFEA00>회피</color>했습니다.";
+        string newCombatInfo = name1 + "(이)가 " + name2 + " 공격을 <color=#0019FA>회피</color>했습니다.";
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
@@ -232,7 +251,7 @@ public class BattleEvent : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = "용사가 " + monsterName + "(을)를 무찔렀습니다!";
+        string newCombatInfo = "<color=#008000>용사</color>가 " + monsterName + "(을)를 무찔렀습니다!";
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
@@ -249,7 +268,7 @@ public class BattleEvent : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = "용사의 눈앞이 깜깜해집니다..";
+        string newCombatInfo = "<color=#008000>용사</color>의 눈앞이 깜깜해집니다..";
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
