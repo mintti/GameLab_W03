@@ -611,22 +611,22 @@ public class GameManager : MonoBehaviour
                     knight, _resourceManager.healEventSprite);
                 break;
             case MapType.Dragon :
-                battleEvent.Init(knight, _resourceManager.Boss);
+                battleEvent.Init(knight, _resourceManager.Dragon);
                 battleEvent.Execute(true);
                 break;
             case MapType.Boss :
                 switch (CurrentKnightFloor)
                 {
                     case 1 :
-                        battleEvent.Init(knight, _resourceManager.Boss);
+                        battleEvent.Init(knight, _resourceManager.Ruggle);
                         battleEvent.Execute(true);
                         break;
                     case 2 :
-                        battleEvent.Init(knight, _resourceManager.Boss);
+                        battleEvent.Init(knight, _resourceManager.DeathKnight);
                         battleEvent.Execute(true);
                         break;
                     case 3 :
-                        battleEvent.Init(knight, _resourceManager.Boss);
+                        battleEvent.Init(knight, _resourceManager.Dragon);
                         battleEvent.Execute(true);
                         break;
                 }
@@ -676,7 +676,6 @@ public class GameManager : MonoBehaviour
         HasKey = true;
         
         // [TODO] 열쇠를 얻었다는 정보를 UI에 표시?
-        
     }
         
 
