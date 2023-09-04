@@ -11,5 +11,6 @@ public enum MapType
     Door,
     Knight,
     Princess,
-    Dragon
+    Dragon,
+    Key,
 }

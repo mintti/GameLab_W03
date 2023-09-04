@@ -15,9 +15,12 @@ public class GameManager : MonoBehaviour
     public CameraManager CameraManager { get; private set; }
     public MapManager MapManager    { get; private set; }
     
-    [Header("게임 관련")] 
-    public bool GameEnd = false;
 
+    [Header("게임 관련")] 
+    public GameObject moveNextFloorObj;
+    
+    public bool HasKey { get; set; }
+    public bool GameEnd = false;
     public string whoseTurn;
 
     public int _turn;
@@ -585,10 +588,41 @@ public class GameManager : MonoBehaviour
                 healEvent.Execute(
                     knight, _resourceManager.healEventSprite);
                 break;
+            case MapType.Dragon :
+                break;
+            case MapType.Boss :
+                break;
+            case MapType.Door :
+                if (HasKey)
+                {
+                    moveNextFloorObj.SetActive(true);
+                }
+                else
+                {
+                    // [TODO] 열쇠가 없어서 문을 열 수 없다는 텍스트 출력
+                }
+                break;
+            case MapType.Key :
+                HasKey = true;
+                break;
             
         }
 
         MapManager.UpdateMapType(field, MapType.Empty);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void B_MoveNextFloor()
+    {
+        moveNextFloorObj.SetActive(false);
+        
+        HasKey = false;
+        
+        CurrentKnightFloor ++;
+        DisplayFloor = CurrentKnightFloor;
+        
     }
     #endregion
     
