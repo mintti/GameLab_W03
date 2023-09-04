@@ -21,7 +21,7 @@ public class MapManager : MonoBehaviour
 
     [Header("Generator")]
     public GameObject generatorManagerObj;
-    public List<Vector2Int> fieldSizeList;
+    public List<Vector2Int> _fieldSizeList;
     public float mapEmptyRatio = 0.35f;
     public float mapMonsterRatio = 0.25f;
     public float mapEventRatio = 0.2f;
@@ -33,6 +33,8 @@ public class MapManager : MonoBehaviour
     public GameObject ObjectField;
     public Tilemap FieldTileMap;
     public Tilemap UITileMap;
+    public Tilemap FloorTileMap;
+    public Tilemap WallTileMap;
     public TileBase ItemTile;
     public TileBase EventTile;
     public TileBase MonsterTile;
@@ -54,6 +56,7 @@ public class MapManager : MonoBehaviour
     GameObject selectCusorObj;
     public List<FieldPiece> canSelectList = new List<FieldPiece>();
     float cellSize = 1.28f;
+    GeneratorManager generatorManager;
 
 
     public FieldType currentField = FieldType.Field;
@@ -63,12 +66,14 @@ public class MapManager : MonoBehaviour
     }
 
     public void InitMap(){
-        floorCount = fieldSizeList.Count;
-        currentFloor = 0;
+        _fieldSizeList = new List<Vector2Int>(DataManager.Instance.fieldSizeList);
+        floorCount = _fieldSizeList.Count;
         for(int i = 0; i < floorCount; ++i){
+            currentFloor = i;
             if (!AllFieldMapData.ContainsKey(i))
-                AllFieldMapData.Add(i, CreateMap(fieldSizeList[i]));
+                AllFieldMapData.Add(i, CreateMap(i, _fieldSizeList[i]));
         }
+        currentFloor = 0;
 
     }
     public FieldPiece GetFieldPiece(int floor, Vector2Int position){
@@ -77,12 +82,11 @@ public class MapManager : MonoBehaviour
     public FieldPiece GetFieldPiece(Vector2Int position){
             return AllFieldMapData[currentFloor][position.x, position.y];
     }
-    public FieldPiece[,] CreateMap(Vector2Int fieldSize){
+    public FieldPiece[,] CreateMap(int floor, Vector2Int fieldSize){
 
-        GeneratorManager generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
+        generatorManager = generatorManagerObj.GetComponent<GeneratorManager>(); 
         generatorManager.width = fieldSize.x + 2;
         generatorManager.height = fieldSize.y + 2;
-        generatorManager.ClearAllMaps();
         generatorManager.chanceOfEmptySpace = 1- mapBlockRatio;
         generatorManager.GenerateNewMap("Maze"); 
 
@@ -92,13 +96,13 @@ public class MapManager : MonoBehaviour
             for (int j = 0; j < fieldSize.y; j++)
             {
                 MapData[i, j] = new FieldPiece();
-                MapData[i, j].Init(new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
+                MapData[i, j].Init(floor, new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
             }
         }
         MapData[0, 0].SetMapType(MapType.Player);
         while(true){
-            int i = (int)(Random.value * fieldSizeList[currentFloor].x);
-            int j = (int)(Random.value * fieldSizeList[currentFloor].y);
+            int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
+            int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
             if(MapData[i, j].MapType == MapType.Empty){
                 MapData[i, j].SetMapType(MapType.Door);
                 break;
@@ -116,11 +120,11 @@ public class MapManager : MonoBehaviour
     
     void GenerateFieldObjects(FieldPiece[,] mapData, float generateRatio, MapType value)
     {
-        for (int i = 0; i < fieldSizeList[currentFloor].x; i++)
+        for (int i = 0; i < _fieldSizeList[currentFloor].x; i++)
         {
-            for (int j = 0; j < fieldSizeList[currentFloor].y; j++)
+            for (int j = 0; j < _fieldSizeList[currentFloor].y; j++)
             {
-                if((i == 0 && j == 0) || (i == fieldSizeList[currentFloor].x -1 && j == fieldSizeList[currentFloor].y -1)){
+                if((i == 0 && j == 0) || (i == _fieldSizeList[currentFloor].x -1 && j == _fieldSizeList[currentFloor].y -1)){
                     continue;
                 }
                 if(mapData[i, j].MapType == MapType.Empty){
@@ -144,6 +148,7 @@ public class MapManager : MonoBehaviour
                 }
                 if(!grid.Equals(currentHoverGrid)){
                     PlaceSelectCursor(mousePosition, ObjectField.transform.position);
+                    // Debug.Log(currentFloor);
                     FieldPiece fieldPiece = AllFieldMapData[currentFloor][grid.x, grid.y];
                     if((currentField == FieldType.Princess && fieldPiece.PrincessIsLight) || (currentField == FieldType.Knight && fieldPiece.KnightIsLight))
                     if(fieldPiece.MapType == MapType.Monster){
@@ -187,6 +192,13 @@ public class MapManager : MonoBehaviour
             if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].KnightIsLight = true;
     }
 
+    public void ChangeFloor(){
+        if(currentFloor == 0)
+            currentFloor = 1;
+        else 
+            currentFloor = 0;
+        RefreshMap();
+    }
 
     // private List<FieldPiece> _backup;
     public void showCanSelectField(List<FieldPiece> _canSelectFields)
@@ -204,7 +216,7 @@ public class MapManager : MonoBehaviour
         
     }
     bool isInGrid(Vector2 gridPosition){
-        if(gridPosition.x >= 0 && gridPosition.x < fieldSizeList[currentFloor].x && gridPosition.y >= 0 && gridPosition.y < fieldSizeList[currentFloor].y){
+        if(gridPosition.x >= 0 && gridPosition.x < _fieldSizeList[currentFloor].x && gridPosition.y >= 0 && gridPosition.y < _fieldSizeList[currentFloor].y){
             return true;
         }
         return false;
@@ -237,7 +249,19 @@ public class MapManager : MonoBehaviour
 
     public void BuildAllField(FieldType type){
         currentField = type;
-        FieldTileMap.ClearAllTiles();
+        ClearAllMaps();
+        
+        WallTileMap.size = new Vector3Int(_fieldSizeList[currentFloor].x+2, _fieldSizeList[currentFloor].y+2, 0);
+        WallTileMap.BoxFill(new Vector3Int(0, 0, 0), BlockTile, 0, 0, _fieldSizeList[currentFloor].x+2, _fieldSizeList[currentFloor].y+2 );
+        FloorTileMap.size = new Vector3Int(_fieldSizeList[currentFloor].x+1, _fieldSizeList[currentFloor].y+1, 0);
+        FloorTileMap.BoxFill(new Vector3Int(1, 1, 0), EmptyTile, 1, 1, _fieldSizeList[currentFloor].x+1, _fieldSizeList[currentFloor].y+1 );
+        // for (int x = 0; x < Width; x++)
+        //     for (int y = 0; y < Height; y++)
+        //         if (MapData[y, x])
+        //         {
+        //             FloorMap.SetTile(new Vector3Int(x, y, 0), null);
+        //             WallMap.SetTile(new Vector3Int(x, y, 0), WallTile);
+        //         }
         BuildMap(MapType.Block, FieldTileMap, BlockTile);
         BuildMap(MapType.Item, FieldTileMap, ItemTile);
         BuildMap(MapType.Empty, FieldTileMap, EmptyTile);
@@ -250,8 +274,8 @@ public class MapManager : MonoBehaviour
     
     public void BuildMap(MapType mapType, Tilemap map, TileBase tile)
     {
-        for (int x = 0; x < fieldSizeList[currentFloor].x; x++){
-            for (int y = 0; y < fieldSizeList[currentFloor].y; y++){
+        for (int x = 0; x < _fieldSizeList[currentFloor].x; x++){
+            for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
                 if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
                 {
                     if((currentField == FieldType.Princess && !AllFieldMapData[currentFloor][x, y].PrincessIsLight) || (currentField == FieldType.Knight && !AllFieldMapData[currentFloor][x, y].KnightIsLight)){ 
@@ -266,14 +290,24 @@ public class MapManager : MonoBehaviour
     }
     
     public void ClearMapPiece(FieldPiece fieldPiece){
-        
+        generatorManager.ClearAllMaps();
         fieldPiece.SetMapType(MapType.Empty);
         RefreshMap();
     }
+    public void ClearAllMaps(){
+        
+        FieldTileMap.ClearAllTiles();
+        UITileMap.ClearAllTiles();
+        FloorTileMap.ClearAllTiles();
+        WallTileMap.ClearAllTiles();
+    }
 
     public void RefreshMap(){
+        ClearAllMaps();
         BuildAllField(currentField);
-
+        if(gameManager.princess.CurrentFieldPiece.currentFloor == currentFloor){
+            // gameManager.princess.
+        }
     }
 
     public void UpdateMapType(FieldPiece fieldPiece, MapType type){
@@ -295,9 +329,9 @@ public class MapManager : MonoBehaviour
 
     void printMap(FieldPiece[,] pieces){
         string arrayStr = "";
-            for (int j = 0; j < fieldSizeList[currentFloor].y; j++)
+            for (int j = 0; j < _fieldSizeList[currentFloor].y; j++)
             {
-                for (int i = 0; i < fieldSizeList[currentFloor].x; i++)
+                for (int i = 0; i < _fieldSizeList[currentFloor].x; i++)
                 {
                     arrayStr += pieces[i,j].MapType + " ";
                 }
@@ -322,7 +356,8 @@ public class FieldPiece
         private set { _mapType = value; }
     }
 
-    public void Init(Vector2Int _gridPosition, MapType type){
+    public void Init(int _currentFloor, Vector2Int _gridPosition, MapType type){
+        currentFloor = _currentFloor;
         gridPosition = _gridPosition;
         _mapType = type;
     }
@@ -334,6 +369,7 @@ public class FieldPiece
     public bool KnightIsLight = false;
 
     public Vector2Int gridPosition{private set; get;}
+    public int currentFloor{private set; get;}
 
     public Monster monsterInfo;
     public FieldEventInfo fieldEventInfo;

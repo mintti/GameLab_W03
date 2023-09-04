@@ -96,10 +96,10 @@ public class GameManager : MonoBehaviour
 
         Turn = 1;
         Coin = 0;
-        StartCoroutine(nameof(PlayGame));
+        // StartCoroutine(nameof(PlayGame));
 
         // Map Test 위에줄 주석치고 밑에거 주석풀기
-        // MapManager.BuildAllField(FieldType.Field);
+        MapManager.BuildAllField(FieldType.Field);
     }
 
 
@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
 
         princess.fieldType = FieldType.Princess;
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
-        princess.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(19,19));
+        princess.CurrentFieldPiece = MapManager.GetFieldPiece(1, new Vector2Int(19,19));
         // MapManager.LightField(FieldType.Princess, new Vector2Int(19,19));
 
         MapManager.RefreshMap();

@@ -31,13 +31,13 @@ public class Generator
     public virtual void BuildMap()
     {
         GenerateMap();
-        FloorMap.BoxFill(new Vector3Int(Width - 1, Height - 1, 0), FloorTile, 0, 0, Width, Height);
-        for (int x = 0; x < Width; x++)
-            for (int y = 0; y < Height; y++)
-                if (MapData[y, x])
-                {
-                    FloorMap.SetTile(new Vector3Int(x, y, 0), null);
-                    WallMap.SetTile(new Vector3Int(x, y, 0), WallTile);
-                }
+        // FloorMap.BoxFill(new Vector3Int(Width - 1, Height - 1, 0), FloorTile, 0, 0, Width, Height);
+        // for (int x = 0; x < Width; x++)
+        //     for (int y = 0; y < Height; y++)
+        //         if (MapData[y, x])
+        //         {
+        //             FloorMap.SetTile(new Vector3Int(x, y, 0), null);
+        //             WallMap.SetTile(new Vector3Int(x, y, 0), WallTile);
+        //         }
     } 
 }
