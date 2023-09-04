@@ -100,6 +100,7 @@ public class Status
         set
         {
             exp = Mathf.Max(value, 0);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo();
         }
     }
 
