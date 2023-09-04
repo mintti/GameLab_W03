@@ -10,7 +10,7 @@ public class Status
     private int power;
     private int defense;
     private int dex;
-    private int exp = 1;
+    private int exp = 0;
 
     private bool _buff;
 
@@ -20,7 +20,7 @@ public class Status
         set
         {
             _buff = value;
-            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo();
         }
     }
     public int MaxHp
@@ -31,7 +31,7 @@ public class Status
             maxHp = Mathf.Max(value, 0);
             // Ensure CurrentHp doesn't exceed MaxHp
             currentHp = Mathf.Min(currentHp, maxHp);
-            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo();
         }
     }
 
@@ -40,11 +40,15 @@ public class Status
         get { return currentHp; }
         set
         {
+            if (player && value < currentHp)
+            {
+                UIManager.Instance.BloodEffect();
+            }
             // Ensure CurrentHp is between 0 and MaxHp
             currentHp = Mathf.Clamp(value, 0, maxHp);
             if (player)
             {
-                UIManager.Instance.UpdateKnightStatusInfo(this);
+                UIManager.Instance.UpdateKnightStatusInfo();
                 if (currentHp == 0)
                 {
                     UIManager.Instance.ActiveGameOverObj();
@@ -62,7 +66,7 @@ public class Status
         set
         {
             power = Mathf.Max(value, 0);
-            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo();
         }
     }
 
@@ -72,7 +76,7 @@ public class Status
         set 
         { 
             defense = Mathf.Max(value, 0);
-            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo();
         }
     }
 
@@ -82,13 +86,17 @@ public class Status
         set
         {
             dex = Mathf.Max(value, 0);
-            if (player) UIManager.Instance.UpdateKnightStatusInfo(this);
+            if (player) UIManager.Instance.UpdateKnightStatusInfo();
         }
     }
 
     public int Exp
     {
-        get => exp;
+        get
+        {
+            if (player) return exp;
+            else return Level + 1;
+        }
         set
         {
             exp = Mathf.Max(value, 0);

@@ -7,7 +7,6 @@ using System;
 
 public class BattleEvent : MonoBehaviour
 {
-    private ResourceManager _resourceManager;
     private GameManager _gameManager;
     private UIManager _uiManager;
     private Player _knight;
@@ -33,7 +32,6 @@ public class BattleEvent : MonoBehaviour
     public void Init(Player knight, Monster monster)
     {
         _combatPanel ??= gameObject;
-        _resourceManager ??= GameObject.Find(nameof(ResourceManager)).GetComponent<ResourceManager>();
         _gameManager ??= GameObject.Find(nameof(GameManager)).GetComponent<GameManager>(); 
         _uiManager ??= GameObject.Find(nameof(UIManager)).GetComponent<UIManager>();
 
@@ -93,11 +91,11 @@ public class BattleEvent : MonoBehaviour
                 if (Dodges(_monster.Status.Dex))
                 {
                     _monster.Status.MaxHp -= playerDam;
-                    OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, playerDam, _monster.Status.MaxHp);
+                    OutputCombatText("<color=#008000>용사</color>", _monster.Name, playerDam, _monster.Status.MaxHp);
                 }
                 else
                 {
-                    OutputCombatMissText(_monster.Name, "<color=#33FF33>용사</color>");
+                    OutputCombatMissText(_monster.Name, "<color=#008000>용사</color>");
                 }
 
 
@@ -108,9 +106,7 @@ public class BattleEvent : MonoBehaviour
 
                 if (_monster.Status.MaxHp <= 0)
                 {
-                    _gameManager.Coin++;
                     CombatPlayerWinText(_monster.Name);
-                    AppendBattleInfoText("\n1 코인을 얻었습니다.");
                     
                     yield return PerformLevelUp();
                     
@@ -127,12 +123,12 @@ public class BattleEvent : MonoBehaviour
                     if (_knight.Status.Power - _monster.Status.Defense > 0)
                     {
                         _knight.Status.CurrentHp -= monsterDam;
-                        OutputCombatText(_monster.Name, "<color=#33FF33>용사</color>", monsterDam, _knight.Status.CurrentHp);
+                        OutputCombatText(_monster.Name, "<color=#008000>용사</color>", monsterDam, _knight.Status.CurrentHp);
                     }
                 }
                 else
                 {
-                    OutputCombatMissText("<color=#33FF33>용사</color>", _monster.Name);
+                    OutputCombatMissText("<color=#008000>용사</color>", _monster.Name);
 
                 }
 
@@ -156,7 +152,7 @@ public class BattleEvent : MonoBehaviour
     void Attack((string name, Status status) attacker, (string name, Status status) receiver)
     {
         _monster.Status.MaxHp -= _knight.Status.Power;
-        OutputCombatText("<color=#33FF33>용사</color>", _monster.Name, _knight.Status.Power, _monster.Status.MaxHp);
+        OutputCombatText("<color=#008000>용사</color>", _monster.Name, _knight.Status.Power, _monster.Status.MaxHp);
 
     }
 
@@ -211,7 +207,7 @@ public class BattleEvent : MonoBehaviour
         lineCount++;
 
         string currentText = combatText.text;
-        string newCombatInfo = name1 + "(이)가 " + name2 + " 공격을 회피했습니다.";
+        string newCombatInfo = name1 + "(이)가 " + name2 + " 공격을 <color=#FFEA00>회피</color>했습니다.";
         string updatedText = currentText + "\n" + newCombatInfo;
 
         combatText.text = updatedText;
@@ -299,11 +295,11 @@ public class BattleEvent : MonoBehaviour
     IEnumerator PerformLevelUp()
     {
         _knight.Status.Exp += _monster.Status.Exp;
-        int expNeed = _resourceManager.ExpNeedForLevelUp[_knight.Status.Level -1];
+        int expNeed = DataManager.Instance.ExpNeedForLevelUp[_knight.Status.Level -1];
 
         yield return new WaitForSeconds(0.5f);
 
-        AppendBattleInfoText($"\n경험치를 {_monster.Status.Exp} 휙득했습니다.");
+        AppendBattleInfoText($"\n경험치를 {_monster.Status.Exp} 획득했습니다.");
 
         if (_knight.Status.Exp >= expNeed)
         {
@@ -312,6 +308,7 @@ public class BattleEvent : MonoBehaviour
             
             yield return new WaitForSeconds(0.5f);
             AppendBattleInfoText($"\n용사의 레벨이 {_knight.Status.Level}로 올랐다!");
+            _gameManager.StatusPoint++;
         }
     }
     #endregion

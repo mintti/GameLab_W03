@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
@@ -51,6 +52,7 @@ public class Player : MonoBehaviour
 
     public Status Status { get; set; }
 
+    [FormerlySerializedAs("selectedFloor")] [Header("other")] public int SelectedFloor;
 
 
     public void Start()
@@ -63,7 +65,7 @@ public class Player : MonoBehaviour
 
         Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, true);
 
-        _uiManager.UpdateKnightStatusInfo(Status);
+        _uiManager.UpdateKnightStatusInfo();
 
     }
 
@@ -104,7 +106,7 @@ public class Player : MonoBehaviour
         }
         else if (wheelInput2.y < 0) // 휠을 당겨 올렸을 때의 처리 ↓
         {
-            if (SelectedIdx > 1) return; // 임시 스킬은 3개만 
+            if (SelectedIdx > 0) return; // 임시 스킬은 3개만 
             SelectedIdx++;
         }
     }

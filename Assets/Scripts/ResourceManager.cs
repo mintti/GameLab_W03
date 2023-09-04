@@ -15,10 +15,6 @@ public class ResourceManager : MonoBehaviour
     public List<ItemInfo> Items { get; private set; }
 
     public Sprite healEventSprite;
-
-
-    public List<int> ExpNeedForLevelUp = new()
-        { 1, 7, 10, 13, 15, 18, 23, 28, 33 };
     
     public void Awake()
     {
@@ -82,11 +78,11 @@ public class ResourceManager : MonoBehaviour
 
         return index switch
         {
-            0 => new Monster("슬라임", new(3, 1, 1, 1), GetSrc("Monster", "slime")),
-            1 => new Monster("고블린", new(3, 2, 1, 1), GetSrc("Monster", "goblin")),
-            2 => new Monster("오크", new(5, 2, 1, 1), GetSrc("Monster", "orc")),
-            3 => new Monster("드레이크", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
-            4 => new Monster("스텀프", new(3, 1, 1, 1), GetSrc("Monster", "stump")),
+            0 => new Monster("<color=#FF0000>슬라임</color>", new(3, 1, 1, 1), GetSrc("Monster", "slime")),
+            1 => new Monster("<color=#FF0000>고블린</color>", new(3, 2, 1, 1), GetSrc("Monster", "goblin")),
+            2 => new Monster("<color=#FF0000>오크</color>", new(5, 2, 1, 1), GetSrc("Monster", "orc")),
+            3 => new Monster("<color=#FF0000>드레이크</color>", new(6, 1, 1, 1), GetSrc("Monster", "drake")),
+            4 => new Monster("<color=#FF0000>스텀프</color>", new(3, 1, 1, 1), GetSrc("Monster", "stump")),
             _ => null,
         };
     }
