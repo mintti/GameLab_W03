@@ -114,19 +114,14 @@ public class MapManager : MonoBehaviour
             }
         }
         if(floor == 2){
-
             MapData[19,19].SetMapType(MapType.Princess);
-            MapData[19,19].PrincessIsLight = true;
-            MapData[19,19].KnightIsLight = true;
+            MapData[19,19].IsLight = true;
             MapData[19,18].SetMapType(MapType.Dragon);
-            MapData[19,19].PrincessIsLight = true;
-            MapData[19,19].KnightIsLight = true;
+            MapData[19,19].IsLight = true;
             MapData[18,19].SetMapType(MapType.Block);
-            MapData[19,19].PrincessIsLight = true;
-            MapData[19,19].KnightIsLight = true;
+            MapData[19,19].IsLight = true;
             MapData[18,18].SetMapType(MapType.Block);
-            MapData[19,19].PrincessIsLight = true;
-            MapData[19,19].KnightIsLight = true;
+            MapData[19,19].IsLight = true;
         }
         float remainRatio = 1-mapBlockRatio;
         GenerateFieldObjects(MapData, mapItemboxRatio/remainRatio, MapType.Item);
@@ -170,21 +165,22 @@ public class MapManager : MonoBehaviour
                     PlaceSelectCursor(mousePosition, ObjectField.transform.position);
                     // Debug.Log(currentFloor);
                     FieldPiece fieldPiece = AllFieldMapData[currentFloor][grid.x, grid.y];
-                    if((currentField == FieldType.Princess && fieldPiece.PrincessIsLight) || (currentField == FieldType.Knight && fieldPiece.KnightIsLight))
-                    if(fieldPiece.MapType == MapType.Monster){
-                        _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
-                        // Debug.Log(fieldPiece.monsterInfo.Name);
+                    if(fieldPiece.IsLight){
+                        if(fieldPiece.MapType == MapType.Monster){
+                            _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
+                            // Debug.Log(fieldPiece.monsterInfo.Name);
+                        }
+                        else if(fieldPiece.MapType == MapType.Item){
+                                _UIManager.TileInfUI(MapType.Item, null);
+                                // Debug.Log(fieldPiece.itemInfo.Type);
+                        }
+                        else if(fieldPiece.MapType == MapType.Event){
+                            _UIManager.TileInfUI(MapType.Event, null);
+                            // Debug.Log(fieldPiece.fieldEventInfo.Type);
+                        }
+                        else _UIManager.TileInfUI(MapType.Empty);
+                        currentHoverGrid = grid;
                     }
-                    else if(fieldPiece.MapType == MapType.Item){
-                            _UIManager.TileInfUI(MapType.Item, null);
-                            // Debug.Log(fieldPiece.itemInfo.Type);
-                    }
-                       else if(fieldPiece.MapType == MapType.Event){
-                        _UIManager.TileInfUI(MapType.Event, null);
-                        // Debug.Log(fieldPiece.fieldEventInfo.Type);
-                    }
-                    else _UIManager.TileInfUI(MapType.Empty);
-                    currentHoverGrid = grid;
                 }
             }
             else{
@@ -193,23 +189,18 @@ public class MapManager : MonoBehaviour
         }
     }
     public void LightField(FieldType type, Vector2Int position){
-        if(type == FieldType.Princess){
-            AllFieldMapData[currentFloor][position.x, position.y].PrincessIsLight = true;
-        }
-        else if(type == FieldType.Knight){
-            AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
-        }
+            AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
     }
     public void LightFieldKnightMove(Vector2Int position){
-            AllFieldMapData[currentFloor][position.x, position.y].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x+1, position.y)))AllFieldMapData[currentFloor][position.x+1, position.y].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].KnightIsLight = true;
-            if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].KnightIsLight = true;
+            AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x+1, position.y)))AllFieldMapData[currentFloor][position.x+1, position.y].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].IsLight = true;
+            if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].IsLight = true;
     }
 
     public void ChangeFloor(int floor){
@@ -289,7 +280,7 @@ public class MapManager : MonoBehaviour
             for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
                 if (AllFieldMapData[currentFloor][x, y].MapType == mapType)
                 {
-                    if((currentField == FieldType.Princess && !AllFieldMapData[currentFloor][x, y].PrincessIsLight) || (currentField == FieldType.Knight && !AllFieldMapData[currentFloor][x, y].KnightIsLight)){ 
+                    if(!AllFieldMapData[currentFloor][x, y].IsLight){ 
                         map.SetTile(new Vector3Int(x+1, y+1, 0), HideTile);
                     }
                     else{
@@ -373,8 +364,7 @@ public class FieldPiece
         _mapType = type;
     }
 
-    public bool PrincessIsLight = false;
-    public bool KnightIsLight = false;
+    public bool IsLight = false;
 
     public Vector2Int gridPosition{private set; get;}
     public int currentFloor{private set; get;}

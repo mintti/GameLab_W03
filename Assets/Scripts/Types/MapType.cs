@@ -7,6 +7,7 @@ public enum MapType
     Heal,
     Item,
     Hide,
+    Boss,
     Door,
     Knight,
     Princess,

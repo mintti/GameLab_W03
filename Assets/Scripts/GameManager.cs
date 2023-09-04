@@ -287,7 +287,7 @@ public class GameManager : MonoBehaviour
     private bool MoveKnight(FieldPiece field)
     {
         bool result = true;
-        int cost = field.PrincessIsLight ? 0 : _dataManager.knightSkillCost[princess.SelectedIdx]; 
+        int cost = field.IsLight ? 0 : _dataManager.knightSkillCost[princess.SelectedIdx]; 
       
         if (cost <= knight.Cost)
         {
@@ -345,23 +345,13 @@ public class GameManager : MonoBehaviour
     {
         bool result = true;
         int cost;
-        if(isKnight && !field.KnightIsLight)
-        {
-            // cost = _dataManager.knightSkillCost[1];
-            //
-            // if (knight.Cost >= cost)
-            // {
-            //     field.KnightIsLight = true;
-            //     MapManager.LightField(FieldType.Knight, field.gridPosition);
-            // }
-        }
-        else if(!isKnight && !field.PrincessIsLight)
+        if(!field.IsLight)
         {
             cost = _dataManager.princessSkillCost[0];
             
             if (princess.Cost >= cost)
             {
-                field.PrincessIsLight = true;
+                field.IsLight = true;
                 MapManager.LightField(FieldType.Princess, field.gridPosition);
                 ChangeBehavior(princess.SelectedIdx);
                 princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
@@ -474,7 +464,7 @@ public class GameManager : MonoBehaviour
                     // 공주가 밝힌 칸에서의 8방향 값을 전달
                     foreach (var piece in baseFields)
                     {
-                        if (piece.PrincessIsLight)
+                        if (piece.IsLight)
                         {
                             // changePiece = changePiece.Concat(GetFieldKnightSkill1(MapManager.princessFields, piece,
                             changePiece = changePiece.Concat(GetFieldKnightSkill1(baseFields, piece,
@@ -490,7 +480,7 @@ public class GameManager : MonoBehaviour
                     // 비어있는 칸만 전달
                     foreach (var piece in baseFields)
                     {
-                        if(piece.PrincessIsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
+                        if(piece.IsLight && piece.MapType == MapType.Empty) changePiece.Add(piece);
                     }
                     break;
             }
