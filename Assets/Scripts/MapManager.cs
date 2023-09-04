@@ -35,6 +35,9 @@ public class MapManager : MonoBehaviour
     public Tilemap UITileMap;
     public Tilemap FloorTileMap;
     public Tilemap WallTileMap;
+    public Tilemap WallTileMap1;
+    public Tilemap WallTileMap2;
+    public Tilemap WallTileMap3;
     public Tilemap LightTileMap;
     public TileBase IsLightTile;
     public TileBase ItemTile;
@@ -88,8 +91,29 @@ public class MapManager : MonoBehaviour
         PrincessTempLight.Add(AllFieldMapData[2][18,19]);
         PrincessTempLight.Add(AllFieldMapData[2][18,18]);
         currentFloor = 0;
+        MakeWallTileMap();
     }
     
+    public void MakeWallTileMap(){
+        if(currentFloor == 0){
+            for (int i = 0; i < _fieldSizeList[currentFloor].x + 2; i++)
+            {
+                string str = "";
+                for (int j = 0; j < _fieldSizeList[currentFloor].y + 2; j++)
+                {
+                    if( WallTileMap2.GetTile(new Vector3Int(i, j, 0)) == null){
+                        str +=  " null";    
+
+                    }
+                    else
+                    str +=  " "  + WallTileMap2.GetTile(new Vector3Int(i, j, 0)).ToString();      
+                }
+                Debug.Log(str); 
+            }
+        }
+        
+    }
+
     public FieldPiece GetFieldPiece(int floor, Vector2Int position){
             return AllFieldMapData[floor-1][position.x, position.y];
     }
@@ -176,6 +200,7 @@ public class MapManager : MonoBehaviour
 
         GenerateFieldObjects(MapData, mapEventRatio/remainRatio, MapType.Event);
         MapData[0, 0].SetMapType(MapType.Empty);
+
 
         return MapData;
     }
@@ -278,25 +303,19 @@ public class MapManager : MonoBehaviour
         if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].IsLight = true;
         if(isInGrid(new Vector2Int(position.x+1, position.y)))AllFieldMapData[currentFloor][position.x+1, position.y].IsLight = true;
         if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].IsLight = true;
-        // if(isInGrid(new Vector2Int(position.x, position.y-1)))AllFieldMapData[currentFloor][position.x, position.y-1].IsLight = true;
-        // if(isInGrid(new Vector2Int(position.x-1, position.y)))AllFieldMapData[currentFloor][position.x-1, position.y].IsLight = true;
-        // if(isInGrid(new Vector2Int(position.x-1, position.y-1)))AllFieldMapData[currentFloor][position.x-1, position.y-1].IsLight = true;
-        // if(isInGrid(new Vector2Int(position.x-1, position.y+1)))AllFieldMapData[currentFloor][position.x-1, position.y+1].IsLight = true;
-        // if(isInGrid(new Vector2Int(position.x+1, position.y-1)))AllFieldMapData[currentFloor][position.x+1, position.y-1].IsLight = true;
     }
     public void LightTempKnightMove(Vector2Int position){
         KnightTempLight.Clear();
-        KnightTempLight.Add(AllFieldMapData[currentFloor][position.x, position.y]);
-        if(isInGrid(new Vector2Int(position.x, position.y-1)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x, position.y-1]);
-        if(isInGrid(new Vector2Int(position.x, position.y+1)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x, position.y+1]);
-        if(isInGrid(new Vector2Int(position.x-1, position.y)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x-1, position.y]);
-        if(isInGrid(new Vector2Int(position.x-1, position.y-1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x-1, position.y-1]);
-        if(isInGrid(new Vector2Int(position.x-1, position.y+1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x-1, position.y+1]);
-        if(isInGrid(new Vector2Int(position.x+1, position.y)))  KnightTempLight.Add(AllFieldMapData[currentFloor][position.x+1, position.y]);
-        if(isInGrid(new Vector2Int(position.x+1, position.y-1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x+1, position.y-1]);
-        if(isInGrid(new Vector2Int(position.x+1, position.y+1)))KnightTempLight.Add(AllFieldMapData[currentFloor][position.x+1, position.y+1]);
+        const int knightSeeRange = 1;
+        for (int x = -knightSeeRange; x <= knightSeeRange; x++) {
+            for (int y = -knightSeeRange; y <= knightSeeRange; y++) {
+                int checkX = position.x + x;
+                int checkY = position.y + y;
+                if (isInGrid(new Vector2Int(checkX, checkY)))
+                    KnightTempLight.Add(AllFieldMapData[currentFloor][checkX, checkY]);
+            }
+        }
         RefreshMap();
-        
     }
 
     public void ChangeFloor(int floor){
@@ -351,8 +370,6 @@ public class MapManager : MonoBehaviour
         return  new Vector2Int((int)(tmp.x / cellSize) - 1,(int)(tmp.y / cellSize) - 1);   
     }
 
-    
-
     public void BuildAllField(){
         ClearAllMaps();
         
@@ -360,16 +377,42 @@ public class MapManager : MonoBehaviour
         WallTileMap.BoxFill(new Vector3Int(0, 0, 0), BlockTile, 0, 0, _fieldSizeList[currentFloor].x+2, _fieldSizeList[currentFloor].y+2 );
         FloorTileMap.size = new Vector3Int(_fieldSizeList[currentFloor].x+1, _fieldSizeList[currentFloor].y+1, 0);
         FloorTileMap.BoxFill(new Vector3Int(1, 1, 0), EmptyTile, 1, 1, _fieldSizeList[currentFloor].x+1, _fieldSizeList[currentFloor].y+1 );
-        BuildMap(MapType.Block, FieldTileMap, BlockTile);
-        BuildMap(MapType.Item, FieldTileMap, ItemTile);
-        BuildMap(MapType.Empty, FieldTileMap, EmptyTile);
-        BuildMap(MapType.Monster, FieldTileMap, MonsterTile);
-        BuildMap(MapType.Event, FieldTileMap, EventTile);
-        BuildMap(MapType.Heal, FieldTileMap, HealTile);
-        BuildMap(MapType.Door, FieldTileMap, DoorTile);
-        BuildMap(MapType.Boss, FieldTileMap, BossTile);
-        BuildMap(MapType.Dragon, FieldTileMap, DragonTile);
 
+        var typeToTile = new Dictionary<MapType, TileBase>() {
+            {MapType.Block, BlockTile}, 
+            {MapType.Item, ItemTile}, 
+            {MapType.Empty, EmptyTile}, 
+            {MapType.Monster, MonsterTile}, 
+            {MapType.Event, EventTile}, 
+            {MapType.Heal, HealTile}, 
+            {MapType.Door, DoorTile}, 
+            {MapType.Boss, BossTile}, 
+            {MapType.Dragon, DragonTile}
+        };
+
+        NewBuildMap(FieldTileMap, typeToTile);
+    }
+
+    public void NewBuildMap(Tilemap map, Dictionary<MapType, TileBase> typeToTile)
+    {
+        for (int x = 0; x < _fieldSizeList[currentFloor].x; x++){
+            for (int y = 0; y < _fieldSizeList[currentFloor].y; y++){
+                var targetTile = AllFieldMapData[currentFloor][x, y];
+                if (!typeToTile.ContainsKey(targetTile.MapType))
+                    continue;
+
+                var tile = typeToTile[targetTile.MapType];
+                
+                if(targetTile.IsLight){ 
+                    LightTileMap.SetTile(new Vector3Int(x + 1, y + 1, 0), IsLightTile);    
+                }
+                else if(!KnightTempLight.Contains(targetTile) && !PrincessTempLight.Contains(targetTile)){
+                    tile = HideTile;
+                }
+
+                map.SetTile(new Vector3Int(x + 1, y + 1, 0), tile);
+            }
+        }
     }
     
     public void BuildMap(MapType mapType, Tilemap map, TileBase tile)
