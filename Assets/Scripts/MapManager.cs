@@ -120,12 +120,15 @@ public class MapManager : MonoBehaviour
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
             if(MapData[i, j].MapType == MapType.Empty){
                 MapData[i, j].SetMapType(MapType.Boss);
+                if(floor == 0) MapData[i, j].monsterInfo = gameManager._resourceManager.Ruggle;
+                else if(floor == 1) MapData[i, j].monsterInfo = gameManager._resourceManager.DeathKnight;
                 break;
             }
         }
         if(floor == 2){ 
             MapData[19,19].SetMapType(MapType.Princess);
             MapData[19,18].SetMapType(MapType.Dragon);
+            MapData[19,18].monsterInfo = gameManager._resourceManager.Dragon;
             MapData[18,19].SetMapType(MapType.Block);
             MapData[18,18].SetMapType(MapType.Block);
         }
@@ -213,6 +216,12 @@ public class MapManager : MonoBehaviour
                     if(fieldPiece.IsLight || KnightTempLight.Contains(fieldPiece)){
                         if(fieldPiece.MapType == MapType.Monster){
                             _UIManager.TileInfUI(MapType.Monster, fieldPiece.monsterInfo);
+                        }
+                        else if(fieldPiece.MapType == MapType.Boss){
+                            _UIManager.TileInfUI(MapType.Boss, fieldPiece.monsterInfo);
+                        }
+                        else if(fieldPiece.MapType == MapType.Dragon){
+                            _UIManager.TileInfUI(MapType.Dragon, fieldPiece.monsterInfo);
                         }
                         else if(fieldPiece.MapType == MapType.Item){
                                 _UIManager.TileInfUI(MapType.Item, null);

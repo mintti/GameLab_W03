@@ -332,7 +332,8 @@ public class GameManager : MonoBehaviour
                     default : 
                         ExecuteMapEvent(field);
                     
-                        MapManager.UpdateMapType(field, MapType.Empty);
+                        if(field.MapType != MapType.Door)
+                            MapManager.UpdateMapType(field, MapType.Empty);
                         break;
                 }
             
