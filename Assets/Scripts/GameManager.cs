@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
             if (_displayFloor != 0)
             {
                 UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
-                // [TODO] MAP 업데이트? 변경?
+                MapManager.ChangeFloor(_displayFloor);
             }
         }
     }
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
         
         princess.fieldType = FieldType.Princess;
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
-        princess.CurrentFieldPiece = MapManager.GetFieldPiece(0, new Vector2Int(19,19));
+        princess.CurrentFieldPiece = MapManager.GetFieldPiece(1, new Vector2Int(19,19));
         // MapManager.LightField(FieldType.Princess, new Vector2Int(19,19));
 
         MapManager.RefreshMap();
@@ -308,14 +308,12 @@ public class GameManager : MonoBehaviour
                     default : 
                         ExecuteMapEvent(field);
                     
-                        // field.UpdateMapType(MapType.Empty);
                         MapManager.UpdateMapType(field, MapType.Empty);
                         break;
                 }
             
                 // 이동
                 Debug.Log("move" +field.gridPosition );
-                // knight.transform.position = MapManager.GridToWorldPosition(field.gridPosition);
                 knight.transform.position = MapManager.GridToWorldPosition(new Vector2(field.gridPosition.x,field.gridPosition.y));
                 knight.CurrentFieldPiece = field;
             }
@@ -576,13 +574,9 @@ public class GameManager : MonoBehaviour
                 battleEvent.Execute();
                 break;
             case MapType.Event :
-                // var fevt = _resourceManager.GetRandomFieldEvent();
-                // fieldEvent.Execute(fevt);
                 fieldEvent.Execute(field.fieldEventInfo);
                 break;
             case MapType.Item : 
-                // var ievt = _resourceManager.GetRandomItemEvent();
-                // itemEvent.Execute(ievt);
                 itemEvent.Execute(field.itemInfo);
                 break;
             case MapType.Heal :

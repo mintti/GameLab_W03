@@ -61,6 +61,8 @@ public class MapManager : MonoBehaviour
 
     public FieldType currentField = FieldType.Field;
 
+    public Vector3 fieldFloorOffset;
+
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
     }
@@ -192,11 +194,19 @@ public class MapManager : MonoBehaviour
             if(isInGrid(new Vector2Int(position.x+1, position.y+1)))AllFieldMapData[currentFloor][position.x+1, position.y+1].KnightIsLight = true;
     }
 
-    public void ChangeFloor(){
+    public void ChangeFloor(int floor){
+        fieldFloorOffset = new Vector3((20 -_fieldSizeList[floor].x)/2, (20 -_fieldSizeList[floor].x)/2, 0);
+        currentFloor = floor;
+        ObjectField.transform.position = fieldFloorOffset * cellSize;
+        RefreshMap();
+    }
+    public void TestChangeFloor(){
+        int floor = currentFloor;
         if(currentFloor == 0)
-            currentFloor = 1;
+            floor = 1;
         else 
-            currentFloor = 0;
+            floor = 0;
+        ChangeFloor(floor);
         RefreshMap();
     }
 
@@ -255,13 +265,6 @@ public class MapManager : MonoBehaviour
         WallTileMap.BoxFill(new Vector3Int(0, 0, 0), BlockTile, 0, 0, _fieldSizeList[currentFloor].x+2, _fieldSizeList[currentFloor].y+2 );
         FloorTileMap.size = new Vector3Int(_fieldSizeList[currentFloor].x+1, _fieldSizeList[currentFloor].y+1, 0);
         FloorTileMap.BoxFill(new Vector3Int(1, 1, 0), EmptyTile, 1, 1, _fieldSizeList[currentFloor].x+1, _fieldSizeList[currentFloor].y+1 );
-        // for (int x = 0; x < Width; x++)
-        //     for (int y = 0; y < Height; y++)
-        //         if (MapData[y, x])
-        //         {
-        //             FloorMap.SetTile(new Vector3Int(x, y, 0), null);
-        //             WallMap.SetTile(new Vector3Int(x, y, 0), WallTile);
-        //         }
         BuildMap(MapType.Block, FieldTileMap, BlockTile);
         BuildMap(MapType.Item, FieldTileMap, ItemTile);
         BuildMap(MapType.Empty, FieldTileMap, EmptyTile);
