@@ -8,6 +8,7 @@ public enum MapType
     Item,
     Hide,
     Door,
-    Player,
+    Knight,
+    Princess,
     Dragon
 }

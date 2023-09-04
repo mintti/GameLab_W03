@@ -104,7 +104,7 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].Init(floor, new Vector2Int(i, j), generatorManager.MapData[i + 1, j + 1] ? MapType.Block : MapType.Empty);                
             }
         }
-        MapData[0, 0].SetMapType(MapType.Player);
+        MapData[0, 0].SetMapType(MapType.Knight);
         while(true){
             int i = (int)(Random.value * _fieldSizeList[currentFloor].x);
             int j = (int)(Random.value * _fieldSizeList[currentFloor].y);
