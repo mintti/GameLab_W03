@@ -61,7 +61,7 @@ public class Status
     {
         get
         {
-            return power + (Buff ? 2 : 0);
+            return power + (Buff ? 2 + DataManager.Instance.PrincessPowerSkillValue : 0);
         }
         set
         {
