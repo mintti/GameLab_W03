@@ -308,7 +308,7 @@ public class GameManager : MonoBehaviour
     private bool MoveKnight(FieldPiece field)
     {
         bool result = true;
-        int cost = field.IsLight ? 0 : _dataManager.knightSkillCost[princess.SelectedIdx]; 
+        int cost = field.IsLight ? 0 : _dataManager.knightSkillCost[knight.SelectedIdx]; 
       
         if (cost <= knight.Cost)
         {
