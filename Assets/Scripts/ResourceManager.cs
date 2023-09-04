@@ -49,10 +49,11 @@ public class ResourceManager : MonoBehaviour
     void InitFieldEvent()
     {
         FieldEvents = new();
-        FieldEvents.Add(new(EventType.HP, 2, GetSrc("FieldEvent", "blessinglake"), "축복의 샘입니다.\n\n체력이 2 회복됩니다."));
+        FieldEvents.Add(new(EventType.HP, 1, GetSrc("FieldEvent", "blessinglake"), "축복의 샘입니다.\n\n체력이 1 회복됩니다."));
         FieldEvents.Add(new(EventType.HP, -2, GetSrc("FieldEvent", "goblinevent"), "수풀을 헤치며 지나가고 있었습니다. 갑자기 주위에서 고블린 덮칩니다./힘겹게 급습을 막아냈으나, 너무나 지칩니다.\n\n체력이 -2 줄어듭니다."));
-        FieldEvents.Add(new(EventType.HP, 3, GetSrc("FieldEvent", "fruitevent"), "수풀을 헤치며 지나가고 있었습니다. 기다렸다는 듯, 탐스러워 보이는 열매를 찾았습니다./아직 신은 나를 버리지 않았나 봅니다. \n\n체력이 3 회복됩니다."));
-        FieldEvents.Add(new(EventType.Power, 1, GetSrc("FieldEvent", "boyevent"), "늑대들에게 둘러싸여 있는 한 소년을 발견하고, 검을 뽑고 달려가 늑대들을 물리쳤습니다./소년은 감사하다는 인사를 하며, 자기도 꼭 커서 용사가 될 것이라 다짐합니다. 흐뭇한 표정을 지으며 갈 길을 이어서 갑니다. \n\n파워가 1 올라갑니다."));
+        FieldEvents.Add(new(EventType.HP, 2, GetSrc("FieldEvent", "fruitevent"), "수풀을 헤치며 지나가고 있었습니다. 기다렸다는 듯, 탐스러워 보이는 열매를 찾았습니다./아직 신은 나를 버리지 않았나 봅니다. \n\n체력이 2 회복됩니다."));
+        FieldEvents.Add(new(EventType.Power, 1, GetSrc("FieldEvent", "boyevent"), "늑대들에게 둘러싸여 있는 한 소년을 발견하고, 검을 뽑고 달려가 늑대들을 물리쳤습니다./소년은 감사하다는 인사를 하며, 자기도 꼭 커서 용사가 될 것이라 다짐합니다. 흐뭇한 표정을 지으며 갈 길을 이어서 갑니다. \n파워가 1 올라갑니다."));
+        FieldEvents.Add(new(EventType.Dex, 3, GetSrc("FieldEvent", "boyevent"), "갑자기 등골이 오싹해 집니다. 뒤를 돌아보니 귀신이 저를 쳐다보고 있습니다./화들짝 놀라 전력질주 합니다. \n\n 민첩이 2 증가합니다."));
 
     }
 
@@ -60,13 +61,13 @@ public class ResourceManager : MonoBehaviour
     {
         var data = DataManager.Instance;
         Artifacts = new List<Artifact>();
-        Artifacts.Add(new Artifact(ArtifactType.AllStatUp, "공주의 편지", $"전체 스텟이 {data.ARTI_AllStatUp_Value}만큼 증가합니다.", null));
-        Artifacts.Add(new Artifact(ArtifactType.AddAttack, "분신술 비급서", $"용사는 {data.ARTI_AddAtack_Interval}공수마다 한번 더 공격합니다.", null));
-        Artifacts.Add(new Artifact(ArtifactType.DexUp, "날개 달린 신발 신발", $"용사의 민첩이 {data.ARTI_DEXUP_Value}만큼 증가합니다.", null));
-        Artifacts.Add(new Artifact(ArtifactType.CostUp, "반짝이는 돌", $"기이한 돌의 효과로 용사와 공주는 {data.ARTI_COSTUP_Value}만큼 추가 행동력을 가집니다.", null));
-        Artifacts.Add(new Artifact(ArtifactType.PrincessSkillUp, "유니콘의 뿔", $"공주의 성력이 증가하여, 용사 강화 시 {data.ARTI_PrincessSkillUP_Value}만큼 추가 강화합니다.", null));
-        Artifacts.Add(new Artifact(ArtifactType.KnightSkillUp, "빠짝 마른 장작", $"휴식 스킬 사용 시 {data.ARTI_KnightSkillUP_Value}만큼 추가 휴식합니다.", null));
-        Artifacts.Add(new Artifact(ArtifactType.HpUp, "트롤의 피", $"체력이 {data.ARTI_HPUP_Value}만큼 증가합니다.", null));
+        Artifacts.Add(new Artifact(ArtifactType.AllStatUp, "공주의 편지", $"전체 스텟이 {data.ARTI_AllStatUp_Value}만큼 증가합니다.", GetSrc("Artifact", "princessletter")));
+        Artifacts.Add(new Artifact(ArtifactType.AddAttack, "분신술 비급서", $"용사는 {data.ARTI_AddAtack_Interval}공수마다 한번 더 공격합니다.", GetSrc("Artifact", "ninja")));
+        Artifacts.Add(new Artifact(ArtifactType.DexUp, "날개 달린 신발", $"용사의 민첩이 {data.ARTI_DEXUP_Value}만큼 증가합니다.", GetSrc("Artifact", "flyingshoes")));
+        Artifacts.Add(new Artifact(ArtifactType.CostUp, "반짝이는 돌", $"기이한 돌의 효과로 용사와 공주는 {data.ARTI_COSTUP_Value}만큼 추가 행동력을 가집니다.", GetSrc("Artifact", "shinestone")));
+        Artifacts.Add(new Artifact(ArtifactType.PrincessSkillUp, "유니콘의 뿔", $"공주의 성력이 증가하여, 용사 강화 시 {data.ARTI_PrincessSkillUP_Value}만큼 추가 강화합니다.", GetSrc("Artifact", "unicorn")));
+        Artifacts.Add(new Artifact(ArtifactType.KnightSkillUp, "빠짝 마른 장작", $"휴식 스킬 사용 시 {data.ARTI_KnightSkillUP_Value}만큼 추가 휴식합니다.", GetSrc("Artifact", "tree")));
+        Artifacts.Add(new Artifact(ArtifactType.HpUp, "트롤의 피", $"체력이 {data.ARTI_HPUP_Value}만큼 증가합니다.", GetSrc("Artifact", "blood")));
     }
 
 
@@ -194,5 +195,8 @@ public enum EventType
 {
     HP,
     Power,
+    Defense,
+    Dex,
+    Exp,
 
 }
