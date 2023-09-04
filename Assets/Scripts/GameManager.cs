@@ -374,12 +374,20 @@ public class GameManager : MonoBehaviour
             
         if (!isKnight && princess.Cost >= cost)
         {
-            // field.IsLight = true;
-            //MapManager.LightField(FieldType.Princess, field.gridPosition);
-            MapManager.LightFieldPrincess(field.gridPosition);
-            MapManager.RefreshMap();
-            ChangeBehavior(princess.SelectedIdx);
-            princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
+            if (MapManager.CheckCanUsedLightSkill(field))
+            {
+                // field.IsLight = true;
+	            //MapManager.LightField(FieldType.Princess, field.gridPosition);
+	            MapManager.LightFieldPrincess(field.gridPosition);
+	            MapManager.RefreshMap();
+	            ChangeBehavior(princess.SelectedIdx);
+	            princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
+            }
+            else
+            {
+                Log("스킬 범위 내 영역이 전부 밝혀져있습니다.");
+                result = false;
+            }
         }
         else
         {
@@ -473,20 +481,22 @@ public class GameManager : MonoBehaviour
         FieldPiece[,] baseFields = MapManager.GetCurrentFloorField();
         FieldPiece     curPiece  = whoseTurn.Equals(nameof(princess)) ? princess.CurrentFieldPiece : knight.CurrentFieldPiece;
         
+        MapManager.LightCellMode = false;
         if (whoseTurn.Equals(nameof(princess)))
         {
             switch (index)
             {
                 case 0:
+                    MapManager.LightCellMode = true;
                     // 공주가 밝히지 않은 칸 전달
-                    foreach (var piece in baseFields)
-                    {
-                        if (!piece.IsLight)
-                        {
-                            changePiece = changePiece.Concat(GetFieldKnightSkill1(baseFields, piece,
-                                new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
-                        }
-                    }
+                    // foreach (var piece in baseFields)
+                    // {
+                    //     if (!piece.IsLight)
+                    //     {
+                    //         changePiece = changePiece.Concat(GetFieldKnightSkill1(baseFields, piece,
+                    //             new[] { -1, 1, 0, 0 }, new[] { 0, 0, -1, 1 })).ToList();
+                    //     }
+                    // }
                     break;
                 case 1:
                     // 공주가 서 있는 위치 전달

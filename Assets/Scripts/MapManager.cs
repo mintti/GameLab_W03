@@ -66,6 +66,8 @@ public class MapManager : MonoBehaviour
 
 
     public Vector3[] fieldFloorOffset;
+    
+    public bool LightCellMode { get; set; }
 
     private void Awake() {
         selectCusorObj = Instantiate(Resources.Load<GameObject>("SelectCursorObject"));
@@ -86,8 +88,8 @@ public class MapManager : MonoBehaviour
         PrincessTempLight.Add(AllFieldMapData[2][18,19]);
         PrincessTempLight.Add(AllFieldMapData[2][18,18]);
         currentFloor = 0;
-
     }
+    
     public FieldPiece GetFieldPiece(int floor, Vector2Int position){
             return AllFieldMapData[floor-1][position.x, position.y];
     }
@@ -161,6 +163,8 @@ public class MapManager : MonoBehaviour
             }
         }
     }
+
+    private Vector2Int beforeVector;
     private void Update()
     {
         if (!gameManager.EventPrinting)
@@ -188,15 +192,46 @@ public class MapManager : MonoBehaviour
                         currentHoverGrid = grid;
                     }
                 }
+
+                // 공주 스킬 밝히기 사용 중, 사용 가능 스킬 범위를 표시 방법 변경
+                if (LightCellMode)
+                {
+                    if (beforeVector != grid)
+                    {
+                        FieldPiece piece = AllFieldMapData[currentFloor][grid.x, grid.y];
+
+                        var list = new List<FieldPiece>() { piece };
+
+                        if (isInGrid(new Vector2Int(grid.x+1, grid.y))) list.Add(AllFieldMapData[currentFloor][grid.x + 1, grid.y]);
+                        if (isInGrid(new Vector2Int(grid.x, grid.y+1))) list.Add(AllFieldMapData[currentFloor][grid.x, grid.y + 1]);
+                        if (isInGrid(new Vector2Int(grid.x+1, grid.y+1))) list.Add(AllFieldMapData[currentFloor][grid.x + 1, grid.y + 1]);
+                        
+                        showCanSelectField(list); // 스킬 사용 시, 밝혀질 범위를 표시
+                    }
+                }
             }
             else{
                 currentHoverGrid = new Vector2Int(-100, -100);
             }
         }
     }
-    public void LightField(Vector2Int position){
-            AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
+
+    /// <summary>
+    /// 공주의 밝히기 스킬 사용 가능 여부를 반환
+    /// </summary>
+    public bool CheckCanUsedLightSkill(FieldPiece piece)
+    {
+        bool result = false;
+        Vector2Int vec = piece.gridPosition;
+        
+        result |= !piece.IsLight;
+        if(isInGrid(new Vector2(vec.x + 1, vec.y))) result |= !AllFieldMapData[currentFloor][vec.x + 1, vec.y].IsLight;
+        if(isInGrid(new Vector2(vec.x, vec.y + 1))) result |= !AllFieldMapData[currentFloor][vec.x, vec.y + 1].IsLight;
+        if(isInGrid(new Vector2(vec.x + 1, vec.y + 1))) result |= !AllFieldMapData[currentFloor][vec.x + 1, vec.y + 1].IsLight;
+
+        return result;
     }
+    
     public void LightFieldPrincess(Vector2Int position){
         AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
         if(isInGrid(new Vector2Int(position.x, position.y+1)))AllFieldMapData[currentFloor][position.x, position.y+1].IsLight = true;
