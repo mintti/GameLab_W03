@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor;
-using UnityEditor.UI;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
