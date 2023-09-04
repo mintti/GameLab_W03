@@ -681,6 +681,7 @@ public class GameManager : MonoBehaviour
         CurrentKnightFloor++;
         DisplayFloor = CurrentKnightFloor; 
         knight.SelectedFloor = CurrentKnightFloor;
+        princess.SelectedFloor = CurrentKnightFloor;
 
         var nextFloorInitPosField = MapManager.AllFieldMapData[CurrentKnightFloor-1][0, 0];
         
