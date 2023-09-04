@@ -14,7 +14,6 @@ public class Player : MonoBehaviour
     public GameObject playerUI;
     private GameObject playerSkillUI;
     public FieldPiece CurrentFieldPiece { get; set; }
-    public FieldType fieldType;
 
     private int _selectedIdx;
     public int SelectedIdx
@@ -84,10 +83,6 @@ public class Player : MonoBehaviour
     {
         IsTurnEnd = true;
         playerUI.SetActive(false);
-        if (fieldType == FieldType.Princess)
-            _mapManager.currentField = FieldType.Knight;
-        else
-            _mapManager.currentField = FieldType.Princess;
     }
 
     public void Update()

@@ -63,11 +63,14 @@ public class GameManager : MonoBehaviour
             {
                 UIManager.Instance.UpdateCurrentDisplayFloor(_displayFloor);
                 MapManager.ChangeFloor(_displayFloor);
-                if(_displayFloor != knight.SelectedFloor)
+                if(_displayFloor != CurrentKnightFloor)
                     knight.gameObject.SetActive(false);
                 else
-                    // knight.SetSpriteRenderer(true);
                     knight.gameObject.SetActive(true);
+                if(_displayFloor != 3)
+                    princess.gameObject.SetActive(false);
+                else
+                    princess.gameObject.SetActive(true);
             }
         }
     }
@@ -143,17 +146,16 @@ public class GameManager : MonoBehaviour
 
     void InitPlayerPosition()
     {
-        knight.fieldType = FieldType.Knight;
         knight.transform.position = MapManager.GridToWorldPosition(new Vector2(0,0));
         knight.CurrentFieldPiece = MapManager.GetFieldPiece(knight.SelectedFloor, new Vector2Int(0,0));
         MapManager.LightFieldKnightMove(knight.CurrentFieldPiece.gridPosition);
         
-        princess.fieldType = FieldType.Princess;
+        MapManager.ChangeFloor(princess.SelectedFloor);
         princess.transform.position = MapManager.GridToWorldPosition(new Vector2(19,19));
         princess.CurrentFieldPiece = MapManager.GetFieldPiece(princess.SelectedFloor, new Vector2Int(19,19));
         // MapManager.LightField(FieldType.Princess, new Vector2Int(19,19));
 
-        MapManager.RefreshMap();
+        MapManager.ChangeFloor(CurrentKnightFloor);
     }
 
     IEnumerator PlayGame()
@@ -162,7 +164,7 @@ public class GameManager : MonoBehaviour
         {
             Camera.main.backgroundColor = new Color(0.3537736f, 0.401642f, 1, 1);
             whoseTurn = nameof(knight);
-            MapManager.BuildAllField(FieldType.Knight);
+            MapManager.BuildAllField();
             yield return StartCoroutine(PlayPlayer(knight));
             if (dotDamageTime)
             {
@@ -172,7 +174,7 @@ public class GameManager : MonoBehaviour
 
             Camera.main.backgroundColor = new Color(1, 0.6650944f, 0.9062265f, 1);
             whoseTurn = nameof(princess);
-            MapManager.BuildAllField(FieldType.Princess);
+            MapManager.BuildAllField();
             yield return StartCoroutine(PlayPlayer(princess));
 
             if (GameEnd)
@@ -352,7 +354,7 @@ public class GameManager : MonoBehaviour
             if (princess.Cost >= cost)
             {
                 field.IsLight = true;
-                MapManager.LightField(FieldType.Princess, field.gridPosition);
+                MapManager.LightField(field.gridPosition);
                 ChangeBehavior(princess.SelectedIdx);
                 princess.Cost -= _dataManager.princessSkillCost[princess.SelectedIdx];
             }

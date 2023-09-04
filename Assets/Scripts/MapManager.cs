@@ -59,7 +59,6 @@ public class MapManager : MonoBehaviour
     GeneratorManager generatorManager;
 
 
-    public FieldType currentField = FieldType.Field;
 
     public Vector3[] fieldFloorOffset;
 
@@ -188,7 +187,7 @@ public class MapManager : MonoBehaviour
             }
         }
     }
-    public void LightField(FieldType type, Vector2Int position){
+    public void LightField(Vector2Int position){
             AllFieldMapData[currentFloor][position.x, position.y].IsLight = true;
     }
     public void LightFieldKnightMove(Vector2Int position){
@@ -256,8 +255,7 @@ public class MapManager : MonoBehaviour
 
     
 
-    public void BuildAllField(FieldType type){
-        currentField = type;
+    public void BuildAllField(){
         ClearAllMaps();
         
         WallTileMap.size = new Vector3Int(_fieldSizeList[currentFloor].x+2, _fieldSizeList[currentFloor].y+2, 0);
@@ -306,7 +304,7 @@ public class MapManager : MonoBehaviour
 
     public void RefreshMap(){
         ClearAllMaps();
-        BuildAllField(currentField);
+        BuildAllField();
     }
 
     public void UpdateMapType(FieldPiece fieldPiece, MapType type){
