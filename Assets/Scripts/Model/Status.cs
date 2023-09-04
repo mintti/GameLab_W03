@@ -94,8 +94,7 @@ public class Status
     {
         get
         {
-            if (player) return exp;
-            else return Level + 1;
+            return exp;
         }
         set
         {
@@ -109,12 +108,12 @@ public class Status
 
     }
 
-    public Status(int maxHp, int power, int defnese, int dex, bool isPlayer = false)
+    public Status(int maxHp, int power, int defnese, int dex, int exp, bool isPlayer = false)
     {
         player = isPlayer;
 
         MaxHp = maxHp;
-
+        Exp = exp;
         currentHp = maxHp;
         Power = power;
         Defense = defense;

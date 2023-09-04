@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
     public int defaultPower;
     public int defaultDefense;
     public int defaultDex;
+    public int defaultExp;
 
     private int _cost;
     public int Cost
@@ -65,7 +66,7 @@ public class Player : MonoBehaviour
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         playerSkillUI = playerUI.transform.GetChild(0).gameObject;
 
-        Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, true);
+        Status = new Status(defaultHp, defaultPower, defaultDefense, defaultDex, defaultExp, true);
 
         _uiManager.UpdateKnightStatusInfo();
 

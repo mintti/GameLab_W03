@@ -70,6 +70,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI monDefense;
     public TextMeshProUGUI monDex;
     public TextMeshProUGUI monName;
+    public TextMeshProUGUI monExp;
     public TextMeshProUGUI eventText;
     public TextMeshProUGUI itemText;
 
@@ -354,6 +355,7 @@ public class UIManager : MonoBehaviour
             monPow.text = "<color=#FFD400>파워</color> : " + monster.Status.Power;
             monDefense.text = "<color=#0000FF>방어</color> : " + monster.Status.Defense;
             monDex.text = "<color=#80FF00>민첩</color> : " + monster.Status.Dex;
+            monExp.text = "<color=#8A2BE2>EXP</color>  + " + monster.Status.Exp;
             monName.text = monster.Name;
         }
 
@@ -391,6 +393,7 @@ public class UIManager : MonoBehaviour
             monPow.text = "<color=#FFD400>파워</color> : " + monster.Status.Power;
             monDefense.text = "<color=#0000FF>방어</color> : " + monster.Status.Defense;
             monDex.text = "<color=#80FF00>민첩</color> : " + monster.Status.Dex;
+            monExp.text = "<color=#8A2BE2>EXP</color>  + " + monster.Status.Exp;
             monName.text = monster.Name;
         }
 
@@ -407,6 +410,7 @@ public class UIManager : MonoBehaviour
             monPow.text = "<color=#FFD400>파워</color> : " + monster.Status.Power;
             monDefense.text = "<color=#0000FF>방어</color> : " + monster.Status.Defense;
             monDex.text = "<color=#80FF00>민첩</color> : " + monster.Status.Dex;
+            monExp.text = "<color=#8A2BE2>EXP</color>  + " + monster.Status.Exp;
             monName.text = monster.Name;
         }
 

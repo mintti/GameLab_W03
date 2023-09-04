@@ -27,7 +27,7 @@ public class DataManager : MonoBehaviour
     [SerializeField]
     public int StatusPoint;
     public List<int> ExpNeedForLevelUp = new()
-        { 1, 7, 10, 13, 15, 18, 23, 28, 33 };
+        { 1, 5, 7, 9, 11, 14, 17, 20, 23, 27, 31, 35, 39, 43, 47, 51 };
     
     [Header("Player Skill")]
     
