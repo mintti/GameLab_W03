@@ -592,7 +592,6 @@ public class GameManager : MonoBehaviour
     /// <param name="field"></param>
     private void ExecuteMapEvent(FieldPiece field)
     {
-        var updateType = MapType.Empty;
         EventPrinting = true;
         
         switch (field.MapType)
@@ -633,7 +632,6 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case MapType.Door :
-                updateType = MapType.Door; // 문은 영원한 문 상태입니다.
                 if (HasKey)
                 {
                     _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
@@ -642,13 +640,12 @@ public class GameManager : MonoBehaviour
                 {
                     Log("열쇠가 없어 문을 열 수 없습니다.");
                 }
+                EventPrinting = false;
                 break;
             case MapType.Princess :
                 _uiManager.ActiveEndingScene();
                 break;
         }
-
-        MapManager.UpdateMapType(field, updateType);
     }
     #endregion
 
