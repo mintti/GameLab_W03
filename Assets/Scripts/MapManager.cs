@@ -370,7 +370,7 @@ public class MapManager : MonoBehaviour
         
         if(type == MapType.Monster){
             // fieldPiece.monsterInfo = moneter;
-            fieldPiece.monsterInfo = gameManager._resourceManager.GetRandomMonster();
+             fieldPiece.monsterInfo = gameManager._resourceManager.GetRandomMonster(1);
         }
         else if(type == MapType.Item){
             // fieldPiece.itemInfo = itemInfo;
