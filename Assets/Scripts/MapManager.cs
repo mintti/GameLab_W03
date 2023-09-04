@@ -111,6 +111,10 @@ public class MapManager : MonoBehaviour
                 MapData[i, j].SetMapType(MapType.Door);
                 break;
             }
+            if(MapData[i, j].MapType == MapType.Empty){
+                MapData[i, j].SetMapType(MapType.Boss);
+                break;
+            }
         }
         if(floor == 2){ 
             MapData[19,19].SetMapType(MapType.Princess);

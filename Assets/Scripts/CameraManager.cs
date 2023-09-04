@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public bool mapON;
+    // public bool mapON;
     private Transform _target;
     public Transform Target
     {
@@ -27,13 +27,13 @@ public class CameraManager : MonoBehaviour
         // }
     }
     
-    public void ActiveMap()
-    {
-        mapON = true;
-    }
+    // public void ActiveMap()
+    // {
+    //     mapON = true;
+    // }
     
-    public void InactiveMap()
-    {
-        mapON = false;
-    }
+    // public void InactiveMap()
+    // {
+    //     mapON = false;
+    // }
 }
