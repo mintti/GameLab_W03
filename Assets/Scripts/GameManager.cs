@@ -644,6 +644,7 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case MapType.Door :
+                _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
                 if (HasKey)
                 {
                     _uiManager.ActiveSomeThingBox("다음 층으로 올라가시겠습니까?", MoveNextFloor);
@@ -678,7 +679,7 @@ public class GameManager : MonoBehaviour
         DisplayFloor = CurrentKnightFloor; 
         knight.SelectedFloor = CurrentKnightFloor;
 
-        var nextFloorInitPosField = MapManager.AllFieldMapData[CurrentKnightFloor][0, 0];
+        var nextFloorInitPosField = MapManager.AllFieldMapData[CurrentKnightFloor-1][0, 0];
         
         knight.transform.position = MapManager.GridToWorldPosition(nextFloorInitPosField.gridPosition);
         knight.CurrentFieldPiece = nextFloorInitPosField;
