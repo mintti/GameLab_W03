@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -399,7 +400,7 @@ public class GameManager : MonoBehaviour
 
         if (knight.Cost >= 1)
         {
-            knight.Status.CurrentHp += knight.Cost;
+            knight.Status.CurrentHp += knight.Cost + _dataManager.KnightRestRecoveryHpAddValue;
             knight.Cost = 0;
         }
         else
@@ -688,6 +689,43 @@ public class GameManager : MonoBehaviour
         ChangeBehavior(knight.SelectedIdx);
     }
 
+    public void GetArtifact(Artifact artifact)
+    {
+        _dataManager.HasArtifactList.Add(artifact);
+        _uiManager.UpdateArtifactInfo();
+
+        switch (artifact.Type)
+        {
+            case ArtifactType.AllStatUp :
+                knight.Status.MaxHp     += _dataManager.ARTI_AllStatUp_Value;
+                knight.Status.CurrentHp += _dataManager.ARTI_AllStatUp_Value;
+                knight.Status.Dex       += _dataManager.ARTI_AllStatUp_Value;
+                knight.Status.Power     += _dataManager.ARTI_AllStatUp_Value;
+                knight.Status.Defense   += _dataManager.ARTI_AllStatUp_Value;
+                break;
+            case ArtifactType.DexUp :
+                knight.Status.Dex += _dataManager.ARTI_DEXUP_Value;
+                break;
+            case ArtifactType.HpUp :
+                knight.Status.CurrentHp += _dataManager.ARTI_HPUP_Value;
+                knight.Status.MaxHp += _dataManager.ARTI_HPUP_Value;
+                break;
+            case ArtifactType.CostUp :
+                KnightMaxCost++;
+                PrincessMaxCost++;
+                break;
+            case ArtifactType.PrincessSkillUp :
+                _dataManager.PrincessPowerSkillValue += _dataManager.ARTI_PrincessSkillUP_Value;
+                break;
+            case ArtifactType.KnightSkillUp :
+                _dataManager.KnightRestRecoveryHpAddValue += _dataManager.ARTI_KnightSkillUP_Value;
+                break;
+            case ArtifactType.AddAttack :
+                _dataManager.ARTI_AddAtack = true;
+                break;
+            
+        }
+    }
 
     public void ClearBoss()
     {
@@ -698,7 +736,7 @@ public class GameManager : MonoBehaviour
         
 
     #endregion
-    
+
     private void Ending()
     {
         EventPrinting = true;

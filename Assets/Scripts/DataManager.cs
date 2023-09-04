@@ -36,6 +36,8 @@ public class DataManager : MonoBehaviour
     public int[] princessSkillCost;
     public int[] knightSkillCost;
 
+    [Tooltip("용사 스킬에서 추가 회복량입니다.")]  public int KnightRestRecoveryHpAddValue;
+    [Tooltip("공주 스킬에서 추가 파워 업될 수치입니다.")] public int PrincessPowerSkillValue;
 
     [Header("게임")]
     /// <summary>
@@ -43,6 +45,19 @@ public class DataManager : MonoBehaviour
     /// </summary>
     public List<int> WaveCountByFloor = new()
     { 10, 10, 10 };
-}
+
     
+
+    [Header("아티펙트")]
+    public List<Artifact> HasArtifactList = new();
+    
+    public int ARTI_AllStatUp_Value;
+    public bool ARTI_AddAtack;
+    public int ARTI_AddAtack_Interval;
+    public int ARTI_DEXUP_Value;
+    public int ARTI_COSTUP_Value;
+    public int ARTI_PrincessSkillUP_Value;
+    public int ARTI_KnightSkillUP_Value;
+    public int ARTI_HPUP_Value;
+}
     
