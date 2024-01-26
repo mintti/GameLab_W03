@@ -101,6 +101,9 @@ public class GameManager : MonoBehaviour
     public int PrincessMaxCost;
     public int KnightMaxCost;
 
+    private readonly Color _knightBGColor = new Color(0.3537736f, 0.401642f, 1, 1);
+    private readonly Color _princessBGColor = new Color(1, 0.6650944f, 0.9062265f, 1);
+
     [Header("이벤트 관련")]
     public BattleEvent battleEvent;
     public FieldEvent fieldEvent;
@@ -175,46 +178,41 @@ public class GameManager : MonoBehaviour
         MapManager.ChangeFloor(CurrentKnightFloor);
     }
 
+    /// <summary>
+    /// 게임 플로우
+    /// </summary>
     IEnumerator PlayGame()
     {
         while (true)
         {
-            Camera.main.backgroundColor = new Color(0.3537736f, 0.401642f, 1, 1);
+            // 기사 턴
+            Camera.main.backgroundColor = _knightBGColor;
             whoseTurn = nameof(knight);
             MapManager.BuildAllField();
-            yield return StartCoroutine(PlayPlayer(knight));
+            yield return PlayPlayer(knight);
+        
+            // 분화 이벤트 : 오버된 턴 수만큼 도트 데미지
             if (DotDamageTime)
             {
-                // [TODO] 도트 데미지 액션 출력
                 knight.Status.CurrentHp -= GetDotDam();
             }
-
-            Camera.main.backgroundColor = new Color(1, 0.6650944f, 0.9062265f, 1);
+				
+            // 공주 턴
+            Camera.main.backgroundColor = _princessBGColor;
             whoseTurn = nameof(princess);
             MapManager.BuildAllField();
-            yield return StartCoroutine(PlayPlayer(princess));
+            yield return PlayPlayer(princess);
 
-            if (GameEnd)
-            {
-                // 게임이 종료되면 실행한다.
-                // 왜 종료되었는 지는 각 오브젝트에서 설정해준다.
-                yield break;
-            }
-            
+            // 게임이 종료되면 실행되며, 종료 사유는 각 이벤트에서 출력
+            if (GameEnd) yield break;
+        
             Turn++;
-            // if (Turn % waveInterval == 0)
-            // {
-            //     MapManager.DoWave(.1f);
-            // }
-            
-            // 도트 데미지 여부 설정
-            if (GetDotDam() > 0)
+        
+            // 분화 이벤트 체크 후 실행
+            if (!DotDamageTime && GetDotDam() > 0)
             {
-                if (!DotDamageTime)
-                {
-                    Log($"<color=#D73502>{CurrentKnightFloor}층이 불타기 시작합니다.</color>");
-                    DotDamageTime = true;
-                }
+                Log($"<color=#D73502>{CurrentKnightFloor}층이 불타기 시작합니다.</color>");
+                DotDamageTime = true;
             }
         }
     }
@@ -227,21 +225,21 @@ public class GameManager : MonoBehaviour
 
     public bool CheckDotDam() => GetDotDam() > 0;
 
+    /// <summary>
+    /// 용사/공주 플레이어별 화면 세팅 및 행동 대기
+    /// </summary>
     IEnumerator PlayPlayer(Player player)
     {
         do
         {
-            if(player == knight)
-                player.StartTurn(KnightMaxCost);
-            else
-                player.StartTurn(PrincessMaxCost);
+            if(player == knight) player.StartTurn(KnightMaxCost);
+            else player.StartTurn(PrincessMaxCost);
             
             DisplayFloor = player.SelectedFloor; // 이전 바라보고 있던 대상 층으로 이동
-            ChangeBehavior(player.SelectedIdx);
-            
+            ChangeBehavior(player.SelectedIdx);  // 스킬 정보 수정          
             
             CameraManager.Target = player.transform;
-            yield return new WaitUntil(() => player.IsTurnEnd);
+            yield return new WaitUntil(() => player.IsTurnEnd); // 턴 종료 버튼 선택 대기
         } while (!player.IsTurnEnd);
     }
 
